@@ -40,9 +40,7 @@ namespace Thunder.Services
         }
 
        
-        //THEN SET UP EMAIL SERVICE - CONFIGURE DOMAIN - SEND GRID
-        //SET UP PASSWORD RESET SERVICE 
-       
+      
         public UserDetails GetUserDeets(string uid)
         {
             var user = _db.Users.FindAsync(uid);
@@ -54,23 +52,30 @@ namespace Thunder.Services
         } 
        
 
-        //MAKE THE ORDERID DYNAMIC IN THE URL MF
-        public async Task<IActionResult> getLabelAsync()
+
+        public async Task<FileStreamResult> getLabel(string orderID, bool view = false)
         {
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, "https://aio.gg/api/upsv3/order/94fb3553-3040-83e6-ec9f-f7312edfa01e/file");
-            request.Headers.Add("Auth", "6b730685-896c-83ba-01e9-e3bf2ea2df38");
+            using var client = new HttpClient();
+            var uri = "https://aio.gg/api/upsv3/order/" + orderID + "/file";
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            request.Headers.Add("Auth", "c422df81-015d-632d-4a3d-3281c0b4d952");
+
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var responseContent = response.Content;
             MemoryStream ms = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
-            return new FileStreamResult(ms, "application/pdf");
-        }
-        public void SaveUpsLabel(UpsOrder upsOrder)
-        {
+            var contentDisposition = view ? "inline" : "attachment";
+            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue(contentDisposition)
+            {
+                FileName = "ShippingLabel.pdf"
+            };
 
+            return new FileStreamResult(ms, "application/pdf")
+            {
+                FileDownloadName = view ? null : "ShippingLabel.pdf"
+            };
         }
+
 
         public void SaveReturnAddress(ReturnAddress returnAddress)
         {
@@ -160,28 +165,7 @@ namespace Thunder.Services
 
             return response;
         }
-        public async Task<FileStreamResult> getLabel(string orderID, bool view = false)
-        {
-            using var client = new HttpClient();
-            var uri = "https://aio.gg/api/upsv3/order/"+orderID+"/file";
-            var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            request.Headers.Add("Auth", "c422df81-015d-632d-4a3d-3281c0b4d952");
-
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            MemoryStream ms = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
-            var contentDisposition = view ? "inline" : "attachment";
-            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue(contentDisposition)
-            {
-                FileName = "ShippingLabel.pdf"
-            };
-
-            return new FileStreamResult(ms, "application/pdf")
-            {
-                FileDownloadName = view ? null : "ShippingLabel.pdf"
-            };
-        }
+       
         private string GenerateRandomPhoneNumber()
         {
             var random = new Random();
