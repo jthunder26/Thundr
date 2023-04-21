@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@plasmicapp/loader-angular": "^0.0.2",
+    "knockout": "^3.5.1"
+  },
+  "devDependencies": {
+    "@angular/cli": "^15.2.1"
+  }
+}

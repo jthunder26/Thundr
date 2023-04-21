@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div data-animation="default" class="dashboardnavbar w-nav" data-easing2="ease" data-easing="ease" data-collapse="medium" style="opacity:0" role="banner" data-no-scroll="1" data-duration="700" id="NavBarComponent" data-doc-height="1">
+    <div class="container nav-container main">
+        <div class="nav-menu-container">
+            <a href="@Url.ActionLink("Index","Home")" aria-current="page" class="brand-link nav w-nav-brand w--current">
+                <img src="~/images/thunder.png" loading="lazy" width="75" height="75" srcset="~/images/thunder-p-500.png 500w, ~/images/thunder-p-800.png 800w, ~/images/thunder-p-1080.png 1080w, ~/images/thunder-p-1600.png 1600w, ~/images/thunder-p-2000.png 2000w, ~/images/thunder.png 2215w" sizes="30px" alt="" class="brand">
+                <div class="text-block-12 gradient-text nav">Thunder</div>
+            </a>
+            <nav role="navigation" class="nav-menu w-nav-menu">
+                <div class="nav-link-container">
+                    <div class="nav-link-holder">
+                        <a href="@Url.ActionLink("Index","Home")" class="nav-link w-inline-block">
+                            <div>Home</div>
+                            <div class="link-block-underline"></div>
+                        </a>
+                    </div>
+                    <div class="nav-link-holder">
+                        <a href="contact.html" class="nav-link w-inline-block">
+                            <div>Login</div>
+                            <div class="link-block-underline"></div>
+                        </a>
+                    </div>
+                    <div class="nav-link-holder logoutholder">
+                        <a href="contact.html" class="nav-link w-inline-block">
+                            <div>Logout</div>
+                            <div class="link-block-underline"></div>
+                        </a>
+                    </div>
+                    <div class="nav-buttons-container">
+                        <a href="@Url.ActionLink("Register","Home")" class="gradient-link w-inline-block">
+                            <div class="button-gradient"></div>
+                            <div class="loginbutton">
+                                <div class="logintext">Create a FREE account</div>
+                            </div>
+                            <div class="white-background-button-color"></div>
+                        </a>
+                    </div>
+                </div>
+                <partial name="_LoginPartial" />
+            </nav>
+            <div class="menu-button-holder">
+                <div class="menu-button w-nav-button">
+                    <div class="center-box"><img src="~/images/menu.svg" loading="lazy" alt="" class="menu-button-image"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

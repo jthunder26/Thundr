@@ -1,0 +1,130 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<html data-wf-page="640dfa54ba67526ba609aa48" data-wf-site="640dfa53ba67521ab709aa29">
+<body data-title="Register">
+    <div class="section">
+        <div class="container">
+            <div class="top-margin-xl">
+                <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                    <h1 data-w-id="0fdd33f8-2382-2f01-89f7-ab67d6545a7c" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hero-normal-weight gradient-text">BEGIN SHIPPING IN SECONDS!</h1>
+                </div>
+                <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-2st">
+                    <p data-w-id="75f362d9-fa04-f72d-0375-be9cd6b35291" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="paragraph-4">100% FREE | NO FEES OR HIDDEN COSTS</p>
+                </div>
+                <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-3rd">
+                    <div id="registerSubmit" class="form-block-2 w-form">
+                        <form asp-route-returnUrl="@ViewData["ReturnUrl"]" name="wf-form-registerForm" data-name="registerForm" method="post" class="form-2 custom">
+                            <label for="name-2" class="field-label-3">Create your free account</label>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="columns-6 w-row">
+                                <div class="w-col w-col-6"><input asp-for="Input.Email" class="text-field w-input" maxlength="256" name="Email" data-name="Email" placeholder="Email" id="Email" aria-required="true"><span asp-validation-for="Input.Email" class="text-danger"></span></div>
+                                <div class="w-col w-col-6"><input asp-for="Input.Password" class="form-control text-field-2 w-input" maxlength="256" name="Password" data-name="Password" placeholder="Password" id="Password" aria-required="true" /><span asp-validation-for="Input.Password" class="text-danger"></span></div>
+                            </div><label for="name-2" class="field-label-2">Provide your physical address</label>
+                            <div class="columns-7 w-row">
+                                <div class="w-col w-col-6"><input asp-for="Input.FullName" class="form-control text-field-3 w-input" maxlength="256" name="FullName" data-name="FullName" placeholder="Full Personal Name" id="FullName" aria-required="true" /> <span asp-validation-for="Input.FullName" class="text-danger"></span></div>
+                                <div class="w-col w-col-6"><input asp-for="Input.Company" class="text-field-4 w-input" maxlength="256" name="Company" data-name="Company" placeholder="Company (optional)" id="Company"></div>
+                            </div>
+                            <div class="columns-8 w-row">
+                                <div class="w-col w-col-6"><div class="autocomplete-container" id="autocomplete-container"></div></div>
+                                <div class="w-col w-col-6"><input asp-for="Input.Address2" class="text-field-6 w-input" maxlength="256" name="Address2" data-name="Address2" placeholder="Apt / Suite / Unit (optional)" id="Address2"></div>
+                            </div>
+                            <div class="columns-9 custom w-row">
+                                <div class="w-col w-col-6">
+                                    <div class="w-row">
+                                        <div class="w-col w-col-4"><input asp-for="Input.City" class="text-field-7 custom w-input" maxlength="256" name="City" data-name="City" placeholder="City" id="City" required=""></div>
+                                        <div class="w-col w-col-4">
+                                            <select asp-for="Input.State" name="State" id="State" data-name="State" class="select-field4 customstate w-select">
+                                                <option value="">State</option>
+                                                <option value="AL">Alabama</option>
+                                                <option value="AK">Alaska</option>
+                                                <option value="AZ">Arizona</option>
+                                                <option value="AR">Arkansas</option>
+                                                <option value="CA">California</option>
+                                                <option value="CO">Colorado</option>
+                                                <option value="CT">Connecticut</option>
+                                                <option value="DE">Delaware</option>
+                                                <option value="FL">Florida</option>
+                                                <option value="GA">Georgia</option>
+                                                <option value="HI">Hawaii</option>
+                                                <option value="ID">Idaho</option>
+                                                <option value="IL">Illinois</option>
+                                                <option value="IN">Indiana</option>
+                                                <option value="IA">Iowa</option>
+                                                <option value="KS">Kansas</option>
+                                                <option value="KY">Kentucky</option>
+                                                <option value="LA">Louisiana</option>
+                                                <option value="ME">Maine</option>
+                                                <option value="MD">Maryland</option>
+                                                <option value="MA">Massachusetts</option>
+                                                <option value="MI">Michigan</option>
+                                                <option value="MN">Minnesota</option>
+                                                <option value="MS">Mississippi</option>
+                                                <option value="MO">Missouri</option>
+                                                <option value="MT">Montana</option>
+                                                <option value="NE">Nebraska</option>
+                                                <option value="NV">Nevada</option>
+                                                <option value="NH">New Hampshire</option>
+                                                <option value="NJ">New Jersey</option>
+                                                <option value="NM">New Mexico</option>
+                                                <option value="NY">New York</option>
+                                                <option value="NC">North Carolina</option>
+                                                <option value="ND">North Dakota</option>
+                                                <option value="OH">Ohio</option>
+                                                <option value="OK">Oklahoma</option>
+                                                <option value="OR">Oregon</option>
+                                                <option value="PA">Pennsylvania</option>
+                                                <option value="RI">Rhode Island</option>
+                                                <option value="SC">South Carolina</option>
+                                                <option value="SD">South Dakota</option>
+                                                <option value="TN">Tennessee</option>
+                                                <option value="TX">Texas</option>
+                                                <option value="UT">Utah</option>
+                                                <option value="VT">Vermont</option>
+                                                <option value="VA">Virginia</option>
+                                                <option value="WA">Washington</option>
+                                                <option value="WV">West Virginia</option>
+                                                <option value="WI">Wisconsin</option>
+                                                <option value="WY">Wyoming</option>
+                                            </select>
+                                        </div>
+                                        <div class="w-col w-col-4"><input asp-for="Input.Zipcode" class="text-field-8 custom w-input" maxlength="256" name="Zipcode" data-name="Zipcode" placeholder="Zipcode" id="Zipcode" required=""></div>
+                                    </div>
+                                </div>
+                                <div class="w-col w-col-6"><input asp-for="Input.Phone" class="text-field-9 w-input" maxlength="256" name="Phone" data-name="Phone" placeholder="Phone" id="Phone" required=""></div>
+                            </div><label class="w-checkbox checkbox-field">@Html.CheckBoxFor(model => model.IsReturnAddress, new { @class="w-checkbox-input" })<span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
+                            <div class="section-2 wf-section">
+                                <a id="registerSubmit" href="#More" class="gradient-link custom w-inline-block">
+                                    <div class="button-gradient"></div>
+                                    <div class="button-content-holder">
+                                        <div class="link-gradient-text">Create Account</div>
+                                    </div>
+                                    <div class="white-background-button-color"></div>
+                                </a>
+                            </div>
+                            <div class="section-2 wf-section">
+                                <button type="submit" class="gradient-link w-inline-block">
+                                    <div class="button-gradient"></div>
+                                    <div class="button-content-holder">
+                                        <div class="link-gradient-text">Register</div>
+                                    </div>
+                                    <div class="white-background-button-color"></div>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="w-form-done">
+                            <div>Thank you! Your submission has been received!</div>
+                        </div>
+                        <div class="w-form-fail">
+                            <div>Oops! Something went wrong while submitting the form.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

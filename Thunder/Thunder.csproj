@@ -1,0 +1,139 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-Thunder-373cfa60-73b8-41e1-bd6b-f6096de1b629</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="wwwroot\css\site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.15" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SendGrid" Version="9.28.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Identity\Pages\Account\ForgotPassword.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ForgotPasswordConfirmation.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\Login.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\Register.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ResetPassword.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\_ViewImports.cshtml" />
+    <None Include="Areas\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+    <None Include="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <None Include="Areas\Identity\Pages\_ViewStart.cshtml" />
+    <None Include="wwwroot\css\GeoapifyStyles.css" />
+    <None Include="wwwroot\images\App-Image_1App Image.webp" />
+    <None Include="wwwroot\images\Arrow-Gradient.svg" />
+    <None Include="wwwroot\images\Arrow-Icon.svg" />
+    <None Include="wwwroot\images\Arrow-Right-Hero.svg" />
+    <None Include="wwwroot\images\BG-Image_1BG Image.webp" />
+    <None Include="wwwroot\images\Black-Box-With-Image_1Black Box With Image.webp" />
+    <None Include="wwwroot\images\Border-Image.svg" />
+    <None Include="wwwroot\images\Card-Sales-Image.svg" />
+    <None Include="wwwroot\images\Cards-Image.svg" />
+    <None Include="wwwroot\images\Circle-Line-Image.svg" />
+    <None Include="wwwroot\images\command.svg" />
+    <None Include="wwwroot\images\Company-Avatar-01.svg" />
+    <None Include="wwwroot\images\Company-Avatar-02.svg" />
+    <None Include="wwwroot\images\Company-Avatar-03.svg" />
+    <None Include="wwwroot\images\Company-Avatar-04.svg" />
+    <None Include="wwwroot\images\Company-Avatar-05.svg" />
+    <None Include="wwwroot\images\Company-Avatar-06.svg" />
+    <None Include="wwwroot\images\Company-Avatar-07.svg" />
+    <None Include="wwwroot\images\Company-Avatar-08.svg" />
+    <None Include="wwwroot\images\Company-Avatar-09.svg" />
+    <None Include="wwwroot\images\Company-Avatar-10.svg" />
+    <None Include="wwwroot\images\Company-Avatar-11.svg" />
+    <None Include="wwwroot\images\Company-Avatar-12.svg" />
+    <None Include="wwwroot\images\Company-Avatar-13.svg" />
+    <None Include="wwwroot\images\Company-Avatar-14.svg" />
+    <None Include="wwwroot\images\Company-Avatar-15.svg" />
+    <None Include="wwwroot\images\Company-Avatar-17.svg" />
+    <None Include="wwwroot\images\Company-Avatar-18.svg" />
+    <None Include="wwwroot\images\Company-Avatar-19.svg" />
+    <None Include="wwwroot\images\Company-Avatar-20.svg" />
+    <None Include="wwwroot\images\Dollar-Gradient-Image.svg" />
+    <None Include="wwwroot\images\Dollar-Icon.svg" />
+    <None Include="wwwroot\images\Drawing-Gradient-Image.svg" />
+    <None Include="wwwroot\images\favicon.svg" />
+    <None Include="wwwroot\images\Feature-Garadient-Image.svg" />
+    <None Include="wwwroot\images\Feature-Grid-Image-02.svg" />
+    <None Include="wwwroot\images\Feature-Image-01.svg" />
+    <None Include="wwwroot\images\Feature-Image-02.svg" />
+    <None Include="wwwroot\images\Feature-Image.svg" />
+    <None Include="wwwroot\images\Flag-Gradient-Image.svg" />
+    <None Include="wwwroot\images\Gift-Gradient-Image.svg" />
+    <None Include="wwwroot\images\Gradient-Image.svg" />
+    <None Include="wwwroot\images\Gradient-Line-Image.svg" />
+    <None Include="wwwroot\images\Hero-Home-Decorative-Bg.svg" />
+    <None Include="wwwroot\images\Instructions-2_1Instructions 2.webp" />
+    <None Include="wwwroot\images\Instruction_1Instruction.webp" />
+    <None Include="wwwroot\images\Left-Arrow.svg" />
+    <None Include="wwwroot\images\Line-Image.svg" />
+    <None Include="wwwroot\images\Line-Image_1.svg" />
+    <None Include="wwwroot\images\Line-Message-Gradient-Image.svg" />
+    <None Include="wwwroot\images\Logo-To-Use-2.svg" />
+    <None Include="wwwroot\images\Logo-To-Use-3.svg" />
+    <None Include="wwwroot\images\Logo-To-Use-4.svg" />
+    <None Include="wwwroot\images\Logo-To-Use-5.svg" />
+    <None Include="wwwroot\images\Logo01.svg" />
+    <None Include="wwwroot\images\Logo02.svg" />
+    <None Include="wwwroot\images\Logo03.svg" />
+    <None Include="wwwroot\images\Logo04.svg" />
+    <None Include="wwwroot\images\Logo05.svg" />
+    <None Include="wwwroot\images\Logo06.svg" />
+    <None Include="wwwroot\images\Logo07.svg" />
+    <None Include="wwwroot\images\Logo08.svg" />
+    <None Include="wwwroot\images\Logo09.svg" />
+    <None Include="wwwroot\images\Logo10.svg" />
+    <None Include="wwwroot\images\Media-Image.svg" />
+    <None Include="wwwroot\images\menu.svg" />
+    <None Include="wwwroot\images\Message-Image.svg" />
+    <None Include="wwwroot\images\Pen-Gradient-Image.svg" />
+    <None Include="wwwroot\images\RIght-Arrow.svg" />
+    <None Include="wwwroot\images\RIght-Arrow_1.svg" />
+    <None Include="wwwroot\images\Search-Icon.svg" />
+    <None Include="wwwroot\images\Slider-Image-2_1Slider Image 2.webp" />
+    <None Include="wwwroot\images\Slider-Image-3.webp" />
+    <None Include="wwwroot\images\Slider-Image-3_1Slider Image 3.webp" />
+    <None Include="wwwroot\images\Slider-Image.webp" />
+    <None Include="wwwroot\images\Staticstic-Image.svg" />
+    <None Include="wwwroot\images\sun-1_1sun 1.webp" />
+    <None Include="wwwroot\images\Support-Image.svg" />
+    <None Include="wwwroot\images\Terra-Logo.svg" />
+    <None Include="wwwroot\images\UPS.svg" />
+    <None Include="wwwroot\images\webclip.svg" />
+    <None Include="wwwroot\images\Webflow-Icon.svg" />
+  </ItemGroup>
+
+</Project>

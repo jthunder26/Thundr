@@ -1,0 +1,255 @@
+﻿@{
+    ViewBag.Title = "Account";
+    ViewBag.NavbarPartial = "_SideNavbar";
+}
+<html data-wf-page="64376762d27d2700262b5dc0" data-wf-site="640dfa53ba67521ab709aa29">
+<body data-title="Account">
+    <div style="display:none;opacity:0" class="confirmpasswordpopup">
+        <div class="container popup">
+            <div data-w-id="280525b9-5bfd-5b22-b9e9-b0a00cac95e1" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div class="center-text popup">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text popup"><span class="gradient-text">Confirm your password to save changes </span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-slace-on-scroll">
+                <div class="top-margin-l white-text popup">
+                    <div class="center-box popup"></div>
+                    <div class="form-block-2 popup w-form">
+                        <form data-bind="submit: validatePass" method="post" class="form-2 popup">
+                            <label for="Password-2" class="field-label-3">Password</label>
+                            <input type="password" class="text-field-2 w-input" placeholder="Password" id="passConfirm" required="">
+                            <div class="section-2 wf-section">
+                                <div class="send-button-holder2 custom4 popup">
+                                    <div class="fake-submit-button-holder static custom4 popup">
+                                        <input type="submit" value="Verify" data-wait="..." class="submit-button3 submit-button-with-text3 custom4 popup w-button">
+                                        <div class="button-gradient custom4 popup"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+ 
+    <div class="section dashboard">
+        <h1 class="heading-3">Account Details</h1>
+        <div data-current="AccountDetails" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
+            <div data-w-id="8f36955f-c7e2-1ed9-da71-087078dfa6c9" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
+                <a id="shipTabLink" data-w-tab="AccountDetails" class="account w-inline-block w-tab-link w--current">
+                    <div class="gradient-wrapp">
+                        <div class="tab-heading">Account</div>
+                        <div class="tab-open-content">
+                            <p class="tab-paragraph">Account Details </p>
+                        </div>
+                    </div>
+                </a>
+                <a data-w-tab="Billing" class="account w-inline-block w-tab-link">
+                    <div class="gradient-wrapp">
+                        <div class="tab-heading">Billing</div>
+                        <div class="tab-open-content">
+                            <p class="tab-paragraph">Billing Details</p>
+                        </div>
+                    </div>
+                </a>
+                <a data-w-tab="Notifications" class="account w-inline-block w-tab-link">
+                    <div class="gradient-wrapp">
+                        <div class="tab-heading">Notifications</div>
+                        <div class="tab-open-content">
+                            <p class="tab-paragraph">Notification Details</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div data-w-id="8f36955f-c7e2-1ed9-da71-087078dfa6df" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="feature-tabs-content w-tab-content">
+                <div data-w-tab="AccountDetails" class="tab-pane-accounttab w-tab-pane w--tab-active">
+                    <div class="accountdetailscontainer">
+                        <h4 class="sectionheader">Your Account</h4>
+                        <div class="detailwrapper personal w-row">
+                            <div class="detailname personal w-col w-col-3">
+                                <div class="text-block-26">Personal Info</div>
+                            </div>
+                            <div class="detailinfo personal w-col w-col-9">
+                                <div class="formupdate w-form">
+                                    <form id="accountUpdateForm" method="post" class="colupdatewrapper emailandname">
+                                        <div data-bind="with: userDeets">
+                                        <div class="columns-18 w-row">
+                                            <div class="details w-col w-col-6">
+                                                <input type="text" class="formupdate details w-input" maxlength="256" name="field" id="field" data-bind="value: FullName">
+                                                <input type="email" class="formupdate details w-input" maxlength="256" name="email"  id="email" data-bind="value: Email">
+                                                <input class="formupdate details w-input" maxlength="256" name="Phone"  id="Phone" data-bind="value: Phone">
+
+                                            </div>
+                                            <div class="iconcolumn w-col w-col-6">
+                                                <div class="send-button-holder2 custom4 updateinto">
+                                                    <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                            <input type="submit" data-bind="click: acc" value="Update" data-wait="..." data-w-id="ac9065cf-471a-dd34-6060-e8896611bd78" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
+                                                        <div class="button-gradient custom4 updateinfo"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </form>
+                                  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detailwrapper password w-row">
+                            <div class="detailname personal w-col w-col-3">
+                                <div class="text-block-26">Password</div>
+                            </div>
+                            <div class="detailinfo personal w-col w-col-9">
+                                <div class="formupdate password w-form">
+                                    <form  name="email-form" data-name="Email Form" method="get" class="colupdatewrapper password">
+                                        <div class="columns-18 w-row">
+                                            <div class="details w-col w-col-6">
+                                                <div class="text-block-28">Send an email with a password-reset link</div>
+                                            </div>
+                                            <div class="iconcolumn foremail w-col w-col-6">
+                                                <div class="div-block-9"><img loading="lazy" src="~/images/Message-Image.svg" alt="" class="iconimage"><input type="submit" value="" data-wait="Please wait..." class="submit-button w-button"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detailwrapper personal w-row">
+                            <div class="detailname personal w-col w-col-3">
+                                <div class="text-block-26">Return Address</div>
+                            </div>
+                            <div class="detailinfo personal w-col w-col-9">
+                                <div class="formupdate w-form">
+                                    <form id="returnAddressForm" method="get" class="colupdatewrapper emailandname">
+                                        <div data-bind="with: returnAddress">
+                                            <div class="columns-18 w-row">
+                                                <div class="details returnaddress w-col w-col-6">
+                                                    <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Street Address" data-bind="value: FromAddress1">
+                                                    <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Apt / Suite / Unit (optional)" data-bind="value: FromAddress2">
+                                                    <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Company" data-bind="value: FromCompany">
+                                                    <div class="columns-19 citystzip w-row">
+                                                        <div class="column-18 w-col w-col-4"><input type="text" class="formupdate details w-input" placeholder="City" data-bind="value: FromCity"></div>
+                                                        <div class="column-19 w-col w-col-4">
+                                                            <select id="State-2" class="select-field4 updateaddress w-select" data-bind="value: FromState">
+                                                                <option value="">State</option>
+                                                                <option value="AL">Alabama</option>
+                                                                <option value="AK">Alaska</option>
+                                                                <option value="AZ">Arizona</option>
+                                                                <option value="AR">Arkansas</option>
+                                                                <option value="CA">California</option>
+                                                                <option value="CO">Colorado</option>
+                                                                <option value="CT">Connecticut</option>
+                                                                <option value="DE">Delaware</option>
+                                                                <option value="FL">Florida</option>
+                                                                <option value="GA">Georgia</option>
+                                                                <option value="HI">Hawaii</option>
+                                                                <option value="ID">Idaho</option>
+                                                                <option value="IL">Illinois</option>
+                                                                <option value="IN">Indiana</option>
+                                                                <option value="IA">Iowa</option>
+                                                                <option value="KS">Kansas</option>
+                                                                <option value="KY">Kentucky</option>
+                                                                <option value="LA">Louisiana</option>
+                                                                <option value="ME">Maine</option>
+                                                                <option value="MD">Maryland</option>
+                                                                <option value="MA">Massachusetts</option>
+                                                                <option value="MI">Michigan</option>
+                                                                <option value="MN">Minnesota</option>
+                                                                <option value="MS">Mississippi</option>
+                                                                <option value="MO">Missouri</option>
+                                                                <option value="MT">Montana</option>
+                                                                <option value="NE">Nebraska</option>
+                                                                <option value="NV">Nevada</option>
+                                                                <option value="NH">New Hampshire</option>
+                                                                <option value="NJ">New Jersey</option>
+                                                                <option value="NM">New Mexico</option>
+                                                                <option value="NY">New York</option>
+                                                                <option value="NC">North Carolina</option>
+                                                                <option value="ND">North Dakota</option>
+                                                                <option value="OH">Ohio</option>
+                                                                <option value="OK">Oklahoma</option>
+                                                                <option value="OR">Oregon</option>
+                                                                <option value="PA">Pennsylvania</option>
+                                                                <option value="RI">Rhode Island</option>
+                                                                <option value="SC">South Carolina</option>
+                                                                <option value="SD">South Dakota</option>
+                                                                <option value="TN">Tennessee</option>
+                                                                <option value="TX">Texas</option>
+                                                                <option value="UT">Utah</option>
+                                                                <option value="VT">Vermont</option>
+                                                                <option value="VA">Virginia</option>
+                                                                <option value="WA">Washington</option>
+                                                                <option value="WV">West Virginia</option>
+                                                                <option value="WI">Wisconsin</option>
+                                                                <option value="WY">Wyoming</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="w-col w-col-4"><input type="text" class="formupdate details w-input" placeholder="Zipcode" data-bind="value: FromZip"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="iconcolumn w-col w-col-6">
+                                                    <div class="send-button-holder2 custom4 updateinto">
+                                                        <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                            <input type="submit" data-bind="click: addy" value="Update" data-wait="..." data-w-id="d8e73b19-f2aa-b28a-a057-de8ee3a474ba" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
+                                                            <div class="button-gradient custom4 updateinfo"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div data-w-tab="Billing" class="w-tab-pane">
+                    <div class="labelcontainer _01">
+                        <div class="feature-image-holder"></div>
+                    </div>
+                </div>
+                <div data-w-tab="Notifications" class="w-tab-pane">
+                    <div class="labelcontainer _01">
+                        <div class="feature-image-holder">
+                            <div class="w-layout-grid grid-6-col">
+                                <div id="w-node-_2f2fcf7f-297c-57fd-e90b-1978b53a7abc-b53a7abb" class="content">
+                                    <div class="fade-in-move-on-scroll">
+                                        <h2 class="heading-2">Create your first label!</h2>
+                                    </div>
+                                    <div class="fade-in-move-on-scroll">
+                                        <p class="paragraph-5">Navigate over to the <strong>Ship </strong>tab and begin creating your first label! Once you purchase a label, you can view and download your labels in the <strong>Orders </strong>tab anytime!</p>
+                                    </div>
+                                    <div class="list-container">
+                                        <ul role="list" class="list-with-icons w-list-unstyled">
+                                            <li class="list-item-with-icon">
+                                                <div>All in one platform.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>Fully secured.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>No hidden fees.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>Ship with ease.</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="w-node-_2f2fcf7f-297c-57fd-e90b-1978b53a7ad7-b53a7abb" class="image-container"><img src="~/images/Feature-Image-01.svg" loading="lazy" alt="" class="feature-image"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

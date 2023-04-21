@@ -1,0 +1,68 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+}
+<html data-wf-page="640dfa54ba6752693209aa6c" data-wf-site="640dfa53ba67521ab709aa29">
+    <div class="section">
+        <div class="container">
+            <div class="center-text">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text"><span class="gradient-text">Welcome Back </span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-slace-on-scroll">
+                   <div class="top-margin-l white-text">
+                    <div class="center-box"></div>
+                            <div class="form-block-7 w-form-7">
+                                <form id="account" class="form-2" method="post">
+                            
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                 <label for="Email" class="field-label-3">Email </label>
+                                <input asp-for="Input.Email" class="text-field w-input form-control" autocomplete="email" aria-required="true" />
+
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+                                 <label asp-for="Input.Password" class="field-label-3"></label>
+                                 <input asp-for="Input.Password" class="text-field-2 w-input form-control" autocomplete="current-password" aria-required="true" />
+                        
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                           
+                            
+                               
+                                    <label asp-for="Input.RememberMe" class="form-label">
+                                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                    </label>
+
+                        <div class="section-2 wf-section">
+                            <div class="send-button-holder2 custom4">
+                                <div data-w-id="4dcca303-a5e1-7daa-9430-1ef68b264886" class="fake-submit-button-holder static custom4">
+                                    <input type="submit" value="Login" data-wait="..." class="submit-button3 submit-button-with-text3 custom4 w-button">
+                                    <div class="button-gradient custom4"></div>
+                                    <div class="white-background-button-color custom4"></div>
+                                </div>
+                          
+                            </div>
+                        </div>
+                          
+                         
+                                <p>
+                                    <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                                </p>
+                                <p>
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                                </p>
+                                <p>
+                                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                                </p>
+                            
+                                 </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</html>
