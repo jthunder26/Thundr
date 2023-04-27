@@ -78,43 +78,134 @@ namespace Thunder.Models
         //public string Status { get; set; }
         public string DateCreated { get; set; }
     }
-    [Table("UpsOrder")]
-    public class UpsOrder
-    {
-        [Key]
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string ToEmail { get; set; } 
-        public string FromName { get; set; }
-        public string? FromCompany { get; set; }
-        public string FromPhone { get; set; }
-        public string FromZip { get; set; }
-        public string FromAddress1 { get; set; }
-        public string? FromAddress2 { get; set; }
-        public string FromCity { get; set; }
-        public string FromState { get; set; }
-
-        public string ToName { get; set; }
-        public string? ToCompany { get; set; }
-        public string ToPhone { get; set; }
-        public string ToZip { get; set; }
-        public string ToAddress1 { get; set; }
-        public string? ToAddress2 { get; set; }
-        public string ToCity { get; set; }
-        public string ToState { get; set; }
-
-        public string Weight { get; set; }
-        public int Length { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Class { get; set; }
-    }
+    //what is used to create the label
     public class CreateUpsLabel
     {
         public UpsOrder order { get; set; }
-        public string serviceClass { get; set; }    
+        public string? serviceClass { get; set; }
     }
 }
+//to make the AIO label
+[Table("UpsOrder")]
+public class UpsOrder
+{
+    [Key]
+    [JsonProperty("userName")]
+    public string UserName { get; set; }
+
+    [JsonProperty("email")]
+    public string Email { get; set; }
+
+    [JsonProperty("toEmail")]
+    public string ToEmail { get; set; }
+
+    [JsonProperty("fromName")]
+    public string FromName { get; set; }
+
+    [JsonProperty("fromCompany")]
+    public string? FromCompany { get; set; }
+
+    [JsonProperty("fromPhone")]
+    public string FromPhone { get; set; }
+
+    [JsonProperty("fromZip")]
+    public string FromZip { get; set; }
+
+    [JsonProperty("fromAddress1")]
+    public string FromAddress1 { get; set; }
+
+    [JsonProperty("fromAddress2")]
+    public string? FromAddress2 { get; set; }
+
+    [JsonProperty("fromCity")]
+    public string FromCity { get; set; }
+
+    [JsonProperty("fromState")]
+    public string FromState { get; set; }
+
+    [JsonProperty("toName")]
+    public string ToName { get; set; }
+
+    [JsonProperty("toCompany")]
+    public string? ToCompany { get; set; }
+
+    [JsonProperty("toPhone")]
+    public string ToPhone { get; set; }
+
+    [JsonProperty("toZip")]
+    public string ToZip { get; set; }
+
+    [JsonProperty("toAddress1")]
+    public string ToAddress1 { get; set; }
+
+    [JsonProperty("toAddress2")]
+    public string? ToAddress2 { get; set; }
+
+    [JsonProperty("toCity")]
+    public string ToCity { get; set; }
+
+    [JsonProperty("toState")]
+    public string ToState { get; set; }
+
+    [JsonProperty("ourPrice")]
+    public long? OurPrice { get; set; }
+
+    [JsonProperty("totalAmount")]
+    public long? TotalAmount { get; set; }
+
+    [JsonProperty("rateDTOID")]
+    public int? RateDTOID { get; set; }
+
+    [JsonProperty("weight")]
+    public string Weight { get; set; }
+
+    [JsonProperty("length")]
+    public int Length { get; set; }
+
+    [JsonProperty("width")]
+    public int Width { get; set; }
+
+    [JsonProperty("height")]
+    public int Height { get; set; }
+
+    [JsonProperty("class")]
+    public string Class { get; set; }
+}
+
+//[Table("UpsOrder")]
+//    public class UpsOrder
+//    {
+//        [Key]
+//        public string UserName { get; set; }
+//        public string Email { get; set; }
+//        public string ToEmail { get; set; } 
+//        public string FromName { get; set; }
+//        public string? FromCompany { get; set; }
+//        public string FromPhone { get; set; }
+//        public string FromZip { get; set; }
+//        public string FromAddress1 { get; set; }
+//        public string? FromAddress2 { get; set; }
+//        public string FromCity { get; set; }
+//        public string FromState { get; set; }
+
+//        public string ToName { get; set; }
+//        public string? ToCompany { get; set; }
+//        public string ToPhone { get; set; }
+//        public string ToZip { get; set; }
+//        public string ToAddress1 { get; set; }
+//        public string? ToAddress2 { get; set; }
+//        public string ToCity { get; set; }
+//        public string ToState { get; set; }
+//        public long? OurPrice { get; set; }
+//        public long? TotalAmount { get; set; }
+//        public int? RateDTOID { get; set; }
+//        public string Weight { get; set; }
+//        public int Length { get; set; }
+//        public int Width { get; set; }
+//        public int Height { get; set; }
+//        public string Class { get; set; }
+//    }
+
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class CustomsItem
 {

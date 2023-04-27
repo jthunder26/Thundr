@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thunder.Data;
 
@@ -11,9 +12,10 @@ using Thunder.Data;
 namespace Thunder.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426050909_RateIDandPrices")]
+    partial class RateIDandPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -365,11 +367,9 @@ namespace Thunder.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<long?>("OurPrice")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("RateDTOID")
-                        .HasColumnType("int");
+                    b.Property<string>("OurPrice")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToAddress1")
                         .IsRequired()
@@ -405,8 +405,9 @@ namespace Thunder.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("TotalAmount")
-                        .HasColumnType("bigint");
+                    b.Property<string>("TotalAmount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Weight")
                         .IsRequired()

@@ -106,18 +106,28 @@
 
     ko.applyBindings(new ViewModel());
 }
-
+//requestForm -> sendRequest(requestForm)
 
 if ($("body").data("title") === "CreateLabel") {
    
+
+
     var ViewModel = function () {
 
         var self = this;
         var now = new Date();
         var date = now.toLocaleDateString();
+        self.beingPurchased = ko.observable(false);
+        //rates is a List<RateDTO>
         self.rates = ko.observableArray();
+
+        //selectedrate is a RateDTO
         self.selectedrate = ko.observable();
         self.createLabelObject = ko.observable({
+            selectedOrder: ko.observable(),
+            selectedClass: ko.observable()
+        });
+        self.Item = ko.observable({
             selectedOrder: ko.observable(),
             selectedClass: ko.observable()
         });
@@ -160,9 +170,7 @@ if ($("body").data("title") === "CreateLabel") {
            const chargeDifference = parseFloat(self.labelRequest().totalCharge()) - parseFloat(self.labelRequest().totalCost());
            var endingB = (parseFloat(self.labelRequest().beginningBalance()) + chargeDifference);
            var roundedEnding = (endingB * 100) / 100;
-            const div = document.getElementById("endingBalanceColumn");
-           // if (isNan(roundedEnding)
-           //{roundedEnding = self.labelRe }
+           const div = document.getElementById("endingBalanceColumn");
             if (roundedEnding < 0) {
                //if negative
 
@@ -175,6 +183,7 @@ if ($("body").data("title") === "CreateLabel") {
 
            self.labelRequest().endingBalance(Math.round(roundedEnding));
         }
+
         //defines a requestForm Object w observables placed in inputs to retrieve the value
         self.requestForm = ko.observable({
             ToEmail: ko.observable(),
@@ -564,6 +573,7 @@ if ($("body").data("title") === "CreateLabel") {
                     url: "/Home/GetFullRates/",
                     dataType: 'json',
                     data: request,
+                    //data is a FullRateDTO
                     success: function (data) {
                         document.getElementById("dropdownrates").style.display = "block";
                         self.selectedrate(data.selectedrate)
@@ -589,39 +599,145 @@ if ($("body").data("title") === "CreateLabel") {
             calculateBalance()
         };
     
-
-        $("#createLabelButton").click(function (event) {
-            event.preventDefault();
-            //document.getElementById("msgDiv").style.display = "block";
-            //change isCharged to hasPayed later
+        
+        $("#buyLabel").click(function (event) {
+            //event.preventDefault();
+            // document.getElementById("msgDiv").style.display = "block";
+            // change isCharged to hasPayed later
             if (isChargedEnough) {
+                // Show the Top Up modal when the balance is insufficient
+               /* $("#topUpModal").show();*/
+                self.beingPurchased(true);
+                
+                // This is your test publishable API key.
+                
+                 //The items the customer wants to buy
+                const items = [
+                    {
+                        order: self.createLabelObject().selectedOrder(),
+                        serviceClass: self.createLabelObject().selectedClass(),
+                        selectedrate: self.selectedrate()
+                    }
+                ];
+               
+                function calculateOrderAmount(amount) {
+                    const price = parseFloat(amount);
+
+                    if (!isNaN(price)) {
+                        // Convert the price to the smallest currency unit (e.g., cents)
+                        const smallestCurrencyUnit = Math.round(price * 100);
+                        return smallestCurrencyUnit;
+                    } else {
+                        return 0;
+                    }
+                }
+               
+                const amount = self.selectedrate().ourPrice;
+                const smallestCurrencyUnit = calculateOrderAmount(amount);
+                //currently not able to get the Client Secret from fetch below, check errors and openai
+                const stripe = Stripe("pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm");
+
+                const options = {
+                    mode: 'payment',
+                    amount: smallestCurrencyUnit,
+                    currency: 'usd',
+                    // Fully customizable with appearance API.
+                    appearance: {
+                        theme: 'night',
+                        variables: {
+                            colorPrimary: '#827ded',
+                            colorBackground: '#171717',
+                        },
+                    },
+                };
+                const elements = stripe.elements(options);
+                const paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+
+
+
+
+
+
+            }
+        });
+
+
+        $("#saveAndBuyLabel").click(function (event) {
+            event.preventDefault();
+            // document.getElementById("msgDiv").style.display = "block";
+            // change isCharged to hasPayed later
+            if (isChargedEnough) {
+
+
                 var after2 = self.requestForm().Weight();
                 var labelRequest = {
                     order: self.createLabelObject().selectedOrder(),
                     serviceClass: self.createLabelObject().selectedClass()
                 };
-                var root = labelRequest;
+                var upsOrder = labelRequest;
 
-                $.ajax({
-                    url: "/Home/makeTheLabel/",
-                    type: "POST",
-                    data: root,
-                    success: function (response) {
-                        window.location.href = response.redirectToUrl;
-                    }
-                });
-                return false;
-            } else if (!isChargedEnough) {
-                alert("The Total Charge amount is not enough for this purchase.")
+
+
+
+                var hasPaid = false;
+                if (hasPaid) {
+                    makeTheLabel(upsOrder)
+                }
+
             }
         });
-       
 
-    };
+        self.makeTheLabel = function (root) {
+            $.ajax({
+                url: "/Home/makeTheLabel/",
+                type: "POST",
+                data: root,
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                }
+            });
+            return false;
+        } 
+     
+    }
 
     ko.applyBindings(new ViewModel());
-
+   
 }
+        //self.userBalance = ko.observable('0');
+        //self.totalCost = ko.observable('40.32');
+
+        //self.topUp = function () {
+        //    // Fetch the top-up session ID from the server
+        //    fetch('/Stripe/TopUp?amount=' + self.totalCost())
+        //        .then(function (response) {
+        //            return response.json();
+        //        })
+        //        .then(function (result) {
+        //            var sessionId = result.sessionId;
+        //            var stripe = Stripe('pk_test_12345'); // Replace with your Stripe public key
+
+        //            // Redirect to the Stripe Checkout page
+        //            stripe.redirectToCheckout({ sessionId: sessionId });
+        //        })
+        //        .catch(function (error) {
+        //            console.error('Error:', error);
+        //        });
+        //};
+
+        //// Fetch the user's balance from the server and update the userBalance observable
+        //fetch('/Stripe/GetUserBalance')
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(function (result) {
+        //        self.userBalance(result.balance.toFixed(2));
+        //    })
+        //    .catch(function (error) {
+        //        console.error('Error:', error);
+        //    });
+   
 
 if ($("body").data("title") === "Orders") {
    

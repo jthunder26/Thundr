@@ -274,37 +274,44 @@ namespace Thunder.Services
             List<RateDTO> rates = new List<RateDTO>();
             FullRateDTO fullrates = new FullRateDTO();
             fullrates.IsError = false;
+            var id = 0;
             foreach (var ratedShipment in upsResponse.RateResponse.RatedShipment)
             {
                 bool hasService = ServiceNames.ContainsKey(ratedShipment.Service.Code);
                 if (hasService)
                 {
+                   
                     RateDTO rate = new RateDTO();
                     var serviceCode = ratedShipment.Service.Code;
-
-                    string serviceClass;
-                    ServiceClass.TryGetValue(serviceCode, out serviceClass);
-                    rate.serviceClass = serviceClass;
-                    rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
-                    if (rate.service == "UPS Next Day Air")
-                    {
-                        rate.isSelected = true;
-                    }
+                    rate.ID = id;
+                    id++;
                     string unparsedDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
                     string parsedDate = unparsedDate.Substring(4, 2) + "/" + unparsedDate.Substring(6, 2);
                     rate.deliveryDate = parsedDate.ToString();
+
                     var unparsedTime = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
                     DateTime DT = DateTime.ParseExact(unparsedTime, "HHmmss", new System.Globalization.CultureInfo("en-US"));
                     var n = DT.ToString("hh:mm tt");
                     rate.deliveryTime = n;
-                    var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
-                    if (dayCode == "SAT")
-                    {
-                        rate.service += " [Saturday Delivery]";
-                    }
-                    string day;
-                    WeekDayConverter.TryGetValue(dayCode, out day);
-                    rate.deliveryDayOfWeek = day;
+
+                        string serviceClass;
+                        ServiceClass.TryGetValue(serviceCode, out serviceClass);
+                        rate.serviceClass = serviceClass;
+                        rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
+                    
+                            var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
+                            if (rate.service == "UPS Next Day Air")
+                            {
+                                rate.isSelected = true;
+                            }
+                            if (dayCode == "SAT")
+                            {
+                                rate.service += " [Saturday Delivery]";
+                            }
+                            string day;
+                            WeekDayConverter.TryGetValue(dayCode, out day);
+                            rate.deliveryDayOfWeek = day;
+                    
                     rate.estimatedDelivery = "Estimated Delivery " + rate.deliveryDayOfWeek + " " + rate.deliveryDate + " by " + rate.deliveryTime + " if shipped today";
                     rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
 
@@ -322,9 +329,9 @@ namespace Thunder.Services
                 }
             }
 
-            var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
-            lowestRate.isCheapest = true;
-            fullrates.rates = rates.OrderBy(x => x.ourPrice).ToList();
+                var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
+                lowestRate.isCheapest = true;
+                fullrates.rates = rates.OrderBy(x => x.ourPrice).ToList();
             
             return fullrates;
         }

@@ -31,6 +31,10 @@ namespace Thunder.Controllers
             _userManager = userManager;
             _mailService = mailService;
         }
+
+
+
+
         [HttpGet]
         public ReturnAddress getUserAddress()
         {

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@plasmicapp/loader-angular": "^0.0.2",
+    "@stripe/stripe-js": "^1.52.1",
     "knockout": "^3.5.1"
   },
   "devDependencies": {

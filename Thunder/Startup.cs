@@ -1,6 +1,8 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using Thunder.Data;
+using Thunder.Models;
 using Thunder.Services;
 
 namespace Thunder
@@ -30,8 +32,10 @@ namespace Thunder
             services.AddControllersWithViews();
             //services.AddHttpClient();
             services.AddRazorPages();
+            services.Configure<StripeOptions>(Configuration.GetSection("Stripe"));
             services.AddScoped<IThunderService, ThunderService>();
             services.AddScoped<IUpsRateService, UpsRateService>();
+            services.AddScoped<IStripeService, StripeService>();
             services.AddTransient<IMailService, MailService>(); //transient bc we want a new object with each request. 
             services.AddHsts(options =>
             {
@@ -70,6 +74,8 @@ namespace Thunder
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //StripeConfiguration.ApiKey = "sk_test_51MxFCnDHpayIZlcAaiJXTw7ln9gD8sPbzmNtN9bBIwFmhrOMhGcoLlWHkbrE8EHUvYDmsoU7e8iCY0Jh0SWRFH8N00sbrQOelZ";
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

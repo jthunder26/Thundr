@@ -141,6 +141,12 @@ public class ShipTo
     public Address Address { get; set; }
 }
 
+public class BankRateDTO
+{
+    public int ID { get; set; }
+    public string service { get; set; }
+}
+
 public class FullRateDTO
 {
     public List<RateDTO>? rates { get; set; }
@@ -156,6 +162,7 @@ public class QuickRateDTO
 }
 public class RateDTO
 {
+    public int ID { get; set; }
     public string service { get; set; }
     public bool isCheapest { get; set; }
     public string deliveryDate { get; set; }

@@ -2,104 +2,64 @@
     ViewBag.Title = "CreateLabel";
     ViewBag.NavbarPartial = "_SideNavbar";
 }
+
 <html data-wf-page="643715b253c8ec4510376427" data-wf-site="640dfa53ba67521ab709aa29">
+
 <body data-title="CreateLabel">
-   
+    <div style="display:none;opacity:0" class="confirmpasswordpopup">
+        <div class="container popup">
+            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div class="center-text popup">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text popup"><span class="gradient-text">Complete your purchase!</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-slace-on-scroll">
+                <div class="top-margin-l white-text popup">
+                    <div class="center-box popup"></div>
+                    <div class="w-form">
+                        <form id="payment-form">
+                            <div id="payment-element">
+                                <!-- Elements will create form elements here -->
+                            </div>
+                            <button id="stripeButton">Submit</button>
+                            <div id="error-message">
+                                <!-- Display error message to your customers here -->
+                            </div>
+                        </form>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="section dashboard">
         <h1 class="heading-3">Create a Label </h1>
         <div class="labelcontainer _01">
             <div class="createlabelholder">
                 <div class="createlabelformblock w-form">
-                    <form data-bind="submit: sendRequest" id="createLabelForm" autocomplete="off" name="wf-form-ship" id="ship" method="post">
-                        <div data-bind="with: requestForm">
-                            <label for="EmailTo" class="field-label">Ship To</label>
-                            <div class="w-row">
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="Email" placeholder="Email (optional)" id="ToEmail" data-bind="value: ToEmail"></div>
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="PhoneTo" placeholder="Phone (optional)" id="ToPhone" data-bind="value: ToPhone"></div>
+                    <form data-bind="submit: sendRequest" id="createLabelForm" autocomplete="off" name="wf-form-ship" data-name="ship" method="post">
+                     <div data-bind="with: requestForm">
+                        <label for="EmailTo-2" class="field-label">Ship To</label>
+                        <div class="w-row">
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="Email" data-name="Email" placeholder="Email (optional)" id="EmailTo" data-bind="value: ToEmail"></div>
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="PhoneTo" data-name="PhoneTo" placeholder="Phone (optional)" id="ToPhone" data-bind="value: ToPhone"></div>
                             </div>
+                        <div class="w-row">
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="Name" data-name="Name" placeholder="Name" id="ToName" required="" data-bind="value: ToName"></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" data-name="ToCompany" placeholder="Company (optional)" data-bind="value: ToCompany"></div>
+                        </div>
+                        <div class="w-row">
+                            <div class="w-col w-col-6"><div class="autocomplete-container" id="autocomplete-container"></div></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ToAddress2" data-name="ToAddress2" placeholder="Apt / Unit / Suite / etc. (optional)" data-bind="value: ToAddress2"></div>
+                        </div>
+                        <div class="wf-section">
                             <div class="w-row">
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" placeholder="Name" id="ToName" required="" data-bind="value: ToName"></div>
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ToCompany" id="ToCompany" placeholder="Company (optional)" data-bind="value: ToCompany"></div>
-                            </div>
-                            <div class="w-row">
-                                <div class="w-col w-col-6"><div class="autocomplete-container" id="autocomplete-container"></div></div>
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ToAddress2" id="ToAddress2" placeholder="Apt / Unit / Suite / etc. (optional)" data-bind="value: ToAddress2"></div>
-                            </div>
-                            <div class="wf-section">
-                                <div class="w-row">
-                                    <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="ToCity" placeholder="City" id="ToCity" required="" data-bind="value: ToCity"></div>
-                                    <div class="w-col w-col-4">
-                                        <select id="ToState" name="State-2" class="select-field4 w-select" data-bind="value: ToState">
-                                            <option value="">State</option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="AK">Alaska</option>
-                                            <option value="AZ">Arizona</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="CA">California</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="HI">Hawaii</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                            <option value="LA">Louisiana</option>
-                                            <option value="ME">Maine</option>
-                                            <option value="MD">Maryland</option>
-                                            <option value="MA">Massachusetts</option>
-                                            <option value="MI">Michigan</option>
-                                            <option value="MN">Minnesota</option>
-                                            <option value="MS">Mississippi</option>
-                                            <option value="MO">Missouri</option>
-                                            <option value="MT">Montana</option>
-                                            <option value="NE">Nebraska</option>
-                                            <option value="NV">Nevada</option>
-                                            <option value="NH">New Hampshire</option>
-                                            <option value="NJ">New Jersey</option>
-                                            <option value="NM">New Mexico</option>
-                                            <option value="NY">New York</option>
-                                            <option value="NC">North Carolina</option>
-                                            <option value="ND">North Dakota</option>
-                                            <option value="OH">Ohio</option>
-                                            <option value="OK">Oklahoma</option>
-                                            <option value="OR">Oregon</option>
-                                            <option value="PA">Pennsylvania</option>
-                                            <option value="RI">Rhode Island</option>
-                                            <option value="SC">South Carolina</option>
-                                            <option value="SD">South Dakota</option>
-                                            <option value="TN">Tennessee</option>
-                                            <option value="TX">Texas</option>
-                                            <option value="UT">Utah</option>
-                                            <option value="VT">Vermont</option>
-                                            <option value="VA">Virginia</option>
-                                            <option value="WA">Washington</option>
-                                            <option value="WV">West Virginia</option>
-                                            <option value="WI">Wisconsin</option>
-                                            <option value="WY">Wyoming</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="ToZip" placeholder="Zipcode" id="ToZip" required="" data-bind="value: ToZip"></div>
-                                </div>
-                            </div><label for="EmailTo-2" class="field-label">Ship From</label>
-                            <div class="w-row">
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromName" id="FromName" placeholder="Name (optional)" data-bind="value: FromName"></div>
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromCompany" id="FromCompany" placeholder="Company (optional)" data-bind="value: FromCompany"></div>
-                            </div>
-                            <div class="w-row">
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromAddress1" id="FromAddress1" placeholder="Address" required="" data-bind="value: FromAddress1"></div>
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromAddress2" id="FromAddress2" placeholder="Apt / Unit / Suite / etc. (optional)" data-bind="value: FromAddress2"></div>
-                            </div>
-                            <div class="w-row">
-                                <div class="w-col w-col-6">
-                                    <div class="w-row">
-                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromCity" id="FromCity" placeholder="City" required="" data-bind="value: FromCity"></div>
+                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="ToCity" placeholder="City" id="ToCity" required="" data-bind="value: ToCity"></div>
                                         <div class="w-col w-col-4">
-                                            <select id="FromState" class="select-field4 w-select" data-bind="value: FromState">
+                                            <select id="ToState" name="State-2" class="select-field4 w-select" data-bind="value: ToState">
                                                 <option value="">State</option>
                                                 <option value="AL">Alabama</option>
                                                 <option value="AK">Alaska</option>
@@ -153,189 +113,259 @@
                                                 <option value="WY">Wyoming</option>
                                             </select>
                                         </div>
-                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromZip" placeholder="Zipcode" id="FromZip" required="" data-bind="value: FromZip"></div>
-                                    </div>
-                                </div>
-
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromPhone" placeholder="Phone" id="FromPhone" required="" data-bind="value: FromPhone"></div>
-                            </div><label class="w-checkbox checkbox-field"><input type="checkbox" id="IsReturnAddress" name="checkbox-2" class="w-checkbox-input checkbox-2" data-bind="value: IsReturnAddress"><span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
-                            <div class="columns-5 w-row">
-                                <div class="w-col w-col-6">
-                                    <label for="ZipFrom" class="field-label-4">Dimensions (Inches)</label>
-                                    <div class="w-row">
-                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="length-2" id="Length" placeholder="Length" required="" data-bind="textInput: Length, event: { input: $parent.checkValues }"></div>
-                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="width-2" id="Width" placeholder="Width" required="" data-bind="textInput: Width, event: { input: $parent.checkValues }"></div>
-                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="height-2" id="Height" placeholder="Height" required="" data-bind="textInput: Height, event: { input: $parent.checkValues }"></div>
-                                        <p data-bind="text: zeroValueMessage"></p>
-                                        <p data-bind="visible: $parent.isOverLimit">The sum of Length plus (Width x 2) + (Height x 2) is over 165".</p>
-                                    </div>
-                                </div>
-                                <div class="w-col w-col-6">
-                                    <label for="toZip-3" class="field-label-5">Weight</label>
-                                    <div class="w-row">
-                                        <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" id="Pounds" placeholder="Pounds" required="" data-bind="textInput: Pounds, event:{ input: isOverweight }"></div>
-                                        <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" id="Ounces" placeholder="Ounces" data-bind="textInput: Ounces, event:{ input: isOverweight }"></div>
-                                        <div id="weightError"></div>
-                                    </div>
-                                </div>
+                                        <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="ToZip" placeholder="Zipcode" id="ToZip-2" required="" data-bind="value: ToZip"></div>
                             </div>
-                            <div class="send-button-wrapper fullrates">
-                                <div class="send-button-holder2 fullrates">
-                                    <div class="fake-submit-button-holder static fullrates">
-                                        <input type="submit" value="Get Rates" data-wait="..." data-w-id="4d401ab9-4610-ac82-f8de-353ee99af7ec" class="submit-button3 submit-button-with-text3 fullrates w-button">
-                                        <div class="button-gradient fullrates"></div>
-                                        <div class="white-background-button-color fullrates"></div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
+
+                        <label for="EmailTo-2" class="field-label">Ship From</label>
+                        <div class="w-row">
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromName-3" data-name="From Name 3" placeholder="Name (optional)" data-bind="value: FromName"></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromCompany-3" data-name="From Company 3" placeholder="Company (optional)" data-bind="value: FromCompany"></div>
+                        </div>
+                        <div class="w-row">
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromAddress1" data-name="FromAddress1" placeholder="Address" id="FromAddress" required="" data-bind="value: FromAddress1"></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromAddress2" data-name="FromAddress2" id="FromAddress2" placeholder="Apt / Unit / Suite / etc. (optional)" data-bind="value: FromAddress2"></div>
+                        </div>
+                        <div class="w-row">
+                            <div class="w-col w-col-6">
+                                <div class="w-row">
+                                            <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromCity-2" data-name="From City 2" placeholder="City" id="FromCity" required="" data-bind="value: FromCity"></div>
+                                    <div class="w-col w-col-4">
+                                                <select id="State-2" name="State-2" data-name="State 2" class="select-field4 w-select" data-bind="value: FromState">
+                                                    <option value="">State</option>
+                                                    <option value="AL">Alabama</option>
+                                                    <option value="AK">Alaska</option>
+                                                    <option value="AZ">Arizona</option>
+                                                    <option value="AR">Arkansas</option>
+                                                    <option value="CA">California</option>
+                                                    <option value="CO">Colorado</option>
+                                                    <option value="CT">Connecticut</option>
+                                                    <option value="DE">Delaware</option>
+                                                    <option value="FL">Florida</option>
+                                                    <option value="GA">Georgia</option>
+                                                    <option value="HI">Hawaii</option>
+                                                    <option value="ID">Idaho</option>
+                                                    <option value="IL">Illinois</option>
+                                                    <option value="IN">Indiana</option>
+                                                    <option value="IA">Iowa</option>
+                                                    <option value="KS">Kansas</option>
+                                                    <option value="KY">Kentucky</option>
+                                                    <option value="LA">Louisiana</option>
+                                                    <option value="ME">Maine</option>
+                                                    <option value="MD">Maryland</option>
+                                                    <option value="MA">Massachusetts</option>
+                                                    <option value="MI">Michigan</option>
+                                                    <option value="MN">Minnesota</option>
+                                                    <option value="MS">Mississippi</option>
+                                                    <option value="MO">Missouri</option>
+                                                    <option value="MT">Montana</option>
+                                                    <option value="NE">Nebraska</option>
+                                                    <option value="NV">Nevada</option>
+                                                    <option value="NH">New Hampshire</option>
+                                                    <option value="NJ">New Jersey</option>
+                                                    <option value="NM">New Mexico</option>
+                                                    <option value="NY">New York</option>
+                                                    <option value="NC">North Carolina</option>
+                                                    <option value="ND">North Dakota</option>
+                                                    <option value="OH">Ohio</option>
+                                                    <option value="OK">Oklahoma</option>
+                                                    <option value="OR">Oregon</option>
+                                                    <option value="PA">Pennsylvania</option>
+                                                    <option value="RI">Rhode Island</option>
+                                                    <option value="SC">South Carolina</option>
+                                                    <option value="SD">South Dakota</option>
+                                                    <option value="TN">Tennessee</option>
+                                                    <option value="TX">Texas</option>
+                                                    <option value="UT">Utah</option>
+                                                    <option value="VT">Vermont</option>
+                                                    <option value="VA">Virginia</option>
+                                                    <option value="WA">Washington</option>
+                                                    <option value="WV">West Virginia</option>
+                                                    <option value="WI">Wisconsin</option>
+                                                    <option value="WY">Wyoming</option>
+                                        </select>
+                                    </div>
+                                            <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromZip-2" data-name="From Zip 2" placeholder="Zipcode" id="FromZip" required="" data-bind="value: FromZip"></div>
+                                </div>
+                            </div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromPhone-2" data-name="From Phone 2" placeholder="Phone" id="FromPhone" required="" data-bind="value: FromPhone"></div>
+                                </div><label class="w-checkbox checkbox-field"><input type="checkbox" id="checkbox-2" name="checkbox-2" data-name="Checkbox 2" class="w-checkbox-input checkbox-2" data-bind="value: IsReturnAddress"><span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
+                        <div class="columns-5 w-row">
+                            <div class="w-col w-col-6">
+                                <label for="ZipFrom" class="field-label-4">Dimensions (Inches)</label>
+                                        <div class="w-row">
+                                            <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="length-2" id="Length" placeholder="Length" required="" data-bind="textInput: Length, event: { input: $parent.checkValues }"></div>
+                                            <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="width-2" id="Width" placeholder="Width" required="" data-bind="textInput: Width, event: { input: $parent.checkValues }"></div>
+                                            <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="height-2" id="Height" placeholder="Height" required="" data-bind="textInput: Height, event: { input: $parent.checkValues }"></div>
+                                            <p data-bind="text: zeroValueMessage"></p>
+                                            <p data-bind="visible: $parent.isOverLimit">The sum of Length plus (Width x 2) + (Height x 2) is over 165".</p>
+                                        </div>
+                            </div>
+                            <div class="w-col w-col-6">
+                                <label for="toZip-2" class="field-label-5">Weight</label>
+                                <div class="w-row">
+                                            <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="pounds-3" data-name="Pounds 3" placeholder="Pounds" id="pounds-3" required="" data-bind="textInput: Pounds, event:{ input: isOverweight }"></div>
+                                            <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ounces-2" data-name="Ounces 2" placeholder="Ounces" id="ounces-2" required="" data-bind="textInput: Ounces, event:{ input: isOverweight }"></div>
+                                             <div id="weightError"></div>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="send-button-wrapper fullrates">
+                            <div class="send-button-holder2 fullrates">
+                                <div class="fake-submit-button-holder static fullrates">
+                                    <input type="submit" value="Get Rates" data-wait="..." data-w-id="1f3f4983-4002-22ab-1572-1a446b9884b8" class="submit-button3 submit-button-with-text3 fullrates w-button">
+                                    <div class="button-gradient fullrates"></div>
+                                    <div class="white-background-button-color fullrates"></div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
                     </form>
+                   
                 </div>
-                <div class="container _4em fade-in-move-on-scroll" id="dropdownrates" style="display:none ">
+                
+                <div class="container _4em fade-in-move-on-scroll" id="dropdownrates" style="display: none">
                     <div class="w-form">
+                        <form id="email-form" method="get" class="form-3">
+                            <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
+                                <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedrate">
+                                    <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                        <div class="quick-access-card spacing">
+                                            <div class="columns w-row">
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
+                                                <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                </div>
+                                            </div>
+                                            <div class="columns-2 w-row">
+                                                <div class="column-5 w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
 
 
-                        <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
-                            <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedrate">
-                                <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
-                                    <div class="quick-access-card spacing">
-                                        <div class="columns w-row">
-                                            <div class="column-3 w-col w-col-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_4765bb29-3e61-7b7e-9d57-fbc62a67c860-8b09aa52"></div>
-                                            <div class="column-4 w-col w-col-11">
-                                                <div id="serviceType" class="text-block" data-bind="text: service"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-2 w-row">
-                                            <div class="column-5 w-col w-col-2" data-bind="visible: isCheapest">
-                                                <div id="isCheapest" class="text-block-3">CHEAPEST</div>
-                                            </div>
-                                            <div class="column-6 w-col w-col-10">
-                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
-                                            </div>
-                                        </div>
-                                        <div class="container-3 w-container">
+
                                             <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
-                                        </div>
-                                        <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
-                                        <div class="columns-3 w-row">
-                                            <div class="column-10 w-col w-col-6">
-                                                <div id="percentSaved" class="text-block-7">Save 50%</div>
-                                                <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                            <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7">Save 50%</div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                                <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                </div>
                                             </div>
-                                            <div class="column-7 w-col w-col-6">
-                                                <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
-                                            </div>
                                         </div>
+                                        <div class="grey-border"></div>
                                     </div>
-                                    <div class="grey-border"></div>
+                                    <div class="icon w-icon-dropdown-toggle"></div>
                                 </div>
-                                <div class="icon w-icon-dropdown-toggle"></div>
+                                <nav class="dropdown-list w-dropdown-list" data-bind="foreach: rates">
+                                    <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                        <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
+                                            <div class="columns w-row">
+
+
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
+                                                <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                </div>
+                                            </div>
+                                            <div class="columns-2 w-row">
+                                                <div class="column-5 w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
+                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                            <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7">Save 50%</div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                                <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grey-border"></div>
+                                    </div>
+                                </nav>
                             </div>
-                            <nav class="dropdown-list w-dropdown-list">
-                                <div id="w-node-_73eaaeb9-144f-4fb7-7acf-6bc24663bc95-8b09aa52" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll" data-bind="foreach: rates">
-                                    <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
-                                        <div class="columns w-row">
-                                            <div class="column-3 w-col w-col-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-c4dfec01-b4da-c24d-32ae-4c694121b30b-8b09aa52"></div>
-                                            <div class="column-4 w-col w-col-11">
-                                                <div id="serviceType" class="text-block" data-bind="text: service"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-2 w-row">
-                                            <div class="column-5 w-col w-col-2" data-bind="visible: isCheapest">
-                                                <div id="isCheapest" class="text-block-3">CHEAPEST</div>
-                                            </div>
-                                            <div class="column-6 w-col w-col-10">
-                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
-                                            </div>
-                                        </div>
-                                        <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
-                                        <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
-                                        <div class="columns-3 w-row">
-                                            <div class="column-10 w-col w-col-6">
-                                                <div id="percentSaved" class="text-block-7">Save 50%</div>
-                                                <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
-                                            </div>
-                                            <div class="column-7 w-col w-col-6">
-                                                <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grey-border"></div>
-                                </div>
-                            </nav>
-                        </div>
-                        @Html.ValidationSummary()
-                        <form id="labelForm" data-url="@Url.Action("CreateLabelAsync", "Home")" method="post">
-                            <div data-w-id="58977fe0-e9e6-8ca6-2c24-1c3a05348316" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="confirmpurchase">
+                            <div data-w-id="1f3f4983-4002-22ab-1572-1a446b988579" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="labellinkcard">
                                 <div data-bind="with: labelRequest">
                                     <div>
-                                        <h6 class="heading">Confirm Purchase</h6>
-                                    </div>
-                                    <div class="block-content">
-                                        <div class="columns-10 w-row">
-                                            <div class="w-col w-col-6">
-                                                <div class="text-block-15">Ship Date</div>
-                                            </div>
-                                            <div class="w-col w-col-6">
-                                                <div class="text-block-14" data-bind="text: currentDate"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-3 w-row">
-                                            <div class="column-10 w-col w-col-6">
-                                                <div class="text-block-16">Current Account Balance</div>
-                                            </div>
-                                            <div class="column-7 w-col w-col-6">
-                                                <div class="text-block-14" id="accountBalance" data-bind="text: beginningBalance"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-12 w-row">
-                                            <div class="w-col w-col-6">
-                                                <div class="text-block-17">Total Cost</div>
-                                            </div>
-                                            <div class="w-col w-col-6">
-                                                <div class="text-block-14" data-bind="text: totalCost"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-13 w-row">
-                                            <div class="w-col w-col-8">
-                                                <div class="text-block-18">Total Charge</div>
-                                            </div>
-                                            <div class="w-col w-col-4"><input type="text" class="input-field custom w-input" maxlength="256" name="TotalCharge" data-bind="textInput: totalCharge, event:{input: calculateBalance}" data-name="TotalCharge" id="TotalCharge" required=""></div>
-                                        </div>
-                                        <div class="columns-3 w-row" id="endingBalanceColumn">
-                                            <div class="column-10 w-col w-col-6">
-                                                <div class="text-block-19">Ending Account Balance</div>
-                                            </div>
-                                            <div class="column-7 w-col w-col-6">
-                                                <div class="text-block-14" id="RemainingBalance" data-bind="text: endingBalance"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h6 class="heading">Confrim Purchase</h6>
                                 </div>
-                                <div class="section-4 wf-section">
-                                    <div class="send-button-holder2 buylabel">
-                                        <div class="fake-submit-button-holder static buylabel">
-                                            <input type="submit" value="Purchase" data-wait="..." class="submit-button3 submit-button-with-text3 buylabel w-button">
-                                            <div class="button-gradient buylabel"></div>
-                                            <div class="white-background-button-color buylabel"></div>
+                                <div class="block-content">
+                                    <div class="columns-10 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div class="text-block-15">Ship Date</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                                <div class="text-block-14" data-bind="text: currentDate"></div>
+                                        </div>
+                                    </div>
+                                    <div class="columns-3 w-row">
+                                        <div class="column-10 w-col w-col-6">
+                                                <div class="text-block-16" >Account Balance</div>
+                                        </div>
+                                        <div class="column-7 w-col w-col-6">
+                                            <div class="text-block-14" data-bind="text: beginningBalance"></div>
+                                        </div>
+                                    </div>
+                                    <div class="columns-12 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div class="text-block-17">Total Cost</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                                <div class="text-block-14" data-bind="text: totalCost"></div>
+                                        </div>
+                                    </div>
+                                    <div class="columns-13 w-row">
+                                        <div class="w-col w-col-8">
+                                            <div class="text-block-18">Total Charge</div>
+                                        </div>
+                                            <div class="w-col w-col-4"><input type="text" class="input-field custom w-input" maxlength="256" name="TotalCharge-2" data-bind="textInput: totalCharge, event:{input: calculateBalance}" data-name="TotalCharge" id="TotalCharge" required=""></div>
+                                    </div>
+                                        <div class="columns-3 w-row" id="endingBalanceColumn">
+                                        <div class="column-10 w-col w-col-6">
+                                            <div class="text-block-19">Ending Account Balance</div>
+                                        </div>
+                                        <div class="column-7 w-col w-col-6">
+                                                <div class="text-block-14" id="RemainingBalance" data-bind="text: endingBalance"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section-4 wf-section">
+                                        <div class="send-button-holder2 buylabel">
+                                                <div class="fake-submit-button-holder static buylabel">
+                                                    <input id="buyLabel" type="submit" value="Purchase" data-wait="..." data-w-id="1f3f4983-4002-22ab-1572-1a446b9885a3" class="submit-button3 submit-button-with-text3 buylabel w-button">
+                                                    <div class="button-gradient buylabel"></div>
+                                                    <div class="white-background-button-color buylabel"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </form>
-                        <div class="w-form-done">
-                            <div>Thank you! Your submission has been received!</div>
-                        </div>
-                        <div class="w-form-fail">
-                            <div>Oops! Something went wrong while submitting the form.</div>
-                        </div>
+                       
                     </div>
                 </div>
-                <div id="w-node-_780cfaaa-0018-414e-0cbc-0872f2e29c74-8b09aa52" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll"></div>
+                
+                <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9885ac-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll"></div>
             </div>
         </div>
     </div>
    
+  
 </body>
 </html>

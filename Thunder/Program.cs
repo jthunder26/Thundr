@@ -1,3 +1,4 @@
+﻿using Thunder.Controllers;
 namespace Thunder
 {
     public class Program
