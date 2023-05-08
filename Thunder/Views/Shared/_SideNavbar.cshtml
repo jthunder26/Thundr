@@ -1,12 +1,12 @@
-﻿@*
+﻿@* 
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
-<div data-animation="default" data-collapse="tiny" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="dashnav w-nav">
+<div data-animation="default" data-collapse="small" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="dashnav w-nav">
     <div class="sidedashboardnavcontainer w-container">
         <a href="@Url.ActionLink("Index","Home")" class="brand-link nav w-nav-brand">
-            <img src="~/images/thunder.png" loading="lazy" width="75" height="75" srcset="~/images/thunder-p-500.png 500w, ~/images/thunder-p-800.png 800w, ~/images/thunder-p-1080.png 1080w, ~/images/thunder-p-1600.png 1600w, ~/images/thunder-p-2000.png 2000w, ~/images/thunder.png 2215w" sizes="30px" alt="" class="brand">
+            <img src="~/images/Icon.png" loading="lazy" width="75" height="75" srcset="~/images/Icon-p-500.png 500w, ~/images/Icon.png 690w" sizes="(max-width: 479px) 100vw, (max-width: 991px) 24.462499618530273px, (max-width: 1439px) 2vw, 24.462499618530273px" alt="" class="brand">
             <div class="text-block-12 gradient-text nav">Thunder</div>
         </a>
         <div class="menu-button-2 w-nav-button">
@@ -15,9 +15,9 @@
         <nav role="navigation" class="dashboardnavmenu w-nav-menu">
             <div class="dashnavlinkscontainer">
                 <div class="dashnavlinkitem">
-                    <a href="@Url.ActionLink("CreateLabel","Dashboard")" aria-current="page" class="dashnavlink w-inline-block w--current">
+                    <a href="@Url.ActionLink("Ship","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/thunder.png" loading="lazy" sizes="(max-width: 479px) 100vw, (max-width: 767px) 15px, (max-width: 991px) 2vw, (max-width: 1439px) 15px, 1vw" width="24" srcset="~/images/thunder-p-500.png 500w, ~/images/thunder-p-800.png 800w, ~/images/thunder-p-1080.png 1080w, ~/images/thunder-p-1600.png 1600w, ~/images/thunder-p-2000.png 2000w, ~/images/thunder.png 2215w" alt="" class="image-3"></div>
+                            <div class="dashnavlinkicondiv"><img src="~/images/Icon.png" loading="lazy" sizes="(max-width: 479px) 100vw, (max-width: 767px) 15px, (max-width: 991px) 2vw, (max-width: 1439px) 15px, 1vw" width="24" srcset="~/images/Icon-p-500.png 500w, ~/images/Icon.png 690w" alt="" class="image-3"></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Ship</div>
                             </div>
@@ -35,7 +35,7 @@
                     </a>
                 </div>
                 <div class="dashnavlinkitem">
-                    <a href="@Url.ActionLink("Monitor","Dashboard")" class="dashnavlink w-inline-block">
+                    <a href="@Url.ActionLink("Orders","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
                             <div class="dashnavlinkicondiv"><img src="~/images/Gradient-Image.svg" loading="lazy" width="25" alt="" class="image-2"></div>
                             <div class="dashnavlinktextdiv">
@@ -45,7 +45,7 @@
                     </a>
                 </div>
                 <div class="dashnavlinkitem">
-                    <a href="@Url.ActionLink("Account","Dashboard")" class="dashnavlink w-inline-block">
+                    <a href="@Url.ActionLink("Account","Dashboard")" aria-current="page" class="dashnavlink w-inline-block w--current">
                         <div class="dashnavlinkcontent">
                             <div class="dashnavlinkicondiv"><img src="~/images/Support-Image.svg" loading="lazy" width="24" alt=""></div>
                             <div class="dashnavlinktextdiv">
@@ -55,7 +55,7 @@
                     </a>
                 </div>
                 <div class="dashnavlinkitem">
-                    <a href="@Url.ActionLink("Logout","Dashboard")" class="dashnavlink w-inline-block">
+                    <a href="@Url.ActionLink("Logout","Home")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
                             <div class="dashnavlinkicondiv"><img src="~/images/RIght-Arrow.svg" loading="lazy" width="22" alt="" class="image-2 logout"></div>
                             <div class="dashnavlinktextdiv">
@@ -67,5 +67,4 @@
             </div>
         </nav>
     </div>
-</div>
 </div>

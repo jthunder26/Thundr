@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -32,7 +33,10 @@ namespace Thunder.Controllers
             _mailService = mailService;
         }
 
+        //public void Store(Items items)
+        //{
 
+        //}
 
 
         [HttpGet]
@@ -46,6 +50,12 @@ namespace Thunder.Controllers
         public IActionResult Dashboard()
         {
 
+            return View("Orders");
+        }
+        [Authorize]
+        public IActionResult PaymentProcessing()
+        {
+
             return View();
         }
         [Authorize]
@@ -53,13 +63,26 @@ namespace Thunder.Controllers
         {
 
             return View();
-        }
+        } 
         [Authorize]
-        public IActionResult CreateLabel()
+        public IActionResult Ship()
         {
 
             return View();
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetUnfinishedLabel(int labelId)
+        {
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Fetch the UpsOrderDetails entry corresponding to the received LabelId
+            var upsOrderDetails = _thunderService.getUnfinishedLabel(labelId, uid);
+
+            // Pass the UpsOrderDetails entry to the Ship view
+            return Json(upsOrderDetails);
+        }
+
         [Authorize]
         public IActionResult Orders()
         {
@@ -118,12 +141,13 @@ namespace Thunder.Controllers
         }
        
         [HttpPost]
-        public async Task<IActionResult> GetFullRates(UpsOrder fullRate)
+        public async Task<IActionResult> GetFullRates(UpsOrderDetails fullRate)
         {
           
             try
             {
                 FullRateDTO result = await _upsRateService.GetFullRatesAsync(fullRate);
+                _thunderService.AddOrder(fullRate);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -133,12 +157,12 @@ namespace Thunder.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> makeTheLabel(CreateUpsLabel upsOrder)
+        public async Task<IActionResult> makeTheLabel(CreateUpsLabel UpsOrderDetails)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
-                var response = await _thunderService.CreateUPSLabelAsync(upsOrder, uid);
+                var response = await _thunderService.CreateUPSLabelAsync(UpsOrderDetails, uid);
 
                 // Handle success case, e.g. return a success message or redirect to another page
                 return RedirectToAction("Dashboard");
@@ -147,7 +171,7 @@ namespace Thunder.Controllers
             {
                 // Handle the error case, e.g. return an error message or show an error view
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return View("Dashboard", upsOrder);
+                return View("Dashboard", UpsOrderDetails);
             }
         }
         public List<LabelDetails> getLabelDetails()

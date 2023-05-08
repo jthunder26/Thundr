@@ -165,6 +165,8 @@ public class RateDTO
     public int ID { get; set; }
     public string service { get; set; }
     public bool isCheapest { get; set; }
+    public bool isFastest { get; set; }
+    public bool isBestValue { get; set; }
     public string deliveryDate { get; set; }
     public string deliveryTime { get; set; }
     public string deliveryDayOfWeek { get; set; }
@@ -174,6 +176,8 @@ public class RateDTO
     public string ourPriceString { get; set; }  
     public bool isSelected { get; set; }
     public string serviceClass { get; set; }
+    public string percentSaved { get; set; }
+    public string percentSavedString { get; set; }
 }
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);

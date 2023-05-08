@@ -28,13 +28,14 @@
     }*/
 
     /* Buttons and links */
-#stripeButton {
+#submit {
     background: #5469d4;
     font-family: Arial, sans-serif;
     color: #ffffff;
     border-radius: 4px;
     border: 0;
     padding: 12px 16px;
+    margin-top: 10px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -44,11 +45,11 @@
     width: 100%;
 }
 
-    #stripeButton:hover {
+    #submit:hover {
         filter: contrast(115%);
     }
 
-    #stripeButton:disabled {
+    #submit:disabled {
         opacity: 0.5;
         cursor: default;
     }

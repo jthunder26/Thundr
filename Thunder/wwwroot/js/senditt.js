@@ -108,7 +108,7 @@
 }
 //requestForm -> sendRequest(requestForm)
 
-if ($("body").data("title") === "CreateLabel") {
+if ($("body").data("title") === "Ship") {
    
 
 
@@ -117,6 +117,95 @@ if ($("body").data("title") === "CreateLabel") {
         var self = this;
         var now = new Date();
         var date = now.toLocaleDateString();
+
+        self.requestForm = ko.observable({
+            LabelId: ko.observable(),
+            ToEmail: ko.observable(),
+            ToPhone: ko.observable(),
+            ToName: ko.observable(),
+            ToCompany: ko.observable(),
+            ToAddress1: ko.observable(),
+            ToAddress2: ko.observable(),
+            ToCity: ko.observable(),
+            ToState: ko.observable(),
+            ToZip: ko.observable(),
+            FromName: ko.observable(),
+            FromCompany: ko.observable(),
+            FromAddress1: ko.observable(),
+            FromAddress2: ko.observable(),
+            FromCity: ko.observable(),
+            FromState: ko.observable(),
+            FromZip: ko.observable(),
+            FromPhone: ko.observable(),
+            IsReturnAddress: ko.observable(),
+            Length: ko.observable(),
+            Width: ko.observable(),
+            Height: ko.observable(),
+            Pounds: ko.observable(),
+            Ounces: ko.observable(),
+            Weight: ko.observable(),
+            zeroValueMessage: ko.observable("")
+        });
+        var madeWeight = false;
+        isOverweight = function () {
+            var pp = self.requestForm().Pounds();
+            var p = parseFloat(pp);
+            var o = parseFloat(self.requestForm().Ounces());
+            if (isNaN(o)) {
+                o = 0;
+            }
+
+            var total = p + (o / 16);
+            if (p > 150 || total > 150) {
+                document.getElementById("weightError").innerHTML = "Maximum weight is 150 lbs, you entered: " + p + " lbs and " + o + " oz. Total of: " + total.toFixed(2) + " lbs";
+                madeWeight = false;
+            }
+            else {
+                document.getElementById("weightError").innerHTML = "";
+                madeWeight = true;
+                var w = total.toFixed(2);
+                self.requestForm().Weight(Math.ceil(w));
+                var after = self.requestForm().Weight();
+            }
+
+        };
+        var selectedLabelId = sessionStorage.getItem("selectedLabelId");
+        if (selectedLabelId) {
+            $.ajax({
+                type: 'GET',
+                url: "/Dashboard/GetUnfinishedLabel",
+                dataType: 'json',
+                data: { labelId: selectedLabelId },
+                success: function (data) {
+                    self.requestForm().LabelId(selectedLabelId);
+                    self.requestForm().ToEmail(data.toEmail);
+                    self.requestForm().ToPhone(data.toPhone);
+                    self.requestForm().ToName(data.toName);
+                    self.requestForm().ToCompany(data.toCompany);
+                    self.requestForm().ToAddress1(data.toAddress1);
+                    self.requestForm().ToAddress2(data.toAddress2);
+                    self.requestForm().ToCity(data.toCity);
+                    self.requestForm().ToState(data.toState);
+                    self.requestForm().ToZip(data.toZip);
+                    self.requestForm().FromName(data.fromName);
+                    self.requestForm().FromCompany(data.fromCompany);
+                    self.requestForm().FromAddress1(data.fromAddress1);
+                    self.requestForm().FromAddress2(data.fromAddress2);
+                    self.requestForm().FromCity(data.fromCity);
+                    self.requestForm().FromState(data.fromState);
+                    self.requestForm().FromZip(data.fromZip);
+                    self.requestForm().FromPhone(data.fromPhone);
+                    self.requestForm().Length(data.length);
+                    self.requestForm().Width(data.width);
+                    self.requestForm().Height(data.height);
+                    self.requestForm().Pounds(data.weight);
+                }
+            });
+
+            
+            // Remove the selectedLabelId from sessionStorage to avoid using it again unintentionally
+            sessionStorage.removeItem("selectedLabelId");
+        }
         self.beingPurchased = ko.observable(false);
         //rates is a List<RateDTO>
         self.rates = ko.observableArray();
@@ -185,56 +274,11 @@ if ($("body").data("title") === "CreateLabel") {
         }
 
         //defines a requestForm Object w observables placed in inputs to retrieve the value
-        self.requestForm = ko.observable({
-            ToEmail: ko.observable(),
-            ToPhone: ko.observable(),
-            ToName: ko.observable(),
-            ToCompany: ko.observable(),
-            ToAddress1: ko.observable(),
-            ToAddress2: ko.observable(),
-            ToCity: ko.observable(),
-            ToState: ko.observable(),
-            ToZip: ko.observable(),
-            FromName: ko.observable(),
-            FromCompany: ko.observable(),
-            FromAddress1: ko.observable(),
-            FromAddress2: ko.observable(),
-            FromCity: ko.observable(),
-            FromState: ko.observable(),
-            FromZip: ko.observable(),
-            FromPhone: ko.observable(),
-            IsReturnAddress: ko.observable(),
-            Length: ko.observable(),
-            Width: ko.observable(),
-            Height: ko.observable(),
-            Pounds: ko.observable(),
-            Ounces: ko.observable(),
-            Weight: ko.observable(),
-            zeroValueMessage: ko.observable("")
-        });
-        var madeWeight = false;
-        isOverweight=function () {
+      
 
-            var p = parseFloat(self.requestForm().Pounds());
-            var o = parseFloat(self.requestForm().Ounces());
-            if (isNaN(o)) {
-                o = 0;
-            }
 
-            var total = p + (o / 16);
-            if (p > 150 || total > 150) {
-                document.getElementById("weightError").innerHTML = "Maximum weight is 150 lbs, you entered: " + p + " lbs and " + o + " oz. Total of: " + total.toFixed(2) + " lbs";
-                madeWeight = false;
-            }
-            else {
-                document.getElementById("weightError").innerHTML = "";
-                madeWeight = true;
-                var w = total.toFixed(2);
-                self.requestForm().Weight(Math.ceil(w));
-                var after = self.requestForm().Weight();
-            }
-
-        };
+      
+       
         self.zeroValueMessage = ko.observable("");
 
         self.isOverLimit = ko.computed(function () {
@@ -296,8 +340,8 @@ if ($("body").data("title") === "CreateLabel") {
         
         function addressAutocomplete(containerElement, callback, options) {
 
-            const MIN_ADDRESS_LENGTH = 6;
-            const DEBOUNCE_DELAY = 300;
+            const MIN_ADDRESS_LENGTH = 5;
+            const DEBOUNCE_DELAY = 100;
 
             // create container for input element
             const inputContainerElement = document.createElement("div");
@@ -537,10 +581,11 @@ if ($("body").data("title") === "CreateLabel") {
         });
 
         self.sendRequest = function (formElement) {
+            isOverweight()
             //document.getElementById("msgDiv").style.display = "block";
             if (madeWeight) {
-                var after2 = self.requestForm().Weight();
                 var request = {
+                    LabelId: self.requestForm().LabelId(),
                     ToEmail: self.requestForm().ToEmail(),
                     ToPhone: self.requestForm().ToPhone(),
                     ToName: self.requestForm().ToName(),
@@ -560,14 +605,40 @@ if ($("body").data("title") === "CreateLabel") {
                     FromZip: self.requestForm().FromZip(),
                     FromPhone: self.requestForm().FromPhone(),
                     IsReturnAdress: self.requestForm().IsReturnAddress(),
-
+                    
                     Length: self.requestForm().Length(),
                     Width: self.requestForm().Width(),
                     Height: self.requestForm().Height(),
                     Weight: self.requestForm().Weight()
                 };
                 self.createLabelObject().selectedOrder(request);
-                console.log(request);
+                if (request.IsReturnAdress == true) {
+                    var addy = {
+                        AddressLine1: request.FromAddress1,
+                        AddressLine2: request.FromAddress2,
+                        Company: request.FromCompany,
+                        City: request.FromCity,
+                        StateProvinceCode: request.FromState,
+                        PostalCode: request.FromZip,
+                        IsReturnAddress: request.IsReturnAddress
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Dashboard/UpdateAddress/",
+                        data: addy,
+                        success: function (response) {
+                            window.location.href = response.redirectToUrl;
+                        }
+                    });
+                }
+
+
+
+
+
+
+
                 $.ajax({
                     type: 'POST',
                     url: "/Home/GetFullRates/",
@@ -575,13 +646,18 @@ if ($("body").data("title") === "CreateLabel") {
                     data: request,
                     //data is a FullRateDTO
                     success: function (data) {
-                        document.getElementById("dropdownrates").style.display = "block";
-                        self.selectedrate(data.selectedrate)
-                        self.createLabelObject().selectedClass(data.selectedrate.serviceClass)
-                        self.rates(data.rates)
-                        self.labelRequest().totalCost(data.selectedrate.ourPrice);
-                        self.labelRequest().totalCharge(data.selectedrate.ourPrice);
-                        calculateBalance()
+                        if (data.isError == true) {
+                            alert(data.error)
+                        }
+                        else {
+                            document.getElementById("dropdownrates").style.display = "block";
+                            self.selectedrate(data.selectedrate)
+                            self.createLabelObject().selectedClass(data.selectedrate.serviceClass)
+                            self.rates(data.rates)
+                            self.labelRequest().totalCost(data.selectedrate.ourPrice);
+                            self.labelRequest().totalCharge(data.selectedrate.ourPrice);
+                            calculateBalance()
+                        }
                     }
                 });
             } else if (!madeWeight) {
@@ -604,7 +680,19 @@ if ($("body").data("title") === "CreateLabel") {
             //event.preventDefault();
             // document.getElementById("msgDiv").style.display = "block";
             // change isCharged to hasPayed later
+            const items = [
+                {
+                    order: self.createLabelObject().selectedOrder(),
+                    serviceClass: self.createLabelObject().selectedClass(),
+                    selectedrate: self.selectedrate()
+                }
+            ];
             if (isChargedEnough) {
+                //$.ajax({
+                //    url: "/Dashboard/Store/",
+                //    type: "POST",
+                //    data: items,
+                //   });
                 // Show the Top Up modal when the balance is insufficient
                /* $("#topUpModal").show();*/
                 self.beingPurchased(true);
@@ -612,13 +700,7 @@ if ($("body").data("title") === "CreateLabel") {
                 // This is your test publishable API key.
                 
                  //The items the customer wants to buy
-                const items = [
-                    {
-                        order: self.createLabelObject().selectedOrder(),
-                        serviceClass: self.createLabelObject().selectedClass(),
-                        selectedrate: self.selectedrate()
-                    }
-                ];
+                
                
                 function calculateOrderAmount(amount) {
                     const price = parseFloat(amount);
@@ -633,13 +715,13 @@ if ($("body").data("title") === "CreateLabel") {
                 }
                
                 const amount = self.selectedrate().ourPrice;
-                const smallestCurrencyUnit = calculateOrderAmount(amount);
+                const amt = calculateOrderAmount(amount);
                 //currently not able to get the Client Secret from fetch below, check errors and openai
                 const stripe = Stripe("pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm");
 
                 const options = {
                     mode: 'payment',
-                    amount: smallestCurrencyUnit,
+                    amount: amt,
                     currency: 'usd',
                     // Fully customizable with appearance API.
                     appearance: {
@@ -655,38 +737,73 @@ if ($("body").data("title") === "CreateLabel") {
                 paymentElement.mount('#payment-element');
 
 
+                const form = document.getElementById('payment-form');
+                const submitBtn = document.getElementById('submit');
 
-
-
-
-            }
-        });
-
-
-        $("#saveAndBuyLabel").click(function (event) {
-            event.preventDefault();
-            // document.getElementById("msgDiv").style.display = "block";
-            // change isCharged to hasPayed later
-            if (isChargedEnough) {
-
-
-                var after2 = self.requestForm().Weight();
-                var labelRequest = {
-                    order: self.createLabelObject().selectedOrder(),
-                    serviceClass: self.createLabelObject().selectedClass()
-                };
-                var upsOrder = labelRequest;
-
-
-
-
-                var hasPaid = false;
-                if (hasPaid) {
-                    makeTheLabel(upsOrder)
+                const handleError = (error) => {
+                    const messageContainer = document.querySelector('#error-message');
+                    messageContainer.textContent = error.message;
+                    submitBtn.disabled = false;
                 }
 
+                form.addEventListener('submit', async (event) => {
+                    // We don't want to let default form submission happen here,
+                    // which would refresh the page.
+                    event.preventDefault();
+
+                    // Prevent multiple form submissions
+                    if (submitBtn.disabled) {
+                        return;
+                    }
+
+                    // Disable form submission while loading
+                    submitBtn.disabled = true;
+
+                    // Trigger form validation and wallet collection
+                    const { error: submitError } = await elements.submit();
+                    if (submitError) {
+                        handleError(submitError);
+                        return;
+                    }
+
+                    // Create the PaymentIntent and obtain clientSecret
+                    const res = await fetch("/create-intent", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ amount: amt })
+                    });
+
+                    const { client_secret: clientSecret } = await res.json();
+
+                    // Confirm the PaymentIntent using the details collected by the Payment Element
+                    const { error } = await stripe.confirmPayment({
+                        elements,
+                        clientSecret,
+                        confirmParams: {
+                            return_url: "https://localhost:7260/Dashboard/PaymentProcessing/",
+                        },
+                    });
+
+                    if (error) {
+                        // This point is only reached if there's an immediate error when
+                        // confirming the payment. Show the error to your customer (for example, payment details incomplete)
+                        handleError(error);
+                    } else {
+                        // Your customer is redirected to your `return_url`. For some payment
+                        // methods like iDEAL, your customer is redirected to an intermediate
+                        // site first to authorize the payment, then redirected to the `return_url`.
+                    }
+                });
+
+
+
             }
         });
+
+
+     
 
         self.makeTheLabel = function (root) {
             $.ajax({
@@ -701,43 +818,10 @@ if ($("body").data("title") === "CreateLabel") {
         } 
      
     }
-
     ko.applyBindings(new ViewModel());
    
 }
-        //self.userBalance = ko.observable('0');
-        //self.totalCost = ko.observable('40.32');
-
-        //self.topUp = function () {
-        //    // Fetch the top-up session ID from the server
-        //    fetch('/Stripe/TopUp?amount=' + self.totalCost())
-        //        .then(function (response) {
-        //            return response.json();
-        //        })
-        //        .then(function (result) {
-        //            var sessionId = result.sessionId;
-        //            var stripe = Stripe('pk_test_12345'); // Replace with your Stripe public key
-
-        //            // Redirect to the Stripe Checkout page
-        //            stripe.redirectToCheckout({ sessionId: sessionId });
-        //        })
-        //        .catch(function (error) {
-        //            console.error('Error:', error);
-        //        });
-        //};
-
-        //// Fetch the user's balance from the server and update the userBalance observable
-        //fetch('/Stripe/GetUserBalance')
-        //    .then(function (response) {
-        //        return response.json();
-        //    })
-        //    .then(function (result) {
-        //        self.userBalance(result.balance.toFixed(2));
-        //    })
-        //    .catch(function (error) {
-        //        console.error('Error:', error);
-        //    });
-   
+     
 
 if ($("body").data("title") === "Orders") {
    
@@ -746,8 +830,10 @@ if ($("body").data("title") === "Orders") {
         var self = this;
   
         self.hasNoLabel= ko.observable(false);
+        self.hasNotStarted = ko.observable(false);
 
         self.labels = ko.observableArray();
+        self.unfinishedLabels = ko.observableArray();
 
         $.ajax({
             type: 'GET',
@@ -760,6 +846,36 @@ if ($("body").data("title") === "Orders") {
                 }
             }
         });
+        $.ajax({
+            type: 'GET',
+            url: "/Home/getUnfinishedOrders/",
+            dataType: 'json',
+            success: function (data) {
+                
+                if (data.length == 0) {
+                    self.hasNotStarted(true);
+                }
+
+                else {
+                    self.unfinishedLabels(data);
+                }
+            }
+        });
+
+
+        self.completeLabel = function (label, event) {
+            console.log('completeLabel function called');
+
+            // The UnfinishedLabel object is accessible using `label`
+            var labelId = label.labelId;
+
+            // Store the selected LabelId in sessionStorage
+            sessionStorage.setItem("selectedLabelId", labelId);
+
+            // Redirect the user to the DashboardController/Ship page
+            window.location.href = "/Dashboard/Ship";
+        };
+
 
     };
 
@@ -822,7 +938,25 @@ if ($("body").data("title") === "Account") {
             accUpdate = true;
         };
         addy = function () {
-            addressUpdate = true;
+            var request = {
+                AddressLine1: self.returnAddress().FromAddress1(),
+                AddressLine2: self.returnAddress().FromAddress2(),
+                Company: self.returnAddress().FromCompany(),
+                City: self.returnAddress().FromCity(),
+                StateProvinceCode: self.returnAddress().FromState(),
+                PostalCode: self.returnAddress().FromZip(),
+                IsReturnAddress: true
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: "/Dashboard/UpdateAddress/",
+                data: request,
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                }
+            });
+
         };
         
         var isVerified = false;
@@ -862,25 +996,7 @@ if ($("body").data("title") === "Account") {
                         }
                         if (addressUpdate)
                         {
-                            var request = {
-                                AddressLine1: self.returnAddress().FromAddress1(),
-                                AddressLine2: self.returnAddress().FromAddress2(),
-                                Company: self.returnAddress().FromCompany(),
-                                City: self.returnAddress().FromCity(),
-                                StateProvinceCode: self.returnAddress().FromState(),
-                                PostalCode: self.returnAddress().FromZip(),
-                                IsReturnAddress: true
-                            };
-
-                            $.ajax({
-                                type: 'POST',
-                                url: "/Dashboard/UpdateAddress/",
-                                data: request,
-                                success: function (response) {
-                                    window.location.href = response.redirectToUrl;
-                                }
-                            });
-
+                           
 
                         }
                        

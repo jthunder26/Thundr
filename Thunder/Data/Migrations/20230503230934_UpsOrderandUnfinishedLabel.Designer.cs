@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thunder.Data;
 
@@ -11,9 +12,10 @@ using Thunder.Data;
 namespace Thunder.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230503230934_UpsOrderandUnfinishedLabel")]
+    partial class UpsOrderandUnfinishedLabel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,7 +318,7 @@ namespace Thunder.Data.Migrations
                     b.ToTable("ReturnAddress", (string)null);
                 });
 
-            modelBuilder.Entity("Thunder.Models.UnfinishedLabel", b =>
+            modelBuilder.Entity("UnfinishedLabel", b =>
                 {
                     b.Property<int>("LabelId")
                         .HasColumnType("int");
@@ -325,7 +327,8 @@ namespace Thunder.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FromEmail")
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LabelName")
@@ -344,7 +347,7 @@ namespace Thunder.Data.Migrations
                     b.ToTable("UnfinishedLabel", (string)null);
                 });
 
-            modelBuilder.Entity("Thunder.Models.UpsOrderDetails", b =>
+            modelBuilder.Entity("UpsOrderDetails", b =>
                 {
                     b.Property<int>("LabelId")
                         .ValueGeneratedOnAdd()
@@ -353,6 +356,9 @@ namespace Thunder.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabelId"), 1L, 1);
 
                     b.Property<string>("Class")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromAddress1")
@@ -367,9 +373,6 @@ namespace Thunder.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromCompany")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FromEmail")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromName")
@@ -436,8 +439,9 @@ namespace Thunder.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
+                    b.Property<string>("Weight")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Width")
                         .HasColumnType("int");
@@ -509,11 +513,11 @@ namespace Thunder.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Thunder.Models.UnfinishedLabel", b =>
+            modelBuilder.Entity("UnfinishedLabel", b =>
                 {
-                    b.HasOne("Thunder.Models.UpsOrderDetails", "UpsOrderDetails")
+                    b.HasOne("UpsOrderDetails", "UpsOrderDetails")
                         .WithOne("UnfinishedLabel")
-                        .HasForeignKey("Thunder.Models.UnfinishedLabel", "LabelId")
+                        .HasForeignKey("UnfinishedLabel", "LabelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -526,7 +530,7 @@ namespace Thunder.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Thunder.Models.UpsOrderDetails", b =>
+            modelBuilder.Entity("UpsOrderDetails", b =>
                 {
                     b.Navigation("UnfinishedLabel")
                         .IsRequired();

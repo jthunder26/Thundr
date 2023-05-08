@@ -4,9 +4,9 @@
 }
 <html data-wf-page="64376762d27d2700262b5dc0" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Account">
-    <div style="display:none;opacity:0" class="confirmpasswordpopup">
+    <div class="confirmpasswordpopup">
         <div class="container popup">
-            <div data-w-id="280525b9-5bfd-5b22-b9e9-b0a00cac95e1" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div data-w-id="1b49cc3a-9306-d5f6-d432-e1386921dcb7" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
             <div class="center-text popup">
                 <div class="hero-text-holder">
                     <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
@@ -17,9 +17,9 @@
             <div class="fade-in-slace-on-scroll">
                 <div class="top-margin-l white-text popup">
                     <div class="center-box popup"></div>
-                    <div class="form-block-2 popup w-form">
-                        <form data-bind="submit: validatePass" method="post" class="form-2 popup">
-                            <label for="Password-2" class="field-label-3">Password</label>
+                    <div class="login popup w-form">
+                        <form data-bind="submit: validatePass" method="post" class="loginform popup">
+                            <label for="Password-3" class="field-label-3">Password</label>
                             <input type="password" class="text-field-2 w-input" placeholder="Password" id="passConfirm" required="">
                             <div class="section-2 wf-section">
                                 <div class="send-button-holder2 custom4 popup">
@@ -30,17 +30,17 @@
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
- 
- 
+   
     <div class="section dashboard">
         <h1 class="heading-3">Account Details</h1>
         <div data-current="AccountDetails" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
-            <div data-w-id="8f36955f-c7e2-1ed9-da71-087078dfa6c9" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
+            <div id="w-node-_83450bf1-8c5e-cec9-d941-7a02f8d156d4-f8d156d3" data-w-id="83450bf1-8c5e-cec9-d941-7a02f8d156d4" class="tabs-menu feature-page w-tab-menu">
                 <a id="shipTabLink" data-w-tab="AccountDetails" class="account w-inline-block w-tab-link w--current">
                     <div class="gradient-wrapp">
                         <div class="tab-heading">Account</div>
@@ -66,7 +66,7 @@
                     </div>
                 </a>
             </div>
-            <div data-w-id="8f36955f-c7e2-1ed9-da71-087078dfa6df" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="feature-tabs-content w-tab-content">
+            <div data-w-id="83450bf1-8c5e-cec9-d941-7a02f8d156ea" class="feature-tabs-content w-tab-content">
                 <div data-w-tab="AccountDetails" class="tab-pane-accounttab w-tab-pane w--tab-active">
                     <div class="accountdetailscontainer">
                         <h4 class="sectionheader">Your Account</h4>
@@ -78,25 +78,24 @@
                                 <div class="formupdate w-form">
                                     <form id="accountUpdateForm" method="post" class="colupdatewrapper emailandname">
                                         <div data-bind="with: userDeets">
-                                        <div class="columns-18 w-row">
-                                            <div class="details w-col w-col-6">
-                                                <input type="text" class="formupdate details w-input" maxlength="256" name="field" id="field" data-bind="value: FullName">
-                                                <input type="email" class="formupdate details w-input" maxlength="256" name="email"  id="email" data-bind="value: Email">
-                                                <input class="formupdate details w-input" maxlength="256" name="Phone"  id="Phone" data-bind="value: Phone">
-
-                                            </div>
-                                            <div class="iconcolumn w-col w-col-6">
-                                                <div class="send-button-holder2 custom4 updateinto">
-                                                    <div class="fake-submit-button-holder static custom4 updateinfo">
-                                                            <input type="submit" data-bind="click: acc" value="Update" data-wait="..." data-w-id="ac9065cf-471a-dd34-6060-e8896611bd78" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
-                                                        <div class="button-gradient custom4 updateinfo"></div>
+                                            <div class="columns-18 w-row">
+                                                <div class="details w-col w-col-6">
+                                                    <input type="text" class="formupdate details w-input" maxlength="256" name="field" id="field" data-bind="value: FullName">
+                                                    <input type="email" class="formupdate details w-input" maxlength="256" name="email" id="email" data-bind="value: Email">
+                                                    <input class="formupdate details w-input" maxlength="256" name="Phone" id="Phone" data-bind="value: Phone">
+                                                </div>
+                                                <div class="iconcolumn w-col w-col-6">
+                                                    <div class="send-button-holder2 custom4 updateinto">
+                                                        <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                            <input type="submit" data-bind="click: acc" value="Update" data-wait="..." data-w-id="83450bf1-8c5e-cec9-d941-7a02f8d156fe" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
+                                                            <div class="button-gradient custom4 updateinfo"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>
                                     </form>
-                                  
+                                   
                                 </div>
                             </div>
                         </div>
@@ -106,7 +105,7 @@
                             </div>
                             <div class="detailinfo personal w-col w-col-9">
                                 <div class="formupdate password w-form">
-                                    <form  name="email-form" data-name="Email Form" method="get" class="colupdatewrapper password">
+                                    <form id="email-form" name="email-form" data-name="Email Form" method="get" class="colupdatewrapper password">
                                         <div class="columns-18 w-row">
                                             <div class="details w-col w-col-6">
                                                 <div class="text-block-28">Send an email with a password-reset link</div>
@@ -116,7 +115,12 @@
                                             </div>
                                         </div>
                                     </form>
-                                 
+                                    <div class="w-form-done">
+                                        <div>Thank you! Your submission has been received!</div>
+                                    </div>
+                                    <div class="w-form-fail">
+                                        <div>Oops! Something went wrong while submitting the form.</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -127,15 +131,17 @@
                             <div class="detailinfo personal w-col w-col-9">
                                 <div class="formupdate w-form">
                                     <form id="returnAddressForm" method="get" class="colupdatewrapper emailandname">
-                                        <div data-bind="with: returnAddress">
-                                            <div class="columns-18 w-row">
-                                                <div class="details returnaddress w-col w-col-6">
+                                       <div data-bind="with: returnAddress">
+                                        <div class="columns-18 w-row">
+                                            <div class="details returnaddress w-col w-col-6 w-col-stack">
                                                     <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Street Address" data-bind="value: FromAddress1">
                                                     <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Apt / Suite / Unit (optional)" data-bind="value: FromAddress2">
                                                     <input type="text" class="formupdate details w-input" maxlength="256" placeholder="Company" data-bind="value: FromCompany">
-                                                    <div class="columns-19 citystzip w-row">
-                                                        <div class="column-18 w-col w-col-4"><input type="text" class="formupdate details w-input" placeholder="City" data-bind="value: FromCity"></div>
-                                                        <div class="column-19 w-col w-col-4">
+                                                <div class="columns-19 citystzip w-row">
+                                                    <div class="column-18 w-col w-col-4 w-col-stack w-col-small-small-stack w-col-tiny-tiny-stack">
+                                                            <input type="text" class="formupdate details w-input" placeholder="City" data-bind="value: FromCity">
+                                                        </div>
+                                                    <div class="column-19 w-col w-col-4 w-col-stack w-col-small-small-stack w-col-tiny-tiny-stack">
                                                             <select id="State-2" class="select-field4 updateaddress w-select" data-bind="value: FromState">
                                                                 <option value="">State</option>
                                                                 <option value="AL">Alabama</option>
@@ -189,22 +195,24 @@
                                                                 <option value="WI">Wisconsin</option>
                                                                 <option value="WY">Wyoming</option>
                                                             </select>
-                                                        </div>
-                                                        <div class="w-col w-col-4"><input type="text" class="formupdate details w-input" placeholder="Zipcode" data-bind="value: FromZip"></div>
                                                     </div>
-                                                </div>
-                                                <div class="iconcolumn w-col w-col-6">
-                                                    <div class="send-button-holder2 custom4 updateinto">
-                                                        <div class="fake-submit-button-holder static custom4 updateinfo">
-                                                            <input type="submit" data-bind="click: addy" value="Update" data-wait="..." data-w-id="d8e73b19-f2aa-b28a-a057-de8ee3a474ba" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
-                                                            <div class="button-gradient custom4 updateinfo"></div>
+                                                    <div class="w-col w-col-4 w-col-stack w-col-small-small-stack w-col-tiny-tiny-stack">
+                                                            <div class="w-col w-col-4"><input type="text" class="formupdate details w-input" placeholder="Zipcode" data-bind="value: FromZip"></div>
                                                         </div>
+                                                </div>
+                                            </div>
+                                            <div class="iconcolumn w-col w-col-6 w-col-stack">
+                                                <div class="send-button-holder2 custom4 updateinto">
+                                                    <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                            <input type="submit" data-bind="click: addy" value="Update" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
+                                                        <div class="button-gradient custom4 updateinfo"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                       </div>
                                     </form>
-                                 
+                                   
                                 </div>
                             </div>
                         </div>
@@ -251,5 +259,23 @@
             </div>
         </div>
     </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
+
 </html>
+

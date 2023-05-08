@@ -10,7 +10,7 @@ namespace Thunder.Models
     public class Item
     {
        [JsonProperty("order")]
-        public UpsOrder order { get; set; }
+        public UpsOrderDetails order { get; set; }
         [JsonProperty("serviceClass")]
         public string? serviceClass { get; set; }
         [JsonProperty("selectedrate")]

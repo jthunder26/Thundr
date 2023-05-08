@@ -149,7 +149,7 @@ namespace Thunder.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    address.Id = user.Id;
+                    address.Uid = user.Id;
                     _thunderService.SaveReturnAddress(address);
                     _logger.LogInformation("User created a new account with password.");
                     

@@ -12,8 +12,8 @@ using Thunder.Data;
 namespace Thunder.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230406235703_UpsOrder")]
-    partial class UpsOrder
+    [Migration("20230503220045_NullEmail")]
+    partial class NullEmail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -231,9 +231,58 @@ namespace Thunder.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Thunder.Data.UserBalance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserBalance", (string)null);
+                });
+
+            modelBuilder.Entity("Thunder.Models.LabelDetails", b =>
+                {
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DateCreated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LabelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("LabelDetails", (string)null);
+                });
+
             modelBuilder.Entity("Thunder.Models.ReturnAddress", b =>
                 {
-                    b.Property<string>("Email")
+                    b.Property<string>("Uid")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AddressLine1")
@@ -253,10 +302,6 @@ namespace Thunder.Data.Migrations
                     b.Property<string>("CountryCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsReturnAddress")
                         .HasColumnType("bit");
 
@@ -268,22 +313,52 @@ namespace Thunder.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Email");
+                    b.HasKey("Uid");
 
                     b.ToTable("ReturnAddress", (string)null);
                 });
 
-            modelBuilder.Entity("Thunder.Models.UpsOrder", b =>
+            modelBuilder.Entity("UnfinishedLabelDetails", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("LabelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Class")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabelId"), 1L, 1);
+
+                    b.Property<string>("DateCreated")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LabelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LabelId");
+
+                    b.ToTable("UnfinishedLabelDetails", (string)null);
+                });
+
+            modelBuilder.Entity("UpsOrderDetails", b =>
+                {
+                    b.Property<int>("LabelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabelId"), 1L, 1);
+
+                    b.Property<string>("Class")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromAddress1")
@@ -322,6 +397,9 @@ namespace Thunder.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
+                    b.Property<long?>("OurPrice")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("ToAddress1")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -336,12 +414,14 @@ namespace Thunder.Data.Migrations
                     b.Property<string>("ToCompany")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ToEmail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ToName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToPhone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToState")
@@ -352,9 +432,8 @@ namespace Thunder.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("TotalAmount")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Weight")
                         .IsRequired()
@@ -363,9 +442,13 @@ namespace Thunder.Data.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UpsOrder", (string)null);
+                    b.HasKey("LabelId");
+
+                    b.ToTable("UpsOrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -416,6 +499,23 @@ namespace Thunder.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Thunder.Data.UserBalance", b =>
+                {
+                    b.HasOne("Thunder.Data.ApplicationUser", "User")
+                        .WithOne("UserBalance")
+                        .HasForeignKey("Thunder.Data.UserBalance", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Thunder.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("UserBalance")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

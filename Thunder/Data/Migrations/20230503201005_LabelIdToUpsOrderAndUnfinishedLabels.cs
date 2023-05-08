@@ -4,7 +4,7 @@
 
 namespace Thunder.Data.Migrations
 {
-    public partial class UpsOrder : Migration
+    public partial class LabelIdToUpsOrderAndUnfinishedLabels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,16 +12,17 @@ namespace Thunder.Data.Migrations
                 name: "PK_UpsOrder",
                 table: "UpsOrder");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Weight",
-                table: "UpsOrder",
-                type: "nvarchar(max)",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int");
+            migrationBuilder.DropColumn(
+                name: "OrderID",
+                table: "UpsOrder");
+
+            migrationBuilder.RenameColumn(
+                name: "OrderId",
+                table: "UnfinishedLabelDetails",
+                newName: "LabelId");
 
             migrationBuilder.AlterColumn<string>(
-                name: "UserName",
+                name: "uid",
                 table: "UpsOrder",
                 type: "nvarchar(max)",
                 nullable: false,
@@ -29,23 +30,16 @@ namespace Thunder.Data.Migrations
                 oldType: "nvarchar(450)");
 
             migrationBuilder.AddColumn<string>(
-                name: "Id",
+                name: "LabelId",
                 table: "UpsOrder",
                 type: "nvarchar(450)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Email",
-                table: "UpsOrder",
-                type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_UpsOrder",
                 table: "UpsOrder",
-                column: "Id");
+                column: "LabelId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -55,33 +49,33 @@ namespace Thunder.Data.Migrations
                 table: "UpsOrder");
 
             migrationBuilder.DropColumn(
-                name: "Id",
+                name: "LabelId",
                 table: "UpsOrder");
 
-            migrationBuilder.DropColumn(
-                name: "Email",
-                table: "UpsOrder");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Weight",
-                table: "UpsOrder",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+            migrationBuilder.RenameColumn(
+                name: "LabelId",
+                table: "UnfinishedLabelDetails",
+                newName: "OrderId");
 
             migrationBuilder.AlterColumn<string>(
-                name: "UserName",
+                name: "uid",
                 table: "UpsOrder",
                 type: "nvarchar(450)",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
 
+            migrationBuilder.AddColumn<string>(
+                name: "OrderID",
+                table: "UpsOrder",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.AddPrimaryKey(
                 name: "PK_UpsOrder",
                 table: "UpsOrder",
-                column: "UserName");
+                column: "uid");
         }
     }
 }

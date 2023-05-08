@@ -16,15 +16,15 @@ namespace Thunder.Controllers
         {
             public CheckoutApiController()
             {
-                StripeConfiguration.ApiKey = "pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm";
+                StripeConfiguration.ApiKey = "sk_test_51MxFCnDHpayIZlcAaiJXTw7ln9gD8sPbzmNtN9bBIwFmhrOMhGcoLlWHkbrE8EHUvYDmsoU7e8iCY0Jh0SWRFH8N00sbrQOelZ";
             }
 
             [HttpPost]
-            public ActionResult Post()
+            public ActionResult Post([FromBody] CreateIntentRequest request)
             {
                 var options = new PaymentIntentCreateOptions
                 {
-                    Amount = 1099,
+                    Amount = request.Amount,
                     Currency = "usd",
                     AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                     {
@@ -35,7 +35,7 @@ namespace Thunder.Controllers
                 PaymentIntent intent = service.Create(options);
                 return Json(new { client_secret = intent.ClientSecret });
             }
-       
+
 
         //Zero-decimal currencies-
         //    All API requests expect amounts to be provided in a currency’s smallest unit.
@@ -53,6 +53,11 @@ namespace Thunder.Controllers
             {
                 return 0;
             }
+        }
+
+        public class CreateIntentRequest
+        {
+            public long Amount { get; set; }
         }
     }
 }

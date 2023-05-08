@@ -121,7 +121,7 @@ namespace Thunder.Areas.Identity.Pages.Account
                 {
                     //await _mailService.SendEmailAsync(Input.Email, "New Login", "<h1>Hey! New login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
                     _logger.LogInformation("User logged in.");
-                    return RedirectToAction("CreateLabel", "Dashboard");
+                    return RedirectToAction("Ship", "Dashboard");
                 }
                 if (result.RequiresTwoFactor)
                 {
