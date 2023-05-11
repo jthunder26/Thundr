@@ -141,44 +141,6 @@ public class ShipTo
     public Address Address { get; set; }
 }
 
-public class BankRateDTO
-{
-    public int ID { get; set; }
-    public string service { get; set; }
-}
-
-public class FullRateDTO
-{
-    public List<RateDTO>? rates { get; set; }
-    public RateDTO? selectedrate { get; set; }
-    public bool IsError { get; set; }   
-    public string? Error { get; set; }
-}
-public class QuickRateDTO
-{
-    public List<RateDTO>? Rates { get; set; }
-    public bool IsError { get; set; }
-    public string? Error { get; set; }
-}
-public class RateDTO
-{
-    public int ID { get; set; }
-    public string service { get; set; }
-    public bool isCheapest { get; set; }
-    public bool isFastest { get; set; }
-    public bool isBestValue { get; set; }
-    public string deliveryDate { get; set; }
-    public string deliveryTime { get; set; }
-    public string deliveryDayOfWeek { get; set; }
-    public string estimatedDelivery { get; set; }
-    public string upsPrice { get; set; }
-    public string ourPrice { get; set; }
-    public string ourPriceString { get; set; }  
-    public bool isSelected { get; set; }
-    public string serviceClass { get; set; }
-    public string percentSaved { get; set; }
-    public string percentSavedString { get; set; }
-}
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class Alert

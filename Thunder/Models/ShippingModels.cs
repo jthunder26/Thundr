@@ -5,41 +5,43 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Thunder.Models
 {
-   
-    public class ShipFrom
+    public class BankRateDTO
     {
-        public string UserName { get; set; }
-
-        public string Name { get; set; }
-        public string Company { get; set; }
-        public string Phone { get; set; }
-        public string Zip { get; set; }
-        public string Address1 { get; set; }
-        public string Address2 { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-
-
+        public int ID { get; set; }
+        public string service { get; set; }
     }
-    public class ShipTo
+
+    public class FullRateDTO
     {
-        public string UserName { get; set; }
-
-        public string Name { get; set; }
-        public string Company { get; set; }
-        public string Phone { get; set; }
-        public string Zip { get; set; }
-        public string Address1 { get; set; }
-        public string Address2 { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-
+        public List<RateDTO>? rates { get; set; }
+        public RateDTO? selectedrate { get; set; }
+        public bool IsError { get; set; }
+        public string? Error { get; set; }
     }
-    public class UserDetails
+    public class QuickRateDTO
     {
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string FullName { get; set; }
+        public List<RateDTO>? Rates { get; set; }
+        public bool IsError { get; set; }
+        public string? Error { get; set; }
+    }
+    public class RateDTO
+    {
+        public int ID { get; set; }
+        public string service { get; set; }
+        public bool isCheapest { get; set; }
+        public bool isFastest { get; set; }
+        public bool isBest { get; set; }
+        public string deliveryDate { get; set; }
+        public string deliveryTime { get; set; }
+        public string deliveryDayOfWeek { get; set; }
+        public string estimatedDelivery { get; set; }
+        public string upsPrice { get; set; }
+        public string ourPrice { get; set; }
+        public string ourPriceString { get; set; }
+        public bool isSelected { get; set; }
+        public string serviceClass { get; set; }
+        public string percentSaved { get; set; }
+        public string percentSavedString { get; set; }
     }
     [Table("ReturnAddress")]
     public class ReturnAddress
@@ -70,19 +72,6 @@ namespace Thunder.Models
         //public string Status { get; set; }
         public string DateCreated { get; set; }
     }
-    public class NewRate
-    {
-        public string FromZip { get; set; }
-        public string ToZip { get; set; }
-        //public string? PackagingType { get; set; }
-        public string Length { get; set; }
-        public string Width { get; set; }
-        public string Height { get; set; }
-        public string Weight { get; set; }
-        public string? Class { get; set; }
-    }
-
-    //what is used to create the label
     public class CreateUpsLabel
     {
         public UpsOrderDetails order { get; set; }
@@ -104,7 +93,7 @@ namespace Thunder.Models
 
         public virtual UpsOrderDetails UpsOrderDetails { get; set; }
     }
-    
+
     //to make the AIO label
     [Table("UpsOrderDetails")]
     public class UpsOrderDetails
@@ -193,6 +182,56 @@ namespace Thunder.Models
         public virtual UnfinishedLabel UnfinishedLabel { get; set; }
     }
 
+    public class ShipFrom
+    {
+        public string UserName { get; set; }
+
+        public string Name { get; set; }
+        public string Company { get; set; }
+        public string Phone { get; set; }
+        public string Zip { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+
+
+    }
+    public class ShipTo
+    {
+        public string UserName { get; set; }
+
+        public string Name { get; set; }
+        public string Company { get; set; }
+        public string Phone { get; set; }
+        public string Zip { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+
+    }
+    public class UserDetails
+    {
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string FullName { get; set; }
+    }
+  
+    public class NewRate
+    {
+        public string FromZip { get; set; }
+        public string ToZip { get; set; }
+        //public string? PackagingType { get; set; }
+        public string Length { get; set; }
+        public string Width { get; set; }
+        public string Height { get; set; }
+        public string Weight { get; set; }
+        public string? Class { get; set; }
+    }
+
+    //what is used to create the label
+  
     public class CustomsItem
     {
         public string Name { get; set; }

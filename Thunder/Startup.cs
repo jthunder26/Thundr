@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Stripe;
 using Thunder.Data;
 using Thunder.Models;
@@ -33,9 +34,10 @@ namespace Thunder
             //services.AddHttpClient();
             services.AddRazorPages();
             services.Configure<StripeOptions>(Configuration.GetSection("Stripe"));
+            services.AddSingleton(x => new StripeClient(x.GetRequiredService<IOptions<StripeOptions>>().Value.ApiKey));
             services.AddScoped<IThunderService, ThunderService>();
             services.AddScoped<IUpsRateService, UpsRateService>();
-            services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddTransient<IMailService, MailService>(); //transient bc we want a new object with each request. 
             services.AddHsts(options =>
             {

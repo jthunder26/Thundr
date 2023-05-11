@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Register";
 }
-
 <html data-wf-page="640dfa54ba67526ba609aa48" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Register">
     <div class="section">
@@ -96,14 +95,14 @@
                                 </div>
                                 <div class="w-col w-col-6"><input asp-for="Input.Phone" class="text-field-9 w-input" maxlength="256" name="Phone" data-name="Phone" placeholder="Phone" id="Phone" required=""></div>
                             </div><label class="w-checkbox checkbox-field">@Html.CheckBoxFor(model => model.IsReturnAddress, new { @class="w-checkbox-input" })<span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
-                            <div class="section-2 wf-section">
-                                <a id="registerSubmit" href="#More" class="gradient-link custom w-inline-block">
-                                    <div class="button-gradient"></div>
-                                    <div class="button-content-holder">
-                                        <div class="link-gradient-text">Create Account</div>
+                            <div class="section-3 wf-section">
+                                <div class="send-button-holder2 register">
+                                    <div class="fake-submit-button-holder static register">
+                                        <input type="submit" value="Create Account" data-wait="..." class="submit-button3 submit-button-with-text3 register w-button">
+                                        <div class="button-gradient register"></div>
+                                        <div class="white-background-button-color register"></div>
                                     </div>
-                                    <div class="white-background-button-color"></div>
-                                </a>
+                                </div>
                             </div>
                             <div class="section-2 wf-section">
                                 <button type="submit" class="gradient-link w-inline-block">
@@ -115,12 +114,7 @@
                                 </button>
                             </div>
                         </form>
-                        <div class="w-form-done">
-                            <div>Thank you! Your submission has been received!</div>
-                        </div>
-                        <div class="w-form-fail">
-                            <div>Oops! Something went wrong while submitting the form.</div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

@@ -3,12 +3,11 @@
     ViewBag.Title = "Ship";
     ViewBag.NavbarPartial = "_SideNavbar";
 }
-
 <html data-wf-page="643715b253c8ec4510376427" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Ship">
     <div style="display:none;opacity:0" class="confirmpasswordpopup">
         <div class="container popup">
-            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
             <div class="center-text popup">
                 <div class="hero-text-holder">
                     <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
@@ -17,7 +16,7 @@
                 </div>
             </div>
             <div class="form-block-5 w-form">
-                <form id="payment-form">
+                <form id="payment-form" class="payment-form">
                     <div id="payment-element">
                         <!-- Elements will create form elements here -->
                     </div>
@@ -231,97 +230,102 @@
             <div class="container _4em fade-in-move-on-scroll" id="dropdownrates" style="display: none">
                 <div class="w-form">
                         <form id="email-form" method="get" class="form-3">
-                        <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
-                               <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedrate">
-                                <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
-                                    <div class="quick-access-card spacing fullrate">
-                                        <div class="columns fullrate w-row">
-                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
-                                            <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
-                                                  <div id="serviceType" class="text-block" data-bind="text: service"></div>
-                                            </div>
-                                        </div>
+                                    <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
+                                           <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedrate">
+                                            <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
+                                                <div class="quick-access-card spacing fullrate">
+                                                    <div class="columns fullrate w-row">
+                                                        <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
+                                                        <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                              <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                        </div>
+                                                    </div>
 
-                                        <div class="columns-2 fullrate w-row">
+                                                    <div class="columns-2 fullrate w-row">
+                                                             <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                                <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                           </div>
+                                                            <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                                <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                             </div>
+                                                            <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                                <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                            </div>
 
-                                            <div class="badgecolumn w-col w-col-3 w-col-small-3 w-col-tiny-3" data-bind="visible: isCheapest">
-                                                <div id="isCheapest" class="text-block-3">CHEAPEST</div>
-                                            </div>
-                                            @*create isFastest*@
-                                            <div class="badgecolumn w-col w-col-3 w-col-small-3 w-col-tiny-3" data-bind="visible: isFastest">
-                                                    <div class="fastest"><strong>FASTEST</strong></div>
-                                            </div>
-                                            <div class="column-6 w-col w-col-9 w-col-small-9 w-col-tiny-9">
-                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
-                                            </div>
-                                        </div>
+                                                            <div class="column-6 w-col w-col-10">
+                                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                            </div>
+                                                    </div>
 
-                                        <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
-                                        <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
-                                        <div class="columns-3 w-row">
-                                            <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
-                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
-                                                <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
-                                            </div>
-                                            <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
-                                                <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
-                                            </div>
-                                        </div>
+                                                    <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                                    <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                                    <div class="columns-3 w-row">
+                                                        <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                                <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                            <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                        </div>
+                                                           <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                            <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                           </div>
+                                                    </div>
                                         
-                                    </div>
-                                    <div class="grey-border fullrate"></div>
-                                </div>
-                                <div class="icon w-icon-dropdown-toggle"></div>
-                            </div>
-                            <nav class="dropdown-list w-dropdown-list" data-bind="foreach: rates">
-                                <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
-                                    <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
-                                        <div class="columns w-row">
-                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
-                                            <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
-                                               <div id="serviceType" class="text-block" data-bind="text: service"></div>
-                                            </div>
-                                        </div>
-                                        <div class="columns-2 fullrate w-row">
-                                                <div class="badgecolumn w-col w-col-3 w-col-small-3 w-col-tiny-3" data-bind="visible: isCheapest">
-                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
                                                 </div>
-                                                @*create isFastest*@
-                                                <div class="badgecolumn w-col w-col-3 w-col-small-3 w-col-tiny-3" data-bind="visible: isFastest">
-                                                    <div class="fastest"><strong>FASTEST</strong></div>
+                                                <div class="grey-border fullrate"></div>
+                                            </div>
+                                            <div class="icon w-icon-dropdown-toggle"></div>
+                                        </div>
+                                        <nav class="dropdown-list w-dropdown-list" data-bind="foreach: rates">
+                                            <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                                <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
+                                                    <div class="columns w-row">
+                                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
+                                                            <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                           <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="columns-2 fullrate w-row">
+                                                            <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                                <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                            </div>
+                                                            <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                                <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                            </div>
+                                                            <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                                <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                            </div>
+                                               
+                                                            <div class="column-6 w-col w-col-10">
+                                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                            </div>
+                                                    </div>
+                                                        <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                                    <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                                    <div class="columns-3 w-row">
+                                                            <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                                <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                            <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                        </div>
+                                                            <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                         <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            <div class="column-6 w-col w-col-9 w-col-small-9 w-col-tiny-9">
-                                                <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                <div class="grey-border"></div>
                                             </div>
-                                        </div>
-                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
-                                        <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
-                                        <div class="columns-3 w-row">
-                                            <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
-                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
-                                                <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
-                                            </div>
-                                            <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
-                                             <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grey-border"></div>
-                                </div>
                                
-                            </nav>
-                        </div>
-                        <div data-w-id="1f3f4983-4002-22ab-1572-1a446b988579" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="labellinkcard buylabel">
-                          <div data-bind="with: labelRequest">
-                            <div>
-                                <h6 class="heading">Confrim Purchase</h6>
-                            </div>
-                            <div class="block-content">
-                                <div class="columns-10 w-row">
-                                    <div class="w-col w-col-6">
-                                        <div class="text-block-15">Ship Date</div>
+                                        </nav>
                                     </div>
-                                    <div class="w-col w-col-6">
+                            <div data-w-id="1f3f4983-4002-22ab-1572-1a446b988579" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="labellinkcard buylabel">
+                                <div data-bind="with: labelRequest">
+                                <div>
+                                    <h6 class="heading">Confrim Purchase</h6>
+                                </div>
+                                <div class="block-content">
+                                    <div class="columns-10 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div class="text-block-15">Ship Date</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
                                         <div class="text-block-14" data-bind="text: currentDate"></div>
                                     </div>
                                 </div>
@@ -347,7 +351,7 @@
                                     </div>
                                    <div class="w-col w-col-4"><input type="text" class="input-field custom w-input" maxlength="256" name="TotalCharge-2" data-bind="textInput: totalCharge, event:{input: calculateBalance}" data-name="TotalCharge" id="TotalCharge" required=""></div>
                                 </div>
-                                        <div class="columns-3 w-row" id="endingBalanceColumn">
+                                <div class="columns-3 w-row" id="endingBalanceColumn">
                                     <div class="column-10 w-col w-col-6">
                                         <div class="text-block-19">Ending Account Balance</div>
                                     </div>
@@ -356,17 +360,17 @@
                                             </div>
                                 </div>
                                 <div class="send-button-wrapper fullrates buylabel">
-                                    <div class="send-button-holder2 fullrates">
-                                        <div class="fake-submit-button-holder static fullrates">
-                                            <input id="buyLabel" type="submit" value="Buy Label" data-wait="..." data-w-id="0407eb30-f557-8cef-c6d7-0c35c67af1bc" class="submit-button3 submit-button-with-text3 fullrates buylabel w-button">
-                                            <div class="button-gradient fullrates"></div>
-                                            <div class="white-background-button-color fullrates"></div>
+                                        <div class="send-button-holder2 fullrates">
+                                            <div class="fake-submit-button-holder static fullrates">
+                                                <input id="buyLabel" type="submit" value="Buy Label" data-wait="..." data-w-id="0407eb30-f557-8cef-c6d7-0c35c67af1bc" class="submit-button3 submit-button-with-text3 fullrates buylabel w-button">
+                                                <div class="button-gradient fullrates"></div>
+                                                <div class="white-background-button-color fullrates"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                            </div>
                             </div>
                         </div>
-                      </div>
                     </form>
                    
                 </div>

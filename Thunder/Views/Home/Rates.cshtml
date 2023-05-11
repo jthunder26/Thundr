@@ -16,6 +16,9 @@
                     </div>
                 </div>
             </div>
+
+
+
             <div class="section">
                 <div class="container">
                     <div data-w-id="1121d2d6-605f-5031-30d6-c09946328b62" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="w-layout-grid grid-2-col">
@@ -53,12 +56,12 @@
                                                     </div>
                                             </div>
                                         </div>
-                                        <div class="send-button-wrapper rates">
-                                            <div class="send-button-holder2">
-                                                <div class="fake-submit-button-holder static">
-                                                    <input type="submit" value="Get Rates" data-wait="..." data-w-id="610e854f-b69b-a42c-d4f0-3b5c7a901994" class="submit-button3 submit-button-with-text3 pagetransition w-button">
-                                                    <div class="button-gradient"></div>
-                                                    <div class="white-background-button-color"></div>
+                                            <div class="send-button-wrapper rates">
+                                                <div class="send-button-holder2">
+                                                    <div class="fake-submit-button-holder static">
+                                                        <input type="submit" value="Get Rates" data-wait="..." data-w-id="610e854f-b69b-a42c-d4f0-3b5c7a901994" class="submit-button3 submit-button-with-text3 pagetransition w-button">
+                                                        <div class="button-gradient"></div>
+                                                        <div class="white-background-button-color"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -88,6 +91,12 @@
                                     <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
                                         <div id="isCheapest" class="text-block-3">CHEAPEST</div>
                                     </div>
+                                    <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                        <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                    </div>
+                                    <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                        <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                    </div>
                                     <div class="column-6 w-col w-col-10">
                                         <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
                                     </div>
@@ -106,11 +115,12 @@
                                 <div class="columns-4 w-row">
                                     <div class="column-11 w-col w-col-6"></div>
                                     <div class="column-8 w-col w-col-6">
-                                        <a href="@Url.ActionLink("Orders","Dashboard")" aria-current="page" class="gradient-link ratecard w-inline-block w--current">
+                                        <a href="@Url.ActionLink("Ship","Dashboard")" aria-current="page" class="gradient-link ratecard w-inline-block w--current">
                                             <div class="button-gradient ratecard"></div>
                                             <div class="loginbutton ratecard">
                                                 <div class="logintext ratecard">Create Label</div>
                                             </div>
+                                            <div class="white-background-button-color ratecard"></div>
                                         </a>
                                     </div>
                                 </div>

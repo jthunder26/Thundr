@@ -19,23 +19,26 @@ namespace Thunder.Controllers
     /// 
     /// Webflow:
     /// 
-    /// Ensure Logout button is visible in Wide View - Done
+    /// Ensure Logout button is visible in Wide View - DONE
     /// Create Best Value tag for rates. - DONE
-    /// Make the Fastest tag text same color and size. Rates and Ship Page - done
-    /// The Zipcode input In account goes small when in Large desktop
-    /// mini nav menu hamburger icon and  background color is gray when opening. data-nav-menu-open
-    /// Orders page - gradient image is wylin at 590px
+    /// Make the Fastest tag text same color and size. Rates and Ship Page  - DONE
+    /// The Zipcode input In account goes small when in Large desktop  - DONE
+    /// mini nav menu hamburger icon and  background color is gray when opening. data-nav-menu-open  - DONE
+    /// Orders page - gradient image is wylin at 590px  - DONE
     /// Visual Studios: 
     /// 
+    /// Balance Functions
     /// Create Email Templates for Account Creation, Payment Confirmation, Password Reset. 
-    /// Add auto complete for Ship From as well. 
     /// Create Blob Storage to store labels
     /// Transfer Domain to cloudflare -- In Progress
-    /// Add the auto scroll 
+    /// Add the auto scroll -- Done 
     /// Check error from createLabel() to Aio, if Success is false and Error is not over balance issues/format
     /// --> Switch API's
+    /// 
+    /// 
     /// Items to be added in the future:
     /// 
+    /// Add auto complete for Ship From as well. 
     /// Add Content to homepage
     /// About/Contact Us pages/ FAQS/ Support to submit bugs
     /// USPS Integration/Price added to rates

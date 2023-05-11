@@ -6,10 +6,7 @@ using Thunder.Models;
 
 namespace Thunder.Controllers
 {
-    //[Route("api/create-payment-intent")]
-    //[ApiController]
-    //public class PaymentIntentApiController : Controller
-    //{
+    
         [Route("create-intent")]
         [ApiController]
         public class CheckoutApiController : Controller

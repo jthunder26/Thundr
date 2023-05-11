@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations.Schema;
 using Thunder.Models;
 
 namespace Thunder.Data
@@ -11,21 +13,9 @@ namespace Thunder.Data
         public ApplicationUser()
         { }
         public string FullName { get; set; }
-        public UserBalance UserBalance { get; set; }
-    }
-
-
-
-    public class UserBalance
-    {
-        public int Id { get; set; }
-        public string UserId { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
-
-        // Navigation property for ApplicationUser
-        public ApplicationUser User { get; set; }
     }
-
 
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -38,7 +28,6 @@ namespace Thunder.Data
         public DbSet<UpsOrderDetails> UpsOrderDetails { get; set; }
         public DbSet<ReturnAddress> ReturnAddress { get; set; }
         public DbSet<LabelDetails> LabelDetails { get; set; }
-        public DbSet<UserBalance> UserBalances { get; set; }
         public DbSet<UnfinishedLabel> UnfinishedLabel { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,10 +39,8 @@ namespace Thunder.Data
             modelBuilder.Entity<ReturnAddress>().ToTable("ReturnAddress");
             modelBuilder.Entity<LabelDetails>().ToTable("LabelDetails");
             modelBuilder.Entity<UnfinishedLabel>().ToTable("UnfinishedLabel");
-
-            modelBuilder.Entity<UserBalance>().ToTable("UserBalance");
             modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new UserBalanceEntityConfiguration());
+            
         }
     }
 

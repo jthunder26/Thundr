@@ -5,6 +5,7 @@
         var self = this;
         //defines an observableArray named rates, kina like var rates = new List<Rates>()
         self.rates = ko.observableArray();
+        self.hasScrolled = false;
         //defines a requestForm Object w observables placed in inputs to retrieve the value
         self.requestForm = ko.observable({
                 FromZip: ko.observable(),
@@ -71,6 +72,12 @@
         };
 
 
+        self.scrollToRates = function () {
+            var rateContainer = document.getElementById("rateContainer");
+            if (rateContainer) {
+                rateContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        };
 
 
 
@@ -99,6 +106,7 @@
                     //sends it to the rates variable which is a List<Rates> which have
                     //the values data-binded to div block values in the html 
                     self.rates(data)
+                    self.scrollToRates();
                 }
             });
         }

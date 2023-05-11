@@ -8,6 +8,7 @@ using Thunder.Models;
 using Stripe;
 using System.Transactions;
 using System.Runtime.Intrinsics.Arm;
+using Microsoft.CodeAnalysis.QuickInfo;
 
 namespace Thunder.Services
 {
@@ -398,40 +399,29 @@ namespace Thunder.Services
                 }
             }
 
-            // Find the fastest rate
-            foreach (var rate in rates)
-            {
-                DateTime deliveryDate;
-                DateTime deliveryTime;
-                if (DateTime.TryParseExact(rate.deliveryDate, "MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out deliveryDate) &&
-                    DateTime.TryParseExact(rate.deliveryTime, "hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out deliveryTime))
-                {
-                    DateTime deliveryDateTime = deliveryDate.Add(deliveryTime.TimeOfDay);
-                    if (deliveryDateTime < minDeliveryDateTime)
-                    {
-                        minDeliveryDateTime = deliveryDateTime;
-                        fastestRate = rate;
-                    }
-                }
-            }
-
-            // Find the best value rate
-            foreach (var rate in rates)
-            {
-                double percentSaved;
-                if (double.TryParse(rate.percentSaved, out percentSaved))
-                {
-                    if (percentSaved > maxPercentSaved && rate != cheapestRate && rate != fastestRate)
-                    {
-                        maxPercentSaved = percentSaved;
-                        bestValueRate = rate;
-                    }
-                }
-            }
-
             if (cheapestRate != null)
             {
                 cheapestRate.isCheapest = true;
+            }
+
+            // Find the fastest rate
+            foreach (var rate in rates)
+            {
+                if (rate != cheapestRate)
+                {
+                    DateTime deliveryDate;
+                    DateTime deliveryTime;
+                    if (DateTime.TryParseExact(rate.deliveryDate, "MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out deliveryDate) &&
+                        DateTime.TryParseExact(rate.deliveryTime, "hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out deliveryTime))
+                    {
+                        DateTime deliveryDateTime = deliveryDate.Add(deliveryTime.TimeOfDay);
+                        if (deliveryDateTime < minDeliveryDateTime)
+                        {
+                            minDeliveryDateTime = deliveryDateTime;
+                            fastestRate = rate;
+                        }
+                    }
+                }
             }
 
             if (fastestRate != null)
@@ -440,11 +430,59 @@ namespace Thunder.Services
                 fastestRate.isSelected = true;
             }
 
+            // Find the best value rate
+            foreach (var rate in rates)
+            {
+                if (rate != cheapestRate && rate != fastestRate)
+                {
+                    double percentSaved;
+                    if (double.TryParse(rate.percentSaved, out percentSaved))
+                    {
+                        if (percentSaved > maxPercentSaved)
+                        {
+                            maxPercentSaved = percentSaved;
+                            bestValueRate = rate;
+                        }
+                    }
+                }
+            }
+
             if (bestValueRate != null)
             {
-                bestValueRate.isBestValue = true;
+                bestValueRate.isBest = true;
             }
+
+            // Move the rates with specified properties to the beginning of the list
+            List<RateDTO> newRateList = new List<RateDTO>();
+
+            if (cheapestRate != null)
+            {
+                newRateList.Add(cheapestRate);
+            }
+
+            if (fastestRate != null)
+            {
+                newRateList.Add(fastestRate);
+            }
+
+            if (bestValueRate != null)
+            {
+                newRateList.Add(bestValueRate);
+            }
+
+            foreach (var rate in rates)
+            {
+                if (rate != cheapestRate && rate != fastestRate && rate != bestValueRate)
+                {
+                    newRateList.Add(rate);
+                }
+            }
+
+            rates.Clear();
+            rates.AddRange(newRateList);
         }
+
+
 
 
 
@@ -562,14 +600,15 @@ namespace Thunder.Services
                     rates.Add(rate);
                 }
             }
+            SetAttributes(rates);
+            //var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
+            //if (lowestRate != null)
+            //{
+            //    lowestRate.isCheapest = true;
+            //}
 
-            var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
-            if (lowestRate != null)
-            {
-                lowestRate.isCheapest = true;
-            }
-
-            quickRates.Rates = rates.OrderBy(x => x.ourPrice).ToList();
+            //quickRates.Rates = rates.OrderBy(x => x.ourPrice).ToList();
+            quickRates.Rates = rates;
             return quickRates;
         }
 

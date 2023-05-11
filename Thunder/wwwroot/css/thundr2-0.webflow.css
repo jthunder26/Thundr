@@ -5478,6 +5478,10 @@ blockquote {
   overflow: auto;
 }
 
+.text-block-3.best {
+  background-color: #000;
+}
+
 .column-6 {
   color: rgba(0, 0, 0, 0);
   padding-left: 2px;
@@ -6586,7 +6590,7 @@ blockquote {
   }
 
   .nav-link-holder.logoutholder {
-    display: none;
+    display: block;
   }
 
   .content {
@@ -7045,6 +7049,14 @@ blockquote {
     display: block;
   }
 
+  .text-block-3.fastest {
+    background-color: #0954cc;
+  }
+
+  .text-block-3.best {
+    background-color: #000;
+  }
+
   .column-6 {
     color: rgba(0, 0, 0, 0);
     padding-left: 5px;
@@ -7223,7 +7235,7 @@ blockquote {
 
   .nav-menu {
     grid-row-gap: 40px;
-    background-color: #1b1c1e;
+    background-color: #000;
     flex-direction: row;
     justify-content: center;
     align-items: center;
@@ -7317,8 +7329,8 @@ blockquote {
 
   .copy-right-section {
     grid-row-gap: 20px;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
 
   .quick-access-grid {
@@ -8245,14 +8257,27 @@ blockquote {
     margin-bottom: 10px;
   }
 
+  .columns-9.custom {
+    flex-direction: column;
+  }
+
   .columns-17 {
     display: flex;
   }
 
   .sidedashboardnavcontainer {
+    background-color: #000;
     margin-left: 0;
     margin-right: 0;
     display: block;
+  }
+
+  .dashboardnavmenu {
+    background-color: #000;
+  }
+
+  .dashnavlinkscontainer {
+    background-color: #141414;
   }
 
   .heading-3 {
@@ -8327,6 +8352,10 @@ blockquote {
 
   .confirmpasswordpopup {
     display: none;
+  }
+
+  .menu-button-2.w--open {
+    background-color: #272727;
   }
 
   .payment-form {
@@ -9364,6 +9393,7 @@ blockquote {
   .send-button-wrapper.rates {
     margin-left: 45px;
     margin-right: 45px;
+    padding-bottom: 10px;
   }
 
   .investors-panel {
@@ -10129,19 +10159,19 @@ blockquote {
     justify-self: center;
   }
 
-  #w-node-bcfa0579-6986-668e-09cb-5d36b8f087e7-b8f087d1, #w-node-c3925a4d-cc19-2d6a-c04f-d71759e14d82-3409aa6b {
+  #w-node-bcfa0579-6986-668e-09cb-5d36b8f087e7-b8f087d1 {
     grid-area: 4 / 1 / 5 / 2;
   }
 
-  #w-node-_7c08b27f-9a10-8923-a290-55113eb1b96b-3409aa6b, #w-node-_6026e755-26ff-43e0-08d1-edc1f61cc8ac-3409aa6b, #w-node-_1d4bcf2d-a442-8f89-77a2-f18cb5c25e00-3409aa6b, #w-node-_9c45953b-a73d-3b90-e3d5-041d4d5d44bb-3409aa6b, #w-node-f10ff1d8-8303-2bbb-c40c-1886beadc548-3409aa6b {
-    grid-area: 1 / 1 / 2 / 2;
+  #w-node-c3925a4d-cc19-2d6a-c04f-d71759e14d82-3409aa6b, #w-node-_7c08b27f-9a10-8923-a290-55113eb1b96b-3409aa6b, #w-node-_6026e755-26ff-43e0-08d1-edc1f61cc8ac-3409aa6b, #w-node-_1d4bcf2d-a442-8f89-77a2-f18cb5c25e00-3409aa6b, #w-node-_9c45953b-a73d-3b90-e3d5-041d4d5d44bb-3409aa6b, #w-node-f10ff1d8-8303-2bbb-c40c-1886beadc548-3409aa6b {
+    grid-area: span 1 / span 1 / span 1 / span 1;
   }
 
   #w-node-aa47b546-eb00-9fad-cd80-f36608c60a83-08c60a83, #w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427 {
     grid-area: 4 / 1 / 5 / 2;
   }
 
-  #w-node-caacae09-723b-2892-684c-f178accba37a-abaa0a41, #w-node-_83450bf1-8c5e-cec9-d941-7a02f8d156d4-f8d156d3 {
+  #w-node-caacae09-723b-2892-684c-f178accba37a-abaa0a41, #w-node-_126f2fb1-0bf5-3493-4e9b-58771fc5e270-262b5dc0 {
     grid-area: span 1 / span 1 / span 1 / span 1;
     align-self: auto;
   }
