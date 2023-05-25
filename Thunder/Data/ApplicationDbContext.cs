@@ -12,9 +12,9 @@ namespace Thunder.Data
     {
         public ApplicationUser()
         { }
-        public string FullName { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Balance { get; set; }
+        public string? FullName { get; set; }
+        public int UserBalance { get; set; }
+        public string? StripeCustomerId { get; set; }        
     }
 
 
@@ -26,6 +26,7 @@ namespace Thunder.Data
         }
 
         public DbSet<UpsOrderDetails> UpsOrderDetails { get; set; }
+        public DbSet<RateCosts> RateCosts { get; set; }
         public DbSet<ReturnAddress> ReturnAddress { get; set; }
         public DbSet<LabelDetails> LabelDetails { get; set; }
         public DbSet<UnfinishedLabel> UnfinishedLabel { get; set; }
@@ -36,6 +37,7 @@ namespace Thunder.Data
                 .HasOne(uo => uo.UnfinishedLabel)
                 .WithOne(ul => ul.UpsOrderDetails)
                 .HasForeignKey<UnfinishedLabel>(ul => ul.LabelId);
+            modelBuilder.Entity<ReturnAddress>().ToTable("RateCosts");
             modelBuilder.Entity<ReturnAddress>().ToTable("ReturnAddress");
             modelBuilder.Entity<LabelDetails>().ToTable("LabelDetails");
             modelBuilder.Entity<UnfinishedLabel>().ToTable("UnfinishedLabel");

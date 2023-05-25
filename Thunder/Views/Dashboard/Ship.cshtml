@@ -63,7 +63,7 @@
                             <div class="w-row">
                                 <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="ToCity" placeholder="City" id="ToCity" required="" data-bind="value: ToCity"></div>
                                 <div class="w-col w-col-4">
-                                    <select id="ToState" name="State-2" class="select-field4 w-select" data-bind="value: ToState">
+                                        <select id="ToState" required="" class="select-field4 w-select" data-bind="value: ToState">
                                         <option value="">State</option>
                                         <option value="AL">Alabama</option>
                                         <option value="AK">Alaska</option>
@@ -123,7 +123,7 @@
 
                         <label for="EmailTo-2" class="field-label">Ship From</label>
                         <div class="w-row">
-                            <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromName-3" data-name="From Name 3" placeholder="Name (optional)" data-bind="value: FromName"></div>
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromName-3" data-name="From Name 3" placeholder="Name"  required="" data-bind="value: FromName"></div>
                             <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromCompany-3" data-name="From Company 3" placeholder="Company (optional)" data-bind="value: FromCompany"></div>
                         </div>
                         <div class="w-row">
@@ -135,7 +135,7 @@
                                 <div class="w-row">
                                     <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromCity-2" data-name="From City 2" placeholder="City" id="FromCity" required="" data-bind="value: FromCity"></div>
                                     <div class="w-col w-col-4">
-                                        <select id="State-2" name="State-2" data-name="State 2" class="select-field4 w-select" data-bind="value: FromState">
+                                            <select id="State-2" name="State-2" required="" class="select-field4 w-select" data-bind="value: FromState">
                                             <option value="">State</option>
                                             <option value="AL">Alabama</option>
                                             <option value="AK">Alaska</option>
@@ -215,9 +215,9 @@
                             </div>
                         </div>
                         <div class="send-button-wrapper fullrates">
-                            <div class="send-button-holder2 fullrates">
+                                <div class="send-button-holder2 fullrates" data-bind="visible: shouldShow">
                                 <div class="fake-submit-button-holder static fullrates">
-                                    <input type="submit" value="Get Rates" data-wait="..." data-w-id="1f3f4983-4002-22ab-1572-1a446b9884b8" class="submit-button3 submit-button-with-text3 fullrates w-button">
+                                    <input type="submit" id="getRates" value="Get Rates" data-wait="..." data-w-id="1f3f4983-4002-22ab-1572-1a446b9884b8" class="submit-button3 submit-button-with-text3 fullrates w-button">
                                     <div class="button-gradient fullrates"></div>
                                     <div class="white-background-button-color fullrates"></div>
                                 </div>
@@ -297,7 +297,7 @@
                                                             <div class="column-6 w-col w-col-10">
                                                                 <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
                                                             </div>
-                                                    </div>
+                                                    </div>    
                                                         <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
                                                     <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
                                                     <div class="columns-3 w-row">
@@ -360,7 +360,7 @@
                                             </div>
                                 </div>
                                 <div class="send-button-wrapper fullrates buylabel">
-                                        <div class="send-button-holder2 fullrates">
+                                            <div class="send-button-holder2 fullrates" data-bind="visible: canBuy">
                                             <div class="fake-submit-button-holder static fullrates">
                                                 <input id="buyLabel" type="submit" value="Buy Label" data-wait="..." data-w-id="0407eb30-f557-8cef-c6d7-0c35c67af1bc" class="submit-button3 submit-button-with-text3 fullrates buylabel w-button">
                                                 <div class="button-gradient fullrates"></div>

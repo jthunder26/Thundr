@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+using Stripe;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,6 +17,7 @@ using Thunder.Services;
 
 namespace Thunder.Areas.Identity.Pages.Account
 {
+    //form should be no bigger than 550px
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -23,6 +28,8 @@ namespace Thunder.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly IThunderService _thunderService;
         private readonly IMailService _mailService;
+        private readonly SecretClient _secretClient;
+
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
@@ -30,7 +37,8 @@ namespace Thunder.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             IThunderService thunderService,
-            IMailService mailService)
+            IMailService mailService,
+            SecretClient secretClient)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -39,7 +47,8 @@ namespace Thunder.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _thunderService = thunderService;
-            _mailService = mailService; 
+            _mailService = mailService;
+            _secretClient = secretClient;
         }
 
         /// <summary>
@@ -75,10 +84,10 @@ namespace Thunder.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
-            [Required]
-            [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "FullName")]
-            public string FullName { get; set; }
+            //[Required]
+            //[StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            //[Display(Name = "FullName")]
+            //public string FullName { get; set; }
 
             //[Display(Name = "UserName"), Required]
             //public string UserName { get; set; }
@@ -93,22 +102,6 @@ namespace Thunder.Areas.Identity.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            //[DataType(DataType.Password)]
-            //[Display(Name = "Confirm password")]
-            //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            //public string ConfirmPassword { get; set; }
-            public string? Company { get; set; }
-            public string Phone { get; set; }
-            public string Zipcode { get; set; }
-            public string Address1 { get; set; }
-            public string? Address2 { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public bool IsReturnAddress { get; set; }
         }
 
 
@@ -128,29 +121,37 @@ namespace Thunder.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
-                //congfigure new FullName property of InputModel()
-
-                user.FullName = Input.FullName;
-                user.PhoneNumber = Input.Phone;
-                ReturnAddress address = new ReturnAddress();
-                address.AddressLine1 = Input.Address1;
-                address.AddressLine2 = Input.Address2;
-                address.Company = Input.Company;
-                address.City = Input.City;
-                address.PostalCode = Input.Zipcode;
-                address.StateProvinceCode = Input.State;
-                address.IsReturnAddress = Input.IsReturnAddress;
-              
                 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                var stripeSecretKey = _secretClient.GetSecret("StripeTestApiKey").Value.Value;
+                StripeConfiguration.ApiKey = stripeSecretKey;
+                var customerOptions = new CustomerCreateOptions
+                {
+                    Email = Input.Email
+                };
+
+
+                var customerService = new CustomerService();
+                var stripeCustomer = customerService.Create(customerOptions);
+
+                // Retrieve the customer ID from the Stripe customer object
+                string customerId = stripeCustomer.Id;
+                user.StripeCustomerId = customerId;
+
+
+
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    address.Uid = user.Id;
-                    _thunderService.SaveReturnAddress(address);
+                    //address.Uid = user.Id;
+                    //_thunderService.SaveReturnAddress(address);
+                  
+
+
                     _logger.LogInformation("User created a new account with password.");
                     
                     var userId = await _userManager.GetUserIdAsync(user);
@@ -172,7 +173,7 @@ namespace Thunder.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("Dashboard", "CreateLabel");
+                        return RedirectToAction("Ship", "Dashboard");
                     }
                 }
                 foreach (var error in result.Errors)
@@ -184,6 +185,8 @@ namespace Thunder.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
+       
 
         private ApplicationUser CreateUser()
         {

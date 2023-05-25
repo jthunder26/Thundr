@@ -1,5 +1,7 @@
 ﻿using EllipticCurve.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
@@ -8,6 +10,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using Thunder.Data;
 using Thunder.Models;
 using Thunder.Services;
 
@@ -15,22 +18,17 @@ namespace Thunder.Controllers
 {
 
     /// <summary>
-    /// Items left to complete before hosting:
+   
     /// 
-    /// Webflow:
+    /// #dec880
+    /// #ff347d
+    /// #827ded
     /// 
-    /// Ensure Logout button is visible in Wide View - DONE
-    /// Create Best Value tag for rates. - DONE
-    /// Make the Fastest tag text same color and size. Rates and Ship Page  - DONE
-    /// The Zipcode input In account goes small when in Large desktop  - DONE
-    /// mini nav menu hamburger icon and  background color is gray when opening. data-nav-menu-open  - DONE
-    /// Orders page - gradient image is wylin at 590px  - DONE
-    /// Visual Studios: 
-    /// 
-    /// Balance Functions
+    /// Return Address is not saving on registry. -- done
+    /// Balance Functions -- done
     /// Create Email Templates for Account Creation, Payment Confirmation, Password Reset. 
-    /// Create Blob Storage to store labels
-    /// Transfer Domain to cloudflare -- In Progress
+    /// Create Blob Storage to store labels -- done
+    /// Transfer Domain to cloudflare -- done
     /// Add the auto scroll -- Done 
     /// Check error from createLabel() to Aio, if Success is false and Error is not over balance issues/format
     /// --> Switch API's
@@ -55,12 +53,19 @@ namespace Thunder.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IThunderService _thunderService;
         private readonly IUpsRateService _upsRateService;
+        private readonly IMailService _mailService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
         public HomeController(ILogger<HomeController> logger, IThunderService thunderService,
-            IUpsRateService upsRateService)
+            IUpsRateService upsRateService, UserManager<ApplicationUser> userManager, IMailService mailService,
+             IUserService userService)
         {
             _logger = logger;
             _thunderService = thunderService;
             _upsRateService = upsRateService;
+            _userManager = userManager;
+            _mailService = mailService;
+            _userService = userService;
         }
         [AllowAnonymous]
         public IActionResult Index()
@@ -95,45 +100,60 @@ namespace Thunder.Controllers
             var rates = quickRateDTO.Result.Rates;
             return rates;
         }
-       
-        [HttpPost]
-        public async Task<IActionResult> GetFullRates(UpsOrderDetails fullRate)
+        [Authorize]
+        public string getUID()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            fullRate.Uid = uid;
+            return uid;
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetUserBalance()
+        {
             try
             {
-                FullRateDTO result = await _upsRateService.GetFullRatesAsync(fullRate);
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userBalance = await _userService.GetUserBalance(uid);
+               
+                return Ok(userBalance); // Return the decimal value without the dollar sign
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                // For example:
+                // logger.LogError(ex, "Error occurred while retrieving user balance.");
+                return StatusCode(500, "An error occurred while retrieving user balance."); // Return an appropriate error response
+            }
+        }
 
-                //THIS IS STILL ADDING MULTIPLE ORDERS
-                _thunderService.AddOrder(fullRate);
+        [HttpPost]
+        public async Task<IActionResult> GetFullRates(UpsOrderDetails upsOrder)
+        {
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            upsOrder.Uid = uid;
+            try
+            {
+                FullRateDTO result = await _upsRateService.GetFullRatesAsync(upsOrder);
+
+                _thunderService.AddOrder(upsOrder);
+
+                result.UpsOrderDetailsId = _thunderService.GetUpsOrderDetailsId(uid);
+                if (result.UpsOrderDetailsId == null)
+                {
+                    throw new Exception("Failed to retrieve UpsOrderDetailsId");
+                }
+                List<RateDTO> ratesList = new List<RateDTO>();
+                ratesList = result.rates;
+                ratesList.Add(result.selectedrate); 
+                await _thunderService.CreateAndSaveRateCosts((int)result.UpsOrderDetailsId, ratesList);
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                // Log the exception here, if needed
-
-                return StatusCode(500, new { message = "An error occurred while processing the request.", details = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while processing the request.", details = ex.InnerException?.Message ?? ex.Message });
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> makeTheLabel(CreateUpsLabel UpsOrderDetails)
-        {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            try
-            {
-                var response = await _thunderService.CreateUPSLabelAsync(UpsOrderDetails, uid);
 
-                // Handle success case, e.g. return a success message or redirect to another page
-                return Json(new { redirectToUrl = Url.Action("Ship", "Dashboard") });
-            }
-            catch (ApplicationException ex)
-            {
-                // Handle the error case, e.g. return an error message or show an error view
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return Json(new { redirectToUrl = Url.Action("Ship", "Dashboard") });
-            }
-        }
         public List<LabelDetails> getLabelDetails()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -190,10 +210,18 @@ namespace Thunder.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+      
+            [Route("/Home/Error/{statusCode?}")]
+            public IActionResult Error(int? statusCode = null)
+            {
+                var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
+                var exception = feature?.Error;
+
+                ViewData["Exception"] = exception;
+                ViewData["StatusCode"] = statusCode;
+
+                return View();
+            }
+        
     }
 }

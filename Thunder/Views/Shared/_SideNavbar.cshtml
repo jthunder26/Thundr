@@ -17,7 +17,7 @@
                 <div class="dashnavlinkitem">
                     <a href="@Url.ActionLink("Ship","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/Icon.png" loading="lazy" sizes="(max-width: 479px) 0px, (max-width: 767px) 100vw, (max-width: 991px) 2vw, (max-width: 1439px) 15px, 1vw" width="24" srcset=" ~/images/Icon-p-500.png 500w, ~/images/Icon.png 690w" alt="" class="image-3"></div>
+                            <div class="dashnavlinkicondiv"><img src="/images/Icon.png" loading="lazy" sizes="(max-width: 479px) 0px, (max-width: 767px) 100vw, (max-width: 991px) 2vw, (max-width: 1439px) 15px, 1vw" width="24" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" alt="" class="image-3"></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Ship</div>
                             </div>
@@ -54,15 +54,12 @@
                         </div>
                     </a>
                 </div>
-                <div class="dashnavlinkitem">
-                    <a href="@Url.ActionLink("Logout","Home")" class="dashnavlink w-inline-block">
-                        <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/RIght-Arrow.svg" loading="lazy" width="22" alt="" class="image-2 logout"></div>
-                            <div class="dashnavlinktextdiv">
-                                <div class="text-block-24">Logout</div>
-                            </div>
-                        </div>
-                    </a>
+                <div class="form-block-6 w-form">
+                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" class="form-4">
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="Logout" id="logoutLink" class="logoutbutton w-button">
+                    </form>
+                  
                 </div>
             </div>
         </nav>

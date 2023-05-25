@@ -17,6 +17,7 @@ namespace Thunder.Models
         public RateDTO? selectedrate { get; set; }
         public bool IsError { get; set; }
         public string? Error { get; set; }
+        public int? UpsOrderDetailsId { get; set; }   
     }
     public class QuickRateDTO
     {
@@ -27,6 +28,7 @@ namespace Thunder.Models
     public class RateDTO
     {
         public int ID { get; set; }
+        public int exactCost { get; set; }
         public string service { get; set; }
         public bool isCheapest { get; set; }
         public bool isFastest { get; set; }
@@ -72,10 +74,27 @@ namespace Thunder.Models
         //public string Status { get; set; }
         public string DateCreated { get; set; }
     }
+
+    [Table("RateCosts")]
+    public class RateCosts
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int RateCostsId { get; set; } // New primary key
+
+        public int LabelId { get; set; } // Now it's a foreign key
+
+        public string serviceClass { get; set; }
+
+        public int TotalCost { get; set; }
+        public int? TotalCharge { get; set; }
+    }
     public class CreateUpsLabel
     {
-        public UpsOrderDetails order { get; set; }
-        public string? serviceClass { get; set; }
+        [JsonProperty("rate")]
+        public RateDTO Rate { get; set; }
+        [JsonProperty("labelId")]
+        public int labelId { get; set; }
     }
 
     //THIS LabelId corresponds with UpsOrderDetails
@@ -90,7 +109,7 @@ namespace Thunder.Models
         public string? FromEmail { get; set; }  ////This should correspond with UpsOrderDetails.FromEmail
         public int Status { get; set; } //Ignore this property
         public string DateCreated { get; set; } //Ignore this property
-
+       
         public virtual UpsOrderDetails UpsOrderDetails { get; set; }
     }
 
@@ -111,7 +130,7 @@ namespace Thunder.Models
         public string? ToEmail { get; set; }
 
         [JsonProperty("fromName")]
-        public string FromName { get; set; }
+        public string? FromName { get; set; }
 
         [JsonProperty("fromCompany")]
         public string? FromCompany { get; set; }
@@ -179,6 +198,7 @@ namespace Thunder.Models
 
         [JsonProperty("class")]
         public string? Class { get; set; }
+        public int checkedOut { get; set; }
         public virtual UnfinishedLabel UnfinishedLabel { get; set; }
     }
 

@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    var exception = ViewData["Exception"];
+    var statusCode = ViewData["StatusCode"];
+}
+
+<h1>Error</h1>
+
+<p>An error occurred while processing your request.</p>
+
+@if (statusCode != null)
+{
+    <p>Status Code: @statusCode</p>
+}
+
+@if (exception != null)
+{
+    <p>Error Details: @exception</p>
+}

@@ -1,7 +1,21 @@
 ﻿using Newtonsoft.Json;
+using Thunder.Data;
 
 namespace Thunder.Models
 {
+    public class ChargeValidationResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public int? LabelId { get; set; }   
+    }
+    public class FindUserResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string uid { get; set; }
+    }
+
     public class StripeOptions
     {
         public string ApiKey { get; set; }

@@ -1,83 +1,108 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using Stripe;
-using Thunder.Services;
 using Thunder.Models;
-using Microsoft.AspNetCore.Identity;
-using Thunder.Data;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Composition;
-using System.Numerics;
-using Microsoft.AspNetCore;
-using static Google.Protobuf.WellKnownTypes.Field.Types;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Microsoft.AspNetCore.Mvc.Routing;
-using System.Security.Claims;
-using System.Runtime.Intrinsics.X86;
+using Thunder.Services;
 
 namespace Thunder.Controllers
 {
     [Route("webhook")]
     [ApiController]
-    public class WebhookController : Controller
+    public class WebhookController : ControllerBase
     {
         private readonly IUserService _userService;
-
-        public WebhookController(IUserService userService)
+        private readonly IThunderService _thunderService;
+        private readonly ILogger<WebhookController> _logger;
+        private readonly string _webhookSecret;
+        public WebhookController(IUserService userService, ILogger<WebhookController> logger, SecretClient secretClient, IThunderService thunderService)
         {
             _userService = userService;
+            _logger = logger;
+
+
+            var stripeWebhookSecret = secretClient.GetSecret("StripeEndpointSecret");
+            _webhookSecret = stripeWebhookSecret.Value.Value;
+            _thunderService = thunderService;   
         }
+
         [HttpPost]
+        [AllowAnonymous]
+        [Consumes("application/json")]
         public async Task<IActionResult> Index()
         {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            const string endpointSecret = "whsec_3362d4d218dc5080c7b9fb863908b0b3374f6fa8dbcbc57905b1326c96bc8a8d";
+            var eventType = "";
+            var custID = "";
             try
             {
-                var stripeEvent = EventUtility.ParseEvent(json);
-                var signatureHeader = Request.Headers["Stripe-Signature"];
+                var json = await new StreamReader(Request.Body).ReadToEndAsync();
 
-                stripeEvent = EventUtility.ConstructEvent(json,
-                        signatureHeader, endpointSecret);
+                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _webhookSecret);
+                eventType = stripeEvent.Type;
+                if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+                {
+                    return Ok("User PaymentIntent Succeeded.");
+                }
+
+                if (stripeEvent.Type == Events.PaymentIntentCanceled)
+                {
+                    return Ok("User PaymentIntent Canceled.");
+                }
 
                 if (stripeEvent.Type == Events.ChargeSucceeded)
                 {
                     var charge = stripeEvent.Data.Object as Charge;
-                    Console.WriteLine("A successful payment for {0} was made. In the amount of {1}", charge.BillingDetails.Name, charge.AmountCaptured);
-
-                    // Get the User ID from the metadata or other sources
-                    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    decimal amountInCurrency = charge.AmountCaptured / 100m;
-
-                    // Call the UpdateUserBalanceByUserIdAsync() function
-                    var updateResult = await _userService.UpdateUserBalanceByUserIdAsync(uid, amountInCurrency);
-
-                    // Check if the update was successful
-                    if (updateResult.Succeeded)
+                    if (charge != null)
                     {
-                        // Handle successful update, e.g., return a success response
-                        return Ok("User balance updated successfully.");
+                        //try
+                        //{
+                        //    _logger.LogInformation("A successful payment for {BillingName} was made. In the amount of {Amount}",
+                        //                      charge.BillingDetails.Name, charge.AmountCaptured);
+                        //    var stripeCustomerId = charge.CustomerId;
+
+                        //    var labelIdString = charge.Metadata["LabelId"];
+                        //    var serviceClass = charge.Metadata["ServiceClass"];
+                        //    int labelId = int.Parse(labelIdString);
+                        //    long amountCaptured = charge.AmountCaptured;
+                        //    var response = await _thunderService.ValidateChargeAsync(labelId, amountCaptured, stripeCustomerId, serviceClass);
+
+                        //    if (response.Success)
+                        //    {
+                        //        _thunderService.CreateAIOLabelAsync(labelId);
+                        //        // If validation was successful, return a success response
+                        //        return Ok(response);
+                        //    }
+                        //    else
+                        //    {
+                        //        // Log the error and return a Bad Request response with the error message
+                        //        _logger.LogError("Failed to validate charge. Error: {Error}", response.Message);
+                        //        return BadRequest($"Failed to validate charge. Error: {response.Message}");
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    _logger.LogError(ex, "Exception occurred while validating charge.");
+                        //    return StatusCode(500, "An unexpected error occurred while validating charge."+ ex);
+                        //}
                     }
                     else
                     {
-                        // Log the error and return a 400 Bad Request response
-                        var errors = string.Join(", ", updateResult.Errors.Select(e => e.Description));
-                        Console.Error.WriteLine($"Failed to update user balance. Errors: {errors}");
-                        return BadRequest("Failed to update user balance.");
+                        _logger.LogError("stripeEvent.Data.Object is not of type Charge.");
+                        return BadRequest("stripeEvent.Data.Object is not of type Charge.");
                     }
                 }
                 else if (stripeEvent.Type == Events.ChargeFailed)
                 {
                     var charge = stripeEvent.Data.Object as Charge;
-                    Console.WriteLine("A failed payment for {0} was made. In the amount of {1}", charge.BillingDetails.Name, charge.Amount);
-
-                    // Get the User ID from the metadata or other sources
-                    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    _logger.LogInformation("A failed payment for {BillingName} was made. In the amount of {Amount}", charge.BillingDetails.Name, charge.Amount);
 
                     // Perform any required actions, e.g., update your application's records or send a notification to the user
 
@@ -92,13 +117,18 @@ namespace Thunder.Controllers
             catch (StripeException e)
             {
                 // Log the error and return a 400 Bad Request response
-                Console.Error.WriteLine($"Error: {e.Message}");
-                return BadRequest("Error processing the event.");
+                _logger.LogError("Error processing the event:{Message}", e);
+                return BadRequest("Error processing the event: " + e);
+            }
+            catch (Exception e)
+            {
+                // Log the error and return a 500 Internal Server Error response
+                _logger.LogError("An unexpected error occurred while processing the event: {Message}", e);
+                return StatusCode(500, "An unexpected error occurred while processing the event: " + e + "// Here is the event: " + eventType + " //CustomerID from Charge: " + custID);
             }
 
             // Return a generic response for unhandled events
             return Ok("Event received.");
         }
     }
-
 }

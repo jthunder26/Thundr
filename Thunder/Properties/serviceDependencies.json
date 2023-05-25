@@ -1,11 +1,17 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "DefaultConnection"
-    },
     "apis1": {
       "type": "apis"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "thunderblobstorage",
+      "dynamicId": null
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": "ThundrVault",
+      "dynamicId": null
     }
   }
 }

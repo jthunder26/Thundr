@@ -1,10 +1,16 @@
 {
   "dependencies": {
-    "mssql1": {
-      "secretStore": null,
-      "resourceId": null,
-      "type": "mssql.local",
-      "connectionId": "DefaultConnection"
+    "storage1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/thunderblobstorage",
+      "type": "storage.azure",
+      "connectionId": "thunderblobstorage",
+      "dynamicId": null
+    },
+    "storage2": {
+      "ignored": "true",
+      "type": "storage",
+      "connectionId": "Azure:BlobStorage"
     }
   }
 }

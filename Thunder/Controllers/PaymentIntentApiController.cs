@@ -1,60 +1,65 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using Stripe.FinancialConnections;
+using System.Threading.Tasks;
 using Thunder.Models;
+using Thunder.Services;
 
 namespace Thunder.Controllers
 {
-    
-        [Route("create-intent")]
-        [ApiController]
-        public class CheckoutApiController : Controller
+    [Route("create-intent")]
+    [ApiController]
+    public class CheckoutApiController : Controller
+    {
+        private readonly IUserService _userService;
+        private readonly IStripeClient _stripeClient;
+        private readonly IThunderService _thunderService;
+        public CheckoutApiController(IStripeClient stripeClient, IUserService userService, IThunderService thunderService)
         {
-            public CheckoutApiController()
-            {
-                StripeConfiguration.ApiKey = "sk_test_51MxFCnDHpayIZlcAaiJXTw7ln9gD8sPbzmNtN9bBIwFmhrOMhGcoLlWHkbrE8EHUvYDmsoU7e8iCY0Jh0SWRFH8N00sbrQOelZ";
-            }
+            _userService = userService;
+            _stripeClient = stripeClient;
+            _thunderService = thunderService;   
+        }
 
-            [HttpPost]
-            public ActionResult Post([FromBody] CreateIntentRequest request)
+        [HttpPost]
+        public async Task<ActionResult> PostAsync([FromBody] CreateIntentRequest request)
+        {
+            var user = await _userService.GetCurrentUserAsync();
+           
+          
+
+            _thunderService.UpdateOrder(request.amount, request.description, request.serviceClass);
+            var options = new PaymentIntentCreateOptions
             {
-                var options = new PaymentIntentCreateOptions
+                Amount = request.amount,
+                Currency = "usd",
+                Customer = user.StripeCustomerId,
+                ReceiptEmail = user.Email,
+                Metadata = new Dictionary<string, string>
+                      {
+                        { "LabelId", request.description.ToString() },
+                        { "ServiceClass", request.serviceClass }
+
+                      },
+                
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 {
-                    Amount = request.Amount,
-                    Currency = "usd",
-                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-                    {
-                        Enabled = true,
-                    },
-                };
-                var service = new PaymentIntentService();
-                PaymentIntent intent = service.Create(options);
-                return Json(new { client_secret = intent.ClientSecret });
-            }
+                    Enabled = true,
+                }
+            };
 
-
-        //Zero-decimal currencies-
-        //    All API requests expect amounts to be provided in a currency’s smallest unit.
-        //    For example, to charge 10 USD, provide an amount value of 1000 (that is, 1000 cents).
-        private long CalculateOrderAmount(RateDTO rate)
-        {
-            string amount = rate.ourPrice;
-            if (decimal.TryParse(amount, out decimal price))
-            {
-                // Convert the price to the smallest currency unit (e.g., cents)
-                long smallestCurrencyUnit = (long)(price * 100);
-                return smallestCurrencyUnit;
-            }
-            else
-            {
-                return 0;
-            }
+            var service = new PaymentIntentService(_stripeClient);
+            PaymentIntent intent = await service.CreateAsync(options);
+            return Json(new { client_secret = intent.ClientSecret });
         }
 
         public class CreateIntentRequest
         {
-            public long Amount { get; set; }
+            public long amount { get; set; }
+            public int description { get; set; }
+            public string serviceClass { get; set; }
+            
+          
         }
     }
 }

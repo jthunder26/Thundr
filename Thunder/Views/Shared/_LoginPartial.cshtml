@@ -19,20 +19,32 @@
         </a>
     </div>
     <div class="nav-link-holder logoutholder">
-        <a asp-area ="Identity" asp-page="/Account/Manage/Index" class="nav-link w-inline-block">
-            <div>Logout</div>
-            <div class="link-block-underline"></div>
-        </a>
+        <div class="form-block-6 w-form">
+            <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" class="form-4">
+                @Html.AntiForgeryToken()
+                <input type="submit" id="logoutLink" value="Logout" class="logoutbutton w-button">
+            </form>
+           
+        </div>
     </div>
 
-@*
+
+    @* <div class="nav-link-holder logoutholder">
+        <form class="form-inline" id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" id="logoutLink" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+        <div class="link-block-underline"></div>
+    </div>
+
+
+
+
     <li class="nav-item">
         <a  class="nav-link text-dark"  title="Manage">Hello @User.Identity?.Name !</a>
     </li>
     <li class="nav-item">
-        <form  class="form-inline">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
+        
 
     </li>*@
 }

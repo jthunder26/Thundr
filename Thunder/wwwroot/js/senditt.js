@@ -1,4 +1,36 @@
-﻿if ($("body").data("title") === "Rates") {
+﻿document.getElementById("logoutLink").addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent the default link behavior
+
+    // Obtain the anti-forgery token from the form
+    var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    // Create the headers with the anti-forgery token
+    var headers = {
+        "Content-Type": "application/json",
+        "RequestVerificationToken": token
+    };
+
+    // Send an AJAX POST request to the logout endpoint
+    fetch("/Account/Logout", {
+        method: "POST",
+        headers: headers
+    })
+        .then(function (response) {
+            if (response.ok) {
+                // Successful logout, redirect to the desired page
+                window.location.href = "/";
+            } else {
+                // Handle error response if needed
+                console.error("Logout failed");
+            }
+        })
+        .catch(function (error) {
+            // Handle network or other errors
+            console.error("An error occurred during logout:", error);
+        });
+});
+
+if ($("body").data("title") === "Rates") {
 
     var ViewModel = function () {
 
@@ -87,7 +119,19 @@
         self.sendRequest = function (formElement) {
             //document.getElementById("msgDiv").style.display = "block";
             //creates a request object using the values from self.requestForm
+            //$('#loadingAnimationContainer').show();
 
+            //// Load and play the Lottie animation
+            //var animationPath = '/documents/Loading-animation-Static.json'; // Adjust the path to match your file location
+            //var animationContainer = document.getElementById('loadingAnimationContainer');
+            //var animData = {
+            //    container: animationContainer,
+            //    renderer: 'svg',
+            //    loop: true,
+            //    autoplay: true,
+            //    path: animationPath
+            //};
+            //var anim = bodymovin.loadAnimation(animData);
             var request = {
                 FromZip: self.requestForm().FromZip(),
                 ToZip: self.requestForm().ToZip(),
@@ -125,7 +169,10 @@ if ($("body").data("title") === "Ship") {
         var self = this;
         var now = new Date();
         var date = now.toLocaleDateString();
-
+        shouldShow= ko.observable(false);
+        canBuy = ko.observable(false);
+        var labelID = 0;
+        self.userBalance = ko.observable();
         self.requestForm = ko.observable({
             LabelId: ko.observable(),
             ToEmail: ko.observable(),
@@ -167,6 +214,7 @@ if ($("body").data("title") === "Ship") {
             if (p > 150 || total > 150) {
                 document.getElementById("weightError").innerHTML = "Maximum weight is 150 lbs, you entered: " + p + " lbs and " + o + " oz. Total of: " + total.toFixed(2) + " lbs";
                 madeWeight = false;
+                shouldShow(false);
             }
             else {
                 document.getElementById("weightError").innerHTML = "";
@@ -174,6 +222,7 @@ if ($("body").data("title") === "Ship") {
                 var w = total.toFixed(2);
                 self.requestForm().Weight(Math.ceil(w));
                 var after = self.requestForm().Weight();
+                shouldShow(true);
             }
 
         };
@@ -231,7 +280,7 @@ if ($("body").data("title") === "Ship") {
         self.labelRequest = ko.observable(
             {
 
-                beginningBalance: ko.observable(100),
+                beginningBalance: ko.observable(),
                 totalCost: ko.observable(),
                 totalCharge: ko.observable(),
                 endingBalance: ko.observable(),
@@ -262,24 +311,82 @@ if ($("body").data("title") === "Ship") {
             }
         );
         var isChargedEnough = false;
-        calculateBalance = function() {
-
-           const chargeDifference = parseFloat(self.labelRequest().totalCharge()) - parseFloat(self.labelRequest().totalCost());
-           var endingB = (parseFloat(self.labelRequest().beginningBalance()) + chargeDifference);
-           var roundedEnding = (endingB * 100) / 100;
-           const div = document.getElementById("endingBalanceColumn");
-            if (roundedEnding < 0) {
-               //if negative
-
-                div.style.backgroundColor = "#F17A69";
-                isChargedEnough = false;
-           } else {
-                div.style.backgroundColor = "rgba(8, 131, 35, 0.66)";
-                isChargedEnough = true;
-           }
-
-           self.labelRequest().endingBalance(Math.round(roundedEnding));
+        getUserBalance = function () {
+            $.ajax({
+                type: 'POST',
+                url: "/Home/GetUserBalance/",
+                dataType: 'text', // Set the response data type as text
+                success: function (userBalance) {
+                    var formattedBalance = parseFloat(userBalance).toFixed(2); // Parse and format the balance value
+                    self.labelRequest().beginningBalance(formattedBalance);
+                    calculateBalance();
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error here
+                    console.error('Error occurred while retrieving user balance:', error);
+                    // You can show an error message to the user or perform any other error handling logic
+                }
+            });
         }
+
+        calculateBalance = function () {
+            const div = document.getElementById("endingBalanceColumn");
+            const chargeDifference = parseFloat(self.labelRequest().totalCharge()) - parseFloat(self.labelRequest().totalCost());
+            if (isNaN(chargeDifference)) {
+                const beginningBalance = parseFloat(self.labelRequest().beginningBalance());
+                if (beginningBalance >= parseFloat(self.labelRequest().totalCost())) {
+                   
+                    div.style.backgroundColor = "rgba(8, 131, 35, 0.66)";
+                    isChargedEnough = true;
+                    canBuy(true);
+                } else {
+                    const endingBalance = beginningBalance - parseFloat(self.labelRequest().totalCost());
+                    self.labelRequest().endingBalance(endingBalance.toFixed(2));
+                    div.style.backgroundColor = "#F17A69";
+                    isChargedEnough = false;
+                    canBuy(false);
+                }
+            } else {
+                var endingB = parseFloat(self.labelRequest().beginningBalance()) + chargeDifference;
+                var roundedEnding = (endingB * 100) / 100;
+
+                if (roundedEnding < 0) {
+                    div.style.backgroundColor = "#F17A69";
+                    isChargedEnough = false;
+                    canBuy(false);
+                } else {
+                    div.style.backgroundColor = "rgba(8, 131, 35, 0.66)";
+                    isChargedEnough = true;
+                    canBuy(true);
+                }
+                self.labelRequest().endingBalance(roundedEnding.toFixed(2)); // Format the endingBalance value
+            }
+        }
+
+
+        
+        //calculateBalance = function () {
+        //    const div = document.getElementById("endingBalanceColumn");
+        //    const chargeDifference = parseFloat(self.labelRequest().totalCharge()) - parseFloat(self.labelRequest().totalCost());
+        //    if (isNaN(chargeDifference)) {
+        //        self.labelRequest().endingBalance("There is no charge");
+        //        div.style.backgroundColor = "#F17A69";
+        //        isChargedEnough = false;
+        //    } else {
+        //        var endingB = parseFloat(self.labelRequest().beginningBalance()) + chargeDifference;
+        //        var roundedEnding = (endingB * 100) / 100;
+
+        //        if (roundedEnding < 0) {
+        //            div.style.backgroundColor = "#F17A69";
+        //            isChargedEnough = false;
+        //        } else {
+        //            div.style.backgroundColor = "rgba(8, 131, 35, 0.66)";
+        //            isChargedEnough = true;
+        //        }
+        //        self.labelRequest().endingBalance(roundedEnding.toFixed(2)); // Format the endingBalance value
+        //    }
+        //}
+
 
         //defines a requestForm Object w observables placed in inputs to retrieve the value
       
@@ -296,8 +403,9 @@ if ($("body").data("title") === "Ship") {
 
             var girth = (width * 2) + (height * 2);
             var result = length + girth;
-
-            return result > 165;
+            var isOver = result > 165;
+            shouldShow(!isOver);
+            return isOver;
         });
 
         self.checkValues = function () {
@@ -312,8 +420,10 @@ if ($("body").data("title") === "Ship") {
 
             if (zeroValues.length) {
                 self.requestForm().zeroValueMessage(zeroValues.join(", ") + " cannot be 0.");
+                shouldShow(false);
             } else {
                 self.requestForm().zeroValueMessage("");
+                shouldShow(true);
             }
         };
         
@@ -664,7 +774,9 @@ if ($("body").data("title") === "Ship") {
                             self.rates(data.rates)
                             self.labelRequest().totalCost(data.selectedrate.ourPrice);
                             self.labelRequest().totalCharge(data.selectedrate.ourPrice);
-                            calculateBalance()
+                            getUserBalance();
+                            calculateBalance();
+                            labelID = data.upsOrderDetailsId;
                         }
                     }
                 });
@@ -696,13 +808,7 @@ if ($("body").data("title") === "Ship") {
                 }
             ];
             if (isChargedEnough) {
-                //$.ajax({
-                //    url: "/Dashboard/Store/",
-                //    type: "POST",
-                //    data: items,
-                //   });
-                // Show the Top Up modal when the balance is insufficient
-               /* $("#topUpModal").show();*/
+              
                 self.beingPurchased(true);
                 
                 // This is your test publishable API key.
@@ -721,15 +827,15 @@ if ($("body").data("title") === "Ship") {
                         return 0;
                     }
                 }
-               
-                const amount = self.selectedrate().ourPrice;
-                const amt = calculateOrderAmount(amount);
+             
+           
                 //currently not able to get the Client Secret from fetch below, check errors and openai
                 const stripe = Stripe("pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm");
+               // const stripe = Stripe("pk_live_51MxFCnDHpayIZlcAomIsaHnFuJDxnQJxJtQf58k2XzvoK2ZRT5Qwmbam93JzOOcS5HZsuQtZP8dMLU7ac0SsZsz5005fSBdzpr");
 
                 const options = {
                     mode: 'payment',
-                    amount: amt,
+                    amount: calculateOrderAmount(self.selectedrate().ourPrice),
                     currency: 'usd',
                     // Fully customizable with appearance API.
                     appearance: {
@@ -780,17 +886,24 @@ if ($("body").data("title") === "Ship") {
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ amount: amt })
+                        body: JSON.stringify({
+                            amount: calculateOrderAmount(self.selectedrate().ourPrice),
+                            description: labelID,
+                            serviceClass: self.createLabelObject().selectedClass()
+                            
+                        })
                     });
 
                     const { client_secret: clientSecret } = await res.json();
 
                     // Confirm the PaymentIntent using the details collected by the Payment Element
+                    const returnUrl = `${window.location.origin}/Dashboard/PaymentProcessing/`;
+
                     const { error } = await stripe.confirmPayment({
                         elements,
                         clientSecret,
                         confirmParams: {
-                            return_url: "https://localhost:7260/Dashboard/PaymentProcessing/",
+                            return_url: returnUrl,
                         },
                     });
 
@@ -810,10 +923,14 @@ if ($("body").data("title") === "Ship") {
             }
         });
 
+      
+        
 
-     
-
-        self.makeTheLabel = function (root) {
+        self.makeTheLabel = function () {
+            var root = {
+                Rate: self.selectedrate(),
+                LabelId: labelID
+            }
             $.ajax({
                 url: "/Home/makeTheLabel/",
                 type: "POST",

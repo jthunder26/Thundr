@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,18 +8,27 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
+using System.Configuration;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using Thunder.Data;
 using Thunder.Models;
+using Azure.Storage.Blobs.Models;
+using System.IO;
+using System.Runtime.CompilerServices;
+using EllipticCurve.Utils;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Thunder.Services
 {
     public interface IThunderService
     {
         void SaveReturnAddress(ReturnAddress returnAddress);
-        Task<HttpResponseMessage> CreateUPSLabelAsync(CreateUpsLabel UpsOrderDetails, string uid);
+        Task<HttpResponseMessage> CreateAIOLabelAsync(int labelId);
+        //Task<ChargeValidationResult> ValidateChargeAsync(int labelId, long amountCaptured, string stripeCustomerId, string serviceClass);
         UserDetails GetUserDeets(string uid);
         ReturnAddress GetUserAddress(string uid);
         List<LabelDetails> getLabelDetails(string uid);
@@ -27,14 +37,25 @@ namespace Thunder.Services
         Task<FileStreamResult> getLabel(string orderID, bool view = false);
         void UpdateAddress(string uid, ReturnAddress address);
         void AddOrder(UpsOrderDetails order);
+        int GetUpsOrderDetailsId(string uid);
+        void UpdateOrder(long amount, int labelId, string serviceClass);
+        Task CreateAndSaveRateCosts(int upsOrderDetailsId, List<RateDTO> rates);
+        int GetLabelCost(int labelId, string serviceClass);
+        void UpdateUnfinishedOrder(int labelId, string serviceClass);
     }
 
     public class ThunderService : IThunderService
     {
         private readonly ApplicationDbContext _db;
-        public ThunderService(ApplicationDbContext db)
+        private readonly IBlobService _blobService;
+        private readonly IUserService _userService;
+        private readonly ILogger<ThunderService> _logger;
+        public ThunderService(ApplicationDbContext db, IBlobService blobservice, IUserService userService, ILogger<ThunderService> logger)
         {
             _db = db;
+            _blobService = blobservice;
+            _userService = userService;
+            _logger = logger; // add this line
         }
         public ReturnAddress GetUserAddress(string uid)
         {
@@ -42,30 +63,122 @@ namespace Thunder.Services
             var jsonAddress = JsonConvert.SerializeObject(address);
             return address;
         }
+        public int GetLabelCost(int labelId, string serviceClass)
+        {
+            var charge = _db.RateCosts.Where(a => a.LabelId == labelId && a.serviceClass == serviceClass).FirstOrDefault();
+            
+            return charge.TotalCost;
+        }
+      
 
         public void UpdateAddress(string uid, ReturnAddress address)
         {
             var og = _db.ReturnAddress.Where(a => a.Uid == uid).FirstOrDefault();
-            _db.Remove(og);
+            if(og != null)
+            {
+                _db.Remove(og);
+            }
+            
             address.Uid = uid;
             _db.Add(address);
             _db.SaveChanges();
 
 
         }
+        //Okay ur not able to get the UPSOrderLabelID, now what?????
+
+
+
+
+
+
+
+
+
+
+        public int GetUpsOrderDetailsId(string uid)
+        {
+            var upsOrderDetail = _db.UpsOrderDetails.Where(a => a.Uid == uid && a.checkedOut == 1).FirstOrDefault();
+
+            var upsOrderDetailsId = int.Parse(upsOrderDetail.LabelId.ToString());
+
+            return upsOrderDetailsId;
+        }
+        public void UpdateOrder(long amount, int labelId, string serviceClass)
+        {
+            var uid = _userService.GetCurrentUserId();
+            var upsOrder = _db.UpsOrderDetails.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
+            if(upsOrder != null)
+            {
+
+                upsOrder.TotalAmount = int.Parse(amount.ToString());
+                upsOrder.LabelId = labelId;
+                upsOrder.Class = serviceClass;
+
+
+            }
+            _db.SaveChanges();
+        } 
+        
+        public void UpdateUnfinishedOrder(int labelId, string serviceClass)
+        {
+            var uid = _userService.GetCurrentUserId();
+            var unfinishedLabel = _db.UnfinishedLabel.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
+            if(unfinishedLabel != null)
+            {
+                unfinishedLabel.Status = 1;
+
+            }
+            _db.SaveChanges();
+        }
+        public async Task CreateAndSaveRateCosts(int upsOrderDetailsId, List<RateDTO> rates)
+        {
+            foreach (var rate in rates)
+            {
+                // Check if a RateCosts record with the same LabelId and serviceClass exists
+                var existingRateCost = _db.RateCosts.FirstOrDefault(rc => rc.LabelId == upsOrderDetailsId && rc.serviceClass == rate.serviceClass);
+                if (existingRateCost != null)
+                {
+                    // Update the TotalCost
+                    existingRateCost.TotalCost = rate.exactCost;
+                    existingRateCost.TotalCharge = 0;
+                }
+                else
+                {
+                    // Create a new RateCosts record
+                    RateCosts rateCost = new RateCosts
+                    {
+                        LabelId = upsOrderDetailsId,
+                        serviceClass = rate.serviceClass,
+                        TotalCost = rate.exactCost
+                    };
+                    _db.RateCosts.Add(rateCost);
+                }
+            }
+
+            await _db.SaveChangesAsync();
+        }
         public void AddOrder(UpsOrderDetails upsOrder)
         {
+           var orders = _db.UpsOrderDetails.Where(x => x.Uid == upsOrder.Uid);
+            foreach (var order in orders)
+            {
+                order.checkedOut = 0;
+            }
+
             // Check if an entry with the same LabelId already exists in UpsOrderDetails
             var existingUpsOrder = _db.UpsOrderDetails.FirstOrDefault(u => u.LabelId == upsOrder.LabelId);
 
             if (existingUpsOrder != null)
             {
+                upsOrder.checkedOut = 1;
                 // Update the existing entry
                 _db.Entry(existingUpsOrder).CurrentValues.SetValues(upsOrder);
             }
             else
             {
                 // Create a new entry
+                upsOrder.checkedOut = 1;
                 _db.UpsOrderDetails.Add(upsOrder);
                 _db.SaveChanges(); // Save changes to get the generated LabelId
             }
@@ -102,31 +215,6 @@ namespace Thunder.Services
         }
 
 
-
-
-        //public void AddOrder(UpsOrderDetails upsOrder)
-        //{
-        //    // Add the UpsOrderDetails object to the database
-        //    _db.Add(upsOrder);
-        //    _db.SaveChanges();
-
-        //    // Create a new UnfinishedLabel object with the corresponding UpsOrderDetails properties
-        //    var unfinishedLabel = new UnfinishedLabel
-        //    {
-        //        LabelId = upsOrder.LabelId,
-        //        Uid = upsOrder.Uid,
-        //        LabelName = upsOrder.ToName,
-        //        FromEmail = upsOrder.FromEmail,
-        //        Status = 0, // Or any initial value you'd like to set
-        //        DateCreated = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
-        //    };
-
-        //    // Add the UnfinishedLabel object to the database and save the changes
-        //    _db.Add(unfinishedLabel);
-        //    _db.SaveChanges();
-        //}
-
-
         public UserDetails GetUserDeets(string uid)
         {
             var user = _db.Users.FindAsync(uid);
@@ -136,36 +224,31 @@ namespace Thunder.Services
             userDeets.Phone = user.Result.PhoneNumber;
             return userDeets;
         }
-
-
-
+        public async Task SaveLabelToBlobStorage(string orderID)
+        {
+            // Code for saving the PDF to Blob Storage using your existing blob service implementation
+            await _blobService.SavePdfToBlobAsync(orderID);
+        }
         public async Task<FileStreamResult> getLabel(string orderID, bool view = false)
         {
-            using var client = new HttpClient();
-            var uri = "https://aio.gg/api/upsv3/order/" + orderID + "/file";
-            var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            request.Headers.Add("Auth", "c422df81-015d-632d-4a3d-3281c0b4d952");
+            var stream = await _blobService.GetPdfFromBlobAsync(orderID);
 
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            MemoryStream ms = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
+            // Set the content disposition based on the view parameter
             var contentDisposition = view ? "inline" : "attachment";
-            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue(contentDisposition)
+            var fileName = "ShippingLabel.pdf";
+
+            var response = new FileStreamResult(stream, "application/pdf")
             {
-                FileName = "ShippingLabel.pdf"
+                FileDownloadName = view ? null : fileName
             };
 
-            return new FileStreamResult(ms, "application/pdf")
-            {
-                FileDownloadName = view ? null : "ShippingLabel.pdf"
-            };
+            return response;
         }
-
 
         public void SaveReturnAddress(ReturnAddress returnAddress)
         {
             _db.Add(returnAddress);
+            _db.SaveChanges();
         }
         public List<LabelDetails> getLabelDetails(string uid)
         {
@@ -195,45 +278,81 @@ namespace Thunder.Services
 
             return upsOrderDetails;
         }
-        public async Task<HttpResponseMessage> CreateUPSLabelAsync(CreateUpsLabel UpsOrderDetails, string uid)
-        {
-            using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://aio.gg/api/upsv3/order");
-            request.Headers.Add("Auth", "c422df81-015d-632d-4a3d-3281c0b4d952");
 
-            if (string.IsNullOrEmpty(UpsOrderDetails.order.FromPhone))
+        //public async Task<ChargeValidationResult> ValidateChargeAsync(int labelId, long amountCaptured, string stripeCustomerId, string serviceClass)
+        //{
+            
+
+        //        try
+        //        {
+        //        var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId && x.Class == serviceClass);
+        //        var rc = _db.RateCosts.FirstOrDefault(x => x.LabelId == labelId && x.serviceClass == serviceClass);
+        //        var response = await _userService.UpdateUserBalanceByCustomerIdAsync(stripeCustomerId, amountCaptured);
+        //            if (response.Success)
+        //            {
+        //                var chargeCustomerResult = await _userService.ChargeCustomer(stripeCustomerId, rc.TotalCost);
+        //                if (!chargeCustomerResult.Succeeded)
+        //                {
+        //                    _logger.LogError($"Error while charging customer: {string.Join(", ", chargeCustomerResult.Errors.Select(x => x.Description))}");
+        //                    return new ChargeValidationResult { Success = false, Message = $"Error while charging customer: {string.Join(", ", chargeCustomerResult.Errors.Select(x => x.Description))}" };
+        //                }
+        //            }
+                   
+        //            return new ChargeValidationResult { Success = true, LabelId = labelId };
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError(ex, $"An error occurred when creating the label for labelId: {labelId}");
+        //            return new ChargeValidationResult { Success = false, Message = ex.Message+" Label Id:"+labelId };
+        //        }
+          
+
+        //    // Handle case where TotalAmount != TotalCost
+        //    return new ChargeValidationResult { Success = false, Message = "AmountCaptured does not equal TotalCost" };
+        //}
+
+
+        public async Task<HttpResponseMessage> CreateAIOLabelAsync(int labelId)
+        {
+            var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId);
+         
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://aio.gg/api/upsv4/order");
+            request.Headers.Add("Auth", "62527fb0-85be-5781-8fa8-8f6a12a0a0fe");
+
+            if (string.IsNullOrEmpty(UpsOrderDetails.FromPhone))
             {
-                UpsOrderDetails.order.FromPhone = GenerateRandomPhoneNumber();
+                UpsOrderDetails.FromPhone = GenerateRandomPhoneNumber();
             }
-            if (string.IsNullOrEmpty(UpsOrderDetails.order.ToPhone))
+            if (string.IsNullOrEmpty(UpsOrderDetails.ToPhone))
             {
-                UpsOrderDetails.order.ToPhone = GenerateRandomPhoneNumber();
+                UpsOrderDetails.ToPhone = GenerateRandomPhoneNumber();
             }
 
             var collection = new List<KeyValuePair<string, string>>();
-            collection.Add(new KeyValuePair<string, string>("FromName", UpsOrderDetails.order.FromName));
-            collection.Add(new KeyValuePair<string, string>("FromCompany", UpsOrderDetails.order.FromCompany));
-            collection.Add(new KeyValuePair<string, string>("FromPhone", UpsOrderDetails.order.FromPhone)); //if empty, generate random number
-            collection.Add(new KeyValuePair<string, string>("FromZip", UpsOrderDetails.order.FromZip));
-            collection.Add(new KeyValuePair<string, string>("FromAddress", UpsOrderDetails.order.FromAddress1));
-            collection.Add(new KeyValuePair<string, string>("FromAddress2", UpsOrderDetails.order.FromAddress2));
-            collection.Add(new KeyValuePair<string, string>("FromCity", UpsOrderDetails.order.FromCity));
-            collection.Add(new KeyValuePair<string, string>("FromState", UpsOrderDetails.order.FromCity));
+            collection.Add(new KeyValuePair<string, string>("FromName", UpsOrderDetails.FromName));
+            collection.Add(new KeyValuePair<string, string>("FromCompany", UpsOrderDetails.FromCompany));
+            collection.Add(new KeyValuePair<string, string>("FromPhone", UpsOrderDetails.FromPhone)); //if empty, generate random number
+            collection.Add(new KeyValuePair<string, string>("FromZip", UpsOrderDetails.FromZip));
+            collection.Add(new KeyValuePair<string, string>("FromAddress", UpsOrderDetails.FromAddress1));
+            collection.Add(new KeyValuePair<string, string>("FromAddress2", UpsOrderDetails.FromAddress2));
+            collection.Add(new KeyValuePair<string, string>("FromCity", UpsOrderDetails.FromCity));
+            collection.Add(new KeyValuePair<string, string>("FromState", UpsOrderDetails.FromCity));
 
-            collection.Add(new KeyValuePair<string, string>("ToName", UpsOrderDetails.order.ToName));
-            collection.Add(new KeyValuePair<string, string>("ToCompany", UpsOrderDetails.order.ToCompany));
-            collection.Add(new KeyValuePair<string, string>("ToPhone", UpsOrderDetails.order.ToPhone));
-            collection.Add(new KeyValuePair<string, string>("ToZip", UpsOrderDetails.order.ToZip));
-            collection.Add(new KeyValuePair<string, string>("ToAddress", UpsOrderDetails.order.ToAddress1));
-            collection.Add(new KeyValuePair<string, string>("ToAddress2", UpsOrderDetails.order.ToAddress2));
-            collection.Add(new KeyValuePair<string, string>("ToCity", UpsOrderDetails.order.ToCity));
-            collection.Add(new KeyValuePair<string, string>("ToState", UpsOrderDetails.order.ToState));
+            collection.Add(new KeyValuePair<string, string>("ToName", UpsOrderDetails.ToName));
+            collection.Add(new KeyValuePair<string, string>("ToCompany", UpsOrderDetails.ToCompany));
+            collection.Add(new KeyValuePair<string, string>("ToPhone", UpsOrderDetails.ToPhone));
+            collection.Add(new KeyValuePair<string, string>("ToZip", UpsOrderDetails.ToZip));
+            collection.Add(new KeyValuePair<string, string>("ToAddress", UpsOrderDetails.ToAddress1));
+            collection.Add(new KeyValuePair<string, string>("ToAddress2", UpsOrderDetails.ToAddress2));
+            collection.Add(new KeyValuePair<string, string>("ToCity", UpsOrderDetails.ToCity));
+            collection.Add(new KeyValuePair<string, string>("ToState", UpsOrderDetails.ToState));
 
-            collection.Add(new KeyValuePair<string, string>("Weight", UpsOrderDetails.order.Weight.ToString()));
-            collection.Add(new KeyValuePair<string, string>("Length", UpsOrderDetails.order.Length.ToString()));
-            collection.Add(new KeyValuePair<string, string>("Width", UpsOrderDetails.order.Width.ToString()));
-            collection.Add(new KeyValuePair<string, string>("Height", UpsOrderDetails.order.Height.ToString()));
-            collection.Add(new KeyValuePair<string, string>("Class", UpsOrderDetails.serviceClass));
+            collection.Add(new KeyValuePair<string, string>("Weight", UpsOrderDetails.Weight.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Length", UpsOrderDetails.Length.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Width", UpsOrderDetails.Width.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Height", UpsOrderDetails.Height.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Class", UpsOrderDetails.Class));
 
             var content = new FormUrlEncodedContent(collection);
             request.Content = content;
@@ -250,8 +369,8 @@ namespace Thunder.Services
                 LabelDetails labelDetails = new LabelDetails();
                 labelDetails.OrderId = createLabelResponse.Data.Order.ID;
                 labelDetails.LabelName = createLabelResponse.Data.Order.ToFormatted;
-                labelDetails.Email = UpsOrderDetails.order.FromEmail;
-                labelDetails.Uid = uid;
+                labelDetails.Email = UpsOrderDetails.FromEmail;
+                labelDetails.Uid = UpsOrderDetails.Uid;
                 labelDetails.DateCreated = DateTime.Now.ToString();
                 _db.Add(labelDetails);
             }

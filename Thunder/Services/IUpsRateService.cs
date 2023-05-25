@@ -535,6 +535,7 @@ namespace Thunder.Services
                     rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
 
                     int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
+                    rate.exactCost = price;
                     int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
                     //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
                     //rate.ourPriceString = "$" + rate.ourPrice;
@@ -571,43 +572,69 @@ namespace Thunder.Services
             QuickRateDTO quickRates = new QuickRateDTO();
             quickRates.IsError = false;
             var rates = new List<RateDTO>();
+          
+            var id = 0;
             foreach (var ratedShipment in upsResponse.RateResponse.RatedShipment)
             {
-                if (ServiceNames.TryGetValue(ratedShipment.Service.Code, out string serviceName))
+                bool hasService = ServiceNames.ContainsKey(ratedShipment.Service.Code);
+                if (hasService)
                 {
-                    RateDTO rate = new RateDTO();
 
-                    rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
+                    RateDTO rate = new RateDTO();
                     var serviceCode = ratedShipment.Service.Code;
-                    rate.deliveryDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date[4..6] + "/" + ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date[6..];
-                    rate.deliveryTime = DateTime.ParseExact(ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time, "HHmmss", CultureInfo.InvariantCulture).ToString("hh:mm tt");
-                    rate.deliveryDayOfWeek = WeekDayConverter[ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek];
-                    rate.upsPrice = $"${ratedShipment.TotalCharges.MonetaryValue} retail";
+                    rate.ID = id;
+                    id++;
+                    string unparsedDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
+                    string parsedDate = unparsedDate.Substring(4, 2) + "/" + unparsedDate.Substring(6, 2);
+                    rate.deliveryDate = parsedDate.ToString();
+
+                    var unparsedTime = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
+                    DateTime DT = DateTime.ParseExact(unparsedTime, "HHmmss", new System.Globalization.CultureInfo("en-US"));
+                    var n = DT.ToString("hh:mm tt");
+                    rate.deliveryTime = n;
+
                     string serviceClass;
                     ServiceClass.TryGetValue(serviceCode, out serviceClass);
                     rate.serviceClass = serviceClass;
+                    rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
+
+                    var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
+                    //if (rate.service == "UPS Next Day Air")
+                    //{
+                    //    rate.isSelected = true;
+                    //}
+                    if (dayCode == "SAT")
+                    {
+                        rate.service += " [Saturday Delivery]";
+                    }
+                    string day;
+                    WeekDayConverter.TryGetValue(dayCode, out day);
+                    rate.deliveryDayOfWeek = day;
+
+                    rate.estimatedDelivery = "Estimated Delivery " + rate.deliveryDayOfWeek + " " + rate.deliveryDate + " by " + rate.deliveryTime + " if shipped today";
+                    rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
+
                     int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
                     int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
-
+                    //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
+                    //rate.ourPriceString = "$" + rate.ourPrice;
                     var dp = ApplyDiscount(rate.serviceClass, weight, price);
                     rate.ourPrice = dp.Price;
                     rate.percentSaved = dp.Discount;
                     rate.percentSavedString = "Save " + dp.Discount + "%";
                     rate.ourPriceString = "$" + rate.ourPrice;
-                    rate.estimatedDelivery = $"Estimated Delivery {rate.deliveryDayOfWeek} {rate.deliveryDate} by {rate.deliveryTime} if shipped today";
-                    //rate.ourPriceString = $"${rate.ourPrice}";
-                    rate.isFastest = false;
+
+
                     rates.Add(rate);
+
                 }
             }
-            SetAttributes(rates);
-            //var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
-            //if (lowestRate != null)
-            //{
-            //    lowestRate.isCheapest = true;
-            //}
 
-            //quickRates.Rates = rates.OrderBy(x => x.ourPrice).ToList();
+            //var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
+            //lowestRate.isCheapest = true;
+
+            SetAttributes(rates);
+          
             quickRates.Rates = rates;
             return quickRates;
         }

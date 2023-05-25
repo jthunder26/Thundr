@@ -23,14 +23,17 @@ namespace Thunder.Controllers
         private readonly IUpsRateService _upsRateService;
         private readonly IMailService _mailService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService; 
         public DashboardController(ILogger<HomeController> logger, IThunderService thunderService,
-            IUpsRateService upsRateService, UserManager<ApplicationUser> userManager, IMailService mailService)
+            IUpsRateService upsRateService, UserManager<ApplicationUser> userManager, IMailService mailService,
+             IUserService userService)
         {
             _logger = logger;
             _thunderService = thunderService;
             _upsRateService = upsRateService;
             _userManager = userManager;
             _mailService = mailService;
+            _userService = userService;
         }
 
         //public void Store(Items items)
@@ -47,9 +50,11 @@ namespace Thunder.Controllers
             return userAddress;
         }
         [Authorize]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> DashboardAsync()
         {
-
+            
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           
             return View("Orders");
         }
         [Authorize]
@@ -65,8 +70,25 @@ namespace Thunder.Controllers
             return View();
         } 
         [Authorize]
-        public IActionResult Ship()
+        public async Task<IActionResult> ShipAsync()
         {
+            var result = await _userService.FindByStripeCustomerIdAsync("cus_NwXJcN02PW5vlO");
+            if (result.Success)
+            {
+                var updated = await _userService.UpdateUserBalance(result.uid, 20000);
+
+                if (updated)
+                {
+                   var labelCost = _thunderService.GetLabelCost(14, "ups_next_day_air_early");
+                    var result2 = await _userService.ChargeUserBalance(result.uid, labelCost);
+                    if(result2.Success)
+                    {
+                        _thunderService.UpdateUnfinishedOrder(14, "ups_next_day_air_early");
+                    }
+                }
+            }
+               
+                 
 
             return View();
         }
@@ -89,6 +111,7 @@ namespace Thunder.Controllers
 
             return View();
         }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> ValidatePasswordAsync(string password)
         {
@@ -104,7 +127,7 @@ namespace Thunder.Controllers
             return Json(new { result });
         }
 
-       
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateUserInfoAsync(string fullName, string email, string phone)
         {
@@ -124,7 +147,7 @@ namespace Thunder.Controllers
 
             return Json(new { redirectToUrl = Url.Action("Account", "Dashboard") });
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateAddress(ReturnAddress address)
         {
@@ -156,24 +179,25 @@ namespace Thunder.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing the request.", details = ex.Message });
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> makeTheLabel(CreateUpsLabel UpsOrderDetails)
-        {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            try
-            {
-                var response = await _thunderService.CreateUPSLabelAsync(UpsOrderDetails, uid);
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> makeTheLabel(CreateUpsLabel UpsOrderDetails)
+        //{
+        //    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    try
+        //    {
+        //        var response = await _thunderService.CreateUPSLabelAsync(UpsOrderDetails, uid);
 
-                // Handle success case, e.g. return a success message or redirect to another page
-                return RedirectToAction("Dashboard");
-            }
-            catch (ApplicationException ex)
-            {
-                // Handle the error case, e.g. return an error message or show an error view
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View("Dashboard", UpsOrderDetails);
-            }
-        }
+        //        // Handle success case, e.g. return a success message or redirect to another page
+        //        return RedirectToAction("Dashboard");
+        //    }
+        //    catch (ApplicationException ex)
+        //    {
+        //        // Handle the error case, e.g. return an error message or show an error view
+        //        ModelState.AddModelError(string.Empty, ex.Message);
+        //        return View("Dashboard", UpsOrderDetails);
+        //    }
+        //}
         public List<LabelDetails> getLabelDetails()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -205,6 +229,7 @@ namespace Thunder.Controllers
                 return View("Error", new ErrorViewModel { ErrorMessage = $"An error occurred while viewing the label: {ex.Message}" });
             }
         }
+        [Authorize]
         public IActionResult Register()
         {
             return Redirect("~/Identity/Account/Register");

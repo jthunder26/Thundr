@@ -1,10 +1,17 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Thunder.Data;
 using Thunder.Models;
 using Thunder.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Azure;
+using Azure.Storage.Queues;
+using Azure.Storage.Blobs;
+using Azure.Core.Extensions;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace Thunder
 {
@@ -17,67 +24,101 @@ namespace Thunder
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<ApplicationUser>(options =>
+            var keyVaultEndpoint = Configuration["KeyVault:Endpoint"];
+            if (!string.IsNullOrEmpty(keyVaultEndpoint))
             {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.User.RequireUniqueEmail = true;
-            }) 
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddServerSideBlazor();
-            services.AddControllersWithViews();
-            //services.AddHttpClient();
-            services.AddRazorPages();
-            services.Configure<StripeOptions>(Configuration.GetSection("Stripe"));
-            services.AddSingleton(x => new StripeClient(x.GetRequiredService<IOptions<StripeOptions>>().Value.ApiKey));
-            services.AddScoped<IThunderService, ThunderService>();
-            services.AddScoped<IUpsRateService, UpsRateService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddTransient<IMailService, MailService>(); //transient bc we want a new object with each request. 
-            services.AddHsts(options =>
-            {
-                options.Preload = true;
-                options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
-            });
-            
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
+                var credential = new DefaultAzureCredential();
+                var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
+
+                var thunderDbSecretName = "thundrdb";
+                var thunderDbSecret = secretClient.GetSecret(thunderDbSecretName);
+
+                var thunderBlobStorageSecretName = "thunderblobstorage";
+                var thunderBlobStorageSecret = secretClient.GetSecret(thunderBlobStorageSecretName);
+
+                var clientSecretSecretName = "clientSecret";
+                var clientSecretSecret = secretClient.GetSecret(clientSecretSecretName);
+
+                //UNCOMMENT WHEN GOING LIVE AND COMMENT OUT THE TEST ONE
+                //var stripeApiKeySecretName = "StripeApiKey";
+                var stripeApiKeySecretName = "StripeTestApiKey";
+                var stripeApiKeySecret = secretClient.GetSecret(stripeApiKeySecretName);
+
+                var stripeWebhookSecretName = "StripeEndpointSecret";
+                var stripeWebhookSecret = secretClient.GetSecret(stripeWebhookSecretName);
+
+                services.AddDbContext<ApplicationDbContext>(options =>
+                {
+                    options.UseSqlServer(thunderDbSecret.Value.Value);
+                   
+
+                });
+
+                services.AddSingleton<IStripeClient>(x => new Stripe.StripeClient(stripeApiKeySecret.Value.Value));
+
+                services.Configure<StripeOptions>(options =>
+                {
+                    options.ApiKey = stripeApiKeySecret.Value.Value;
+                    options.WebhookSecret = stripeWebhookSecret.Value.Value;
+                });
+
+                services.AddScoped<IBlobService>(provider =>
+                {
+                    var connectionString = thunderBlobStorageSecret.Value.Value;
+                    var containerName = "pdfcontainer";
+                    var blobServiceClient = new BlobServiceClient(connectionString);
+                    return new BlobService(blobServiceClient, containerName);
+                });
+
+                services.AddAuthentication()
+                    .AddMicrosoftAccount(options =>
                     {
-                        policy.AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                        options.ClientId = "5bad5faa-9e81-47d3-828e-48a2e68f46af";
+                        options.ClientSecret = clientSecretSecret.Value.Value;
+                        options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "uid");
                     });
-            });
 
-            //CORS should be configured with a strict policy to allow only the required origins, headers,
-            //and methods. Allowing any origin, header, or method could expose your application to security risks.
-            //Consider updating the CORS configuration to something like this:
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("MyPolicy",
-            //        builder =>
-            //        {
-            //            builder.WithOrigins("https://example.com")
-            //                   .AllowAnyHeader()
-            //                   .AllowAnyMethod();
-            //        });
-            //});
+                services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.User.RequireUniqueEmail = true;
+                })
+                    .AddEntityFrameworkStores<ApplicationDbContext>();
 
+                services.AddSingleton(secretClient);
+                services.AddScoped<IThunderService, ThunderService>();
+                services.AddScoped<IUpsRateService, UpsRateService>();
+                services.AddScoped<IUserService, UserService>();
+                services.AddTransient<IMailService, MailService>();
+                services.AddHttpContextAccessor();
+
+                services.AddHsts(options =>
+                {
+                    options.Preload = true;
+                    options.IncludeSubDomains = true;
+                    options.MaxAge = TimeSpan.FromDays(365);
+                });
+
+                services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(
+                        policy =>
+                        {
+                            policy.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        });
+                });
+
+                services.AddControllersWithViews();
+                services.AddRazorPages();
+            }
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //StripeConfiguration.ApiKey = "sk_test_51MxFCnDHpayIZlcAaiJXTw7ln9gD8sPbzmNtN9bBIwFmhrOMhGcoLlWHkbrE8EHUvYDmsoU7e8iCY0Jh0SWRFH8N00sbrQOelZ";
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -86,12 +127,11 @@ namespace Thunder
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors();
             app.UseRouting();
 
             app.UseAuthentication();
@@ -103,7 +143,6 @@ namespace Thunder
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
-                endpoints.MapBlazorHub();
             });
         }
     }
