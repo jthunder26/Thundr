@@ -28,6 +28,7 @@ namespace Thunder.Services
     {
         void SaveReturnAddress(ReturnAddress returnAddress);
         Task<HttpResponseMessage> CreateAIOLabelAsync(int labelId);
+        Task<HttpResponseMessage> CreateShipsterLabelAsync(int labelId);
         //Task<ChargeValidationResult> ValidateChargeAsync(int labelId, long amountCaptured, string stripeCustomerId, string serviceClass);
         UserDetails GetUserDeets(string uid);
         ReturnAddress GetUserAddress(string uid);
@@ -41,7 +42,7 @@ namespace Thunder.Services
         void UpdateOrder(long amount, int labelId, string serviceClass);
         Task CreateAndSaveRateCosts(int upsOrderDetailsId, List<RateDTO> rates);
         int GetLabelCost(int labelId, string serviceClass);
-        void UpdateUnfinishedOrder(int labelId, string serviceClass);
+        bool UpdateUnfinishedOrder(int labelId, string serviceClass, string uid);
     }
 
     public class ThunderService : IThunderService
@@ -50,6 +51,16 @@ namespace Thunder.Services
         private readonly IBlobService _blobService;
         private readonly IUserService _userService;
         private readonly ILogger<ThunderService> _logger;
+        private static readonly Dictionary<string, string> shipsterClasses = new Dictionary<string, string>
+        {
+            { "ups_ground", "48d32fbd-0034-46ff-9b7a-046f3f5b640f" },
+            { "ups_next_day_air", "f8952c0f-3467-4a90-ae7b-a52840254218" },
+            { "ups_next_day_air_early", "deac3347-10ab-412d-b577-4b90d7566bd6" },
+            { "UPS Next Day Air Saturday", "f9a64e11-a254-4b16-96d8-444c6fcfa5ed" },
+            { "ups_2nd_day_air", "7ab79f8d-d687-4c7e-91b1-d35bcff2ab42" },
+            { "ups_3_day_select", "a7ae8133-7a45-4581-b1b2-caca53ab95e2" }
+        };
+
         public ThunderService(ApplicationDbContext db, IBlobService blobservice, IUserService userService, ILogger<ThunderService> logger)
         {
             _db = db;
@@ -120,16 +131,17 @@ namespace Thunder.Services
             _db.SaveChanges();
         } 
         
-        public void UpdateUnfinishedOrder(int labelId, string serviceClass)
+        public bool UpdateUnfinishedOrder(int labelId, string serviceClass, string uid)
         {
-            var uid = _userService.GetCurrentUserId();
-            var unfinishedLabel = _db.UnfinishedLabel.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
+         
+           var unfinishedLabel = _db.UnfinishedLabel.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
             if(unfinishedLabel != null)
             {
                 unfinishedLabel.Status = 1;
-
+                _db.SaveChanges();
+                return true;
             }
-            _db.SaveChanges();
+            return false;
         }
         public async Task CreateAndSaveRateCosts(int upsOrderDetailsId, List<RateDTO> rates)
         {
@@ -165,9 +177,15 @@ namespace Thunder.Services
             {
                 order.checkedOut = 0;
             }
+            var unfinishedOrderDetails = _db.UnfinishedLabel.Where(x => x.Uid == upsOrder.Uid);
+            foreach (var order in unfinishedOrderDetails)
+            {
+                order.Status = 0;
+            }
 
             // Check if an entry with the same LabelId already exists in UpsOrderDetails
             var existingUpsOrder = _db.UpsOrderDetails.FirstOrDefault(u => u.LabelId == upsOrder.LabelId);
+            var existingUnfinishedOrder = _db.UnfinishedLabel.FirstOrDefault(u => u.LabelId == upsOrder.LabelId);
 
             if (existingUpsOrder != null)
             {
@@ -195,7 +213,8 @@ namespace Thunder.Services
                     Uid = upsOrder.Uid,
                     LabelName = upsOrder.ToName,
                     FromEmail = upsOrder.FromEmail,
-                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Status = 1
                 });
             }
             else
@@ -207,7 +226,8 @@ namespace Thunder.Services
                     Uid = upsOrder.Uid,
                     LabelName = upsOrder.ToName,
                     FromEmail = upsOrder.FromEmail,
-                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Status = 1
                 });
             }
 
@@ -279,39 +299,96 @@ namespace Thunder.Services
             return upsOrderDetails;
         }
 
-        //public async Task<ChargeValidationResult> ValidateChargeAsync(int labelId, long amountCaptured, string stripeCustomerId, string serviceClass)
-        //{
-            
+     
 
-        //        try
-        //        {
-        //        var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId && x.Class == serviceClass);
-        //        var rc = _db.RateCosts.FirstOrDefault(x => x.LabelId == labelId && x.serviceClass == serviceClass);
-        //        var response = await _userService.UpdateUserBalanceByCustomerIdAsync(stripeCustomerId, amountCaptured);
-        //            if (response.Success)
-        //            {
-        //                var chargeCustomerResult = await _userService.ChargeCustomer(stripeCustomerId, rc.TotalCost);
-        //                if (!chargeCustomerResult.Succeeded)
-        //                {
-        //                    _logger.LogError($"Error while charging customer: {string.Join(", ", chargeCustomerResult.Errors.Select(x => x.Description))}");
-        //                    return new ChargeValidationResult { Success = false, Message = $"Error while charging customer: {string.Join(", ", chargeCustomerResult.Errors.Select(x => x.Description))}" };
-        //                }
-        //            }
-                   
-        //            return new ChargeValidationResult { Success = true, LabelId = labelId };
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError(ex, $"An error occurred when creating the label for labelId: {labelId}");
-        //            return new ChargeValidationResult { Success = false, Message = ex.Message+" Label Id:"+labelId };
-        //        }
-          
+        public async Task<HttpResponseMessage> CreateShipsterLabelAsync(int labelId)
+        {
+            var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId);
+         
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://shipster.org/api/order");
+            request.Headers.Add("X-Api-Auth", "64cf7549-13e8-6081-b22f-ccd8bf1bdfff");
 
-        //    // Handle case where TotalAmount != TotalCost
-        //    return new ChargeValidationResult { Success = false, Message = "AmountCaptured does not equal TotalCost" };
-        //}
+            if (string.IsNullOrEmpty(UpsOrderDetails.FromPhone))
+            {
+                UpsOrderDetails.FromPhone = GenerateRandomPhoneNumber();
+            }
+            if (string.IsNullOrEmpty(UpsOrderDetails.ToPhone))
+            {
+                UpsOrderDetails.ToPhone = GenerateRandomPhoneNumber();
+            }
+
+            var collection = new List<KeyValuePair<string, string>>();
+            collection.Add(new KeyValuePair<string, string>("FromCountry", "US"));
+            collection.Add(new KeyValuePair<string, string>("ToCountry", "US"));
+            collection.Add(new KeyValuePair<string, string>("FromName", UpsOrderDetails.FromName));
+            collection.Add(new KeyValuePair<string, string>("FromCompany", UpsOrderDetails.FromCompany));
+            collection.Add(new KeyValuePair<string, string>("FromPhone", UpsOrderDetails.FromPhone)); //if empty, generate random number
+            collection.Add(new KeyValuePair<string, string>("FromZip", UpsOrderDetails.FromZip));
+            collection.Add(new KeyValuePair<string, string>("FromStreet", UpsOrderDetails.FromAddress1));
+            collection.Add(new KeyValuePair<string, string>("FromStreet2", UpsOrderDetails.FromAddress2));
+            collection.Add(new KeyValuePair<string, string>("FromCity", UpsOrderDetails.FromCity));
+            collection.Add(new KeyValuePair<string, string>("FromState", UpsOrderDetails.FromCity));
+
+            collection.Add(new KeyValuePair<string, string>("ToName", UpsOrderDetails.ToName));
+            collection.Add(new KeyValuePair<string, string>("ToCompany", UpsOrderDetails.ToCompany));
+            collection.Add(new KeyValuePair<string, string>("ToPhone", UpsOrderDetails.ToPhone));
+            collection.Add(new KeyValuePair<string, string>("ToZip", UpsOrderDetails.ToZip));
+            collection.Add(new KeyValuePair<string, string>("ToStreet", UpsOrderDetails.ToAddress1));
+            collection.Add(new KeyValuePair<string, string>("ToStreet2", UpsOrderDetails.ToAddress2));
+            collection.Add(new KeyValuePair<string, string>("ToCity", UpsOrderDetails.ToCity));
+            collection.Add(new KeyValuePair<string, string>("ToState", UpsOrderDetails.ToState));
+
+            collection.Add(new KeyValuePair<string, string>("Weight", UpsOrderDetails.Weight.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Length", UpsOrderDetails.Length.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Width", UpsOrderDetails.Width.ToString()));
+            collection.Add(new KeyValuePair<string, string>("Height", UpsOrderDetails.Height.ToString()));
+            collection.Add(new KeyValuePair<string, string>("DisableValidate", "true"));
+            string shipsterClassId;
+            shipsterClasses.TryGetValue(UpsOrderDetails.Class, out shipsterClassId);
+            collection.Add(new KeyValuePair<string, string>("Type", shipsterClassId));
+
+            var content = new FormUrlEncodedContent(collection);
+            request.Content = content;
 
 
+            var response = await client.SendAsync(request);
+            //response = {StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:\r\n{\r\n  Date: Sat, 08 Apr 2023 00:57:31 GMT\r\n  Transfer-Encoding: chunked\r\n  Connection: keep-alive\r\n  Vary: Accept-Encoding\r\n  Strict-Transport-Security: max-age=31536000\r\n  X-Frame-Options: SAMEORIGIN\r\n  X-XSS-Protection: 1; mode=block\r\n  X-Content-Type-Options: nosniff\r\n  CF-Cache-Status: DYNAMIC\r\n  Report-To: {\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=dloTtye7MAdOXx42XrShE%2FU%2BRjYVVyBN11MtoHVP9qmDFMV9mFPsYDIiCYx53Z8e3AHIGZ6eun89GGfxyWmNx11r%2BN8PqA5piIwyTNV4Mz11OD74Zt024XFlJczhDZsGjNhudZY%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}\r\n  NEL: {\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}\r\n  Server: cloudflare\r\n  CF-RAY: 7b468e7cdbfee976-DFW\r\n  Alt-Svc: h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400\r\n  Content-Type: application/json\r\n}}
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            //responseContent = {"Success":false,"Error":"You do not have enough balance","Data":[]}
+            var shipsterResponse = JsonConvert.DeserializeObject<ShipsterResponse>(responseContent);
+            if (shipsterResponse.Success)
+            {
+                LabelDetails labelDetails = new LabelDetails();
+                labelDetails.OrderId = shipsterResponse.Data.Order.ID;
+                labelDetails.LabelName = shipsterResponse.Data.Order.ToFormatted;
+                labelDetails.Email = UpsOrderDetails.FromEmail;
+                labelDetails.Uid = UpsOrderDetails.Uid;
+                labelDetails.DateCreated = DateTime.Now.ToString();
+                labelDetails.LabelService = 2;
+                _db.Add(labelDetails);
+            }
+            _db.SaveChanges();
+            if (!response.IsSuccessStatusCode || !shipsterResponse.Success)
+            {
+                var errorMessage = "";
+                if (!response.IsSuccessStatusCode)
+                {
+                    errorMessage = await response.Content.ReadAsStringAsync();
+                }
+                if (shipsterResponse.Success == false)
+                {
+
+                    errorMessage += shipsterResponse.Error;
+
+
+                }
+                throw new ApplicationException($"Error creating UPS label: {response.StatusCode}. {errorMessage}");
+            }
+
+            return response;
+        }  
         public async Task<HttpResponseMessage> CreateAIOLabelAsync(int labelId)
         {
             var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId);
@@ -363,7 +440,7 @@ namespace Thunder.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
             //responseContent = {"Success":false,"Error":"You do not have enough balance","Data":[]}
-            var createLabelResponse = JsonConvert.DeserializeObject<CreateLabelResponse>(responseContent);
+            var createLabelResponse = JsonConvert.DeserializeObject<AIOResponse>(responseContent);
             if (createLabelResponse.Success)
             {
                 LabelDetails labelDetails = new LabelDetails();
@@ -371,6 +448,7 @@ namespace Thunder.Services
                 labelDetails.LabelName = createLabelResponse.Data.Order.ToFormatted;
                 labelDetails.Email = UpsOrderDetails.FromEmail;
                 labelDetails.Uid = UpsOrderDetails.Uid;
+                labelDetails.LabelService = 1;
                 labelDetails.DateCreated = DateTime.Now.ToString();
                 _db.Add(labelDetails);
             }
@@ -398,8 +476,9 @@ namespace Thunder.Services
         private string GenerateRandomPhoneNumber()
         {
             var random = new Random();
-            return $"555{random.Next(1000, 9999)}{random.Next(1000, 9999)}";
+            return $"555{random.Next(100, 999)}{random.Next(1000, 9999)}";
         }
+
     }
     public class ItemizedChargesConverter : JsonConverter
     {

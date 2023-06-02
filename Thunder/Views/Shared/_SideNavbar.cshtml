@@ -1,12 +1,13 @@
 ﻿@* 
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    As soon as my window screen is 475px wide, my image suddenly returns an error trying to find the image. But as soon as the screen size goes larger or smaller it renders again. Here is the image hmtl:
+
 *@
 @{
 }
 <div data-animation="default" data-collapse="small" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="dashnav w-nav">
     <div class="sidedashboardnavcontainer w-container">
         <a href="@Url.ActionLink("Index","Home")" class="brand-link nav w-nav-brand">
-            <img src="~/images/Icon.png" loading="lazy" width="75" height="75" srcset="~/images/Icon-p-500.png 500w, ~/images/Icon.png 690w" sizes="(max-width: 479px) 100vw, (max-width: 991px) 24.453125px, (max-width: 1439px) 2vw, 24.453125px" alt="" class="brand">
+            <img src="/images/Icon.png" loading="lazy" width="75" height="75" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" sizes="(max-width: 479px) 100vw, (max-width: 991px) 24.453125px, (max-width: 1439px) 2vw, 24.453125px" alt="" class="brand">
             <div class="text-block-12 gradient-text nav">Thunder</div>
         </a>
         <div class="menu-button-2 w-nav-button">
@@ -27,7 +28,7 @@
                 <div class="dashnavlinkitem">
                     <a href="@Url.ActionLink("Orders","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/Feature-Image.svg" loading="lazy" width="24" alt="" class="image-2"></div>
+                            <div class="dashnavlinkicondiv"><img src="/images/Feature-Image.svg" loading="lazy" width="24" alt="" class="image-2"></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Orders</div>
                             </div>
@@ -37,7 +38,7 @@
                 <div class="dashnavlinkitem">
                     <a href="@Url.ActionLink("Orders","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/Gradient-Image.svg" loading="lazy" width="25" alt="" class="image-2"></div>
+                            <div class="dashnavlinkicondiv"><img src="/images/Gradient-Image.svg" loading="lazy" width="25" alt="" class="image-2"></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Monitor</div>
                             </div>
@@ -47,7 +48,7 @@
                 <div class="dashnavlinkitem">
                     <a href="@Url.ActionLink("Account","Dashboard")" aria-current="page" class="dashnavlink w-inline-block w--current">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="~/images/Support-Image.svg" loading="lazy" width="24" alt=""></div>
+                            <div class="dashnavlinkicondiv"><img src="/images/Support-Image.svg" loading="lazy" width="24" alt=""></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Account</div>
                             </div>

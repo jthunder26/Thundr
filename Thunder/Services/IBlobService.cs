@@ -23,9 +23,9 @@ namespace Thunder.Services
         public async Task<string> SavePdfToBlobAsync(string orderID)
         {
             using var client = new HttpClient();
-            var uri = "https://aio.gg/api/upsv3/order/" + orderID + "/file";
+            var uri = "https://aio.gg/api/upsv4/order/" + orderID + "/file";
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            request.Headers.Add("Auth", "c422df81-015d-632d-4a3d-3281c0b4d952");
+            request.Headers.Add("Auth", "62527fb0-85be-5781-8fa8-8f6a12a0a0fe");
 
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();

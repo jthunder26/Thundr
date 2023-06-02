@@ -1,34 +1,83 @@
-﻿document.getElementById("logoutLink").addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent the default link behavior
+﻿// Get the logout button
+var logoutButton = document.getElementById('logoutLink');
 
-    // Obtain the anti-forgery token from the form
-    var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+// If the logout button exists, attach the event listener
+if (logoutButton) {
+    logoutButton.addEventListener("click", function (event) {
+        showLoadingScreen()
+        event.preventDefault(); // Prevent the default link behavior
 
-    // Create the headers with the anti-forgery token
-    var headers = {
-        "Content-Type": "application/json",
-        "RequestVerificationToken": token
-    };
+        // Obtain the anti-forgery token from the form
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    // Send an AJAX POST request to the logout endpoint
-    fetch("/Account/Logout", {
-        method: "POST",
-        headers: headers
-    })
-        .then(function (response) {
-            if (response.ok) {
-                // Successful logout, redirect to the desired page
-                window.location.href = "/";
-            } else {
-                // Handle error response if needed
-                console.error("Logout failed");
-            }
+        // Create the headers with the anti-forgery token
+        var headers = {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": token
+        };
+
+        // Send an AJAX POST request to the logout endpoint
+        fetch("/Account/Logout", {
+            method: "POST",
+            headers: headers
         })
-        .catch(function (error) {
-            // Handle network or other errors
-            console.error("An error occurred during logout:", error);
-        });
+            .then(function (response) {
+                if (response.ok) {
+                    hideLoadingScreen();
+                    // Successful logout, redirect to the desired page
+                    window.location.href = "/";
+                } else {
+                    hideLoadingScreen();
+                    // Handle error response if needed
+                    console.error("Logout failed");
+                }
+            })
+            .catch(function (error) {
+                hideLoadingScreen();
+                // Handle network or other errors
+                console.error("An error occurred during logout:", error);
+            });
+    });
+}
+// Include the lottie-web library. You can also use a CDN, install via npm or yarn, or include it in your build process
+
+const animation = lottie.loadAnimation({
+    container: document.getElementById('lottie-animation'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: false,
+    path: '/documents/Loading-animation-Static.json'
 });
+function showLoadingScreen() {
+    // Enable loading screen
+    document.getElementById('lottie-animation').style.visibility = 'visible';
+
+    // Start the animation
+    animation.play();
+
+    // Disable all buttons on the page
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => button.disabled = true);
+
+    // Disable scrolling
+    document.body.style.overflow = 'hidden';
+}
+
+function hideLoadingScreen() {
+    // Stop the animation
+    animation.stop();
+
+    // Disable loading screen
+    document.getElementById('lottie-animation').style.visibility = 'hidden';
+
+    // Enable all buttons on the page
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => button.disabled = false);
+
+    // Enable scrolling
+    document.body.style.overflow = 'auto';
+}
+
 
 if ($("body").data("title") === "Rates") {
 
@@ -117,21 +166,7 @@ if ($("body").data("title") === "Rates") {
         self.error = ko.observable();
 
         self.sendRequest = function (formElement) {
-            //document.getElementById("msgDiv").style.display = "block";
-            //creates a request object using the values from self.requestForm
-            //$('#loadingAnimationContainer').show();
-
-            //// Load and play the Lottie animation
-            //var animationPath = '/documents/Loading-animation-Static.json'; // Adjust the path to match your file location
-            //var animationContainer = document.getElementById('loadingAnimationContainer');
-            //var animData = {
-            //    container: animationContainer,
-            //    renderer: 'svg',
-            //    loop: true,
-            //    autoplay: true,
-            //    path: animationPath
-            //};
-            //var anim = bodymovin.loadAnimation(animData);
+            showLoadingScreen();
             var request = {
                 FromZip: self.requestForm().FromZip(),
                 ToZip: self.requestForm().ToZip(),
@@ -147,10 +182,17 @@ if ($("body").data("title") === "Rates") {
                 dataType: 'json',
                 data: request,
                 success: function (data) {
-                    //sends it to the rates variable which is a List<Rates> which have
-                    //the values data-binded to div block values in the html 
+                    // hides the loading screen once data has been received
+                    hideLoadingScreen();
+
+                    // sends it to the rates variable which is a List<Rates> which have
+                    // the values data-binded to div block values in the html 
                     self.rates(data)
                     self.scrollToRates();
+                },
+                error: function () {
+                    // hides the loading screen if there was an error with the request
+                    hideLoadingScreen();
                 }
             });
         }
@@ -192,7 +234,7 @@ if ($("body").data("title") === "Ship") {
             FromState: ko.observable(),
             FromZip: ko.observable(),
             FromPhone: ko.observable(),
-            IsReturnAddress: ko.observable(),
+            IsReturnAddress: ko.observable(true),
             Length: ko.observable(),
             Width: ko.observable(),
             Height: ko.observable(),
@@ -364,34 +406,7 @@ if ($("body").data("title") === "Ship") {
         }
 
 
-        
-        //calculateBalance = function () {
-        //    const div = document.getElementById("endingBalanceColumn");
-        //    const chargeDifference = parseFloat(self.labelRequest().totalCharge()) - parseFloat(self.labelRequest().totalCost());
-        //    if (isNaN(chargeDifference)) {
-        //        self.labelRequest().endingBalance("There is no charge");
-        //        div.style.backgroundColor = "#F17A69";
-        //        isChargedEnough = false;
-        //    } else {
-        //        var endingB = parseFloat(self.labelRequest().beginningBalance()) + chargeDifference;
-        //        var roundedEnding = (endingB * 100) / 100;
-
-        //        if (roundedEnding < 0) {
-        //            div.style.backgroundColor = "#F17A69";
-        //            isChargedEnough = false;
-        //        } else {
-        //            div.style.backgroundColor = "rgba(8, 131, 35, 0.66)";
-        //            isChargedEnough = true;
-        //        }
-        //        self.labelRequest().endingBalance(roundedEnding.toFixed(2)); // Format the endingBalance value
-        //    }
-        //}
-
-
-        //defines a requestForm Object w observables placed in inputs to retrieve the value
-      
-
-
+    
       
        
         self.zeroValueMessage = ko.observable("");
@@ -699,6 +714,7 @@ if ($("body").data("title") === "Ship") {
         });
 
         self.sendRequest = function (formElement) {
+            showLoadingScreen();
             isOverweight()
             //document.getElementById("msgDiv").style.display = "block";
             if (madeWeight) {
@@ -730,7 +746,7 @@ if ($("body").data("title") === "Ship") {
                     Weight: self.requestForm().Weight()
                 };
                 self.createLabelObject().selectedOrder(request);
-                if (request.IsReturnAdress == true) {
+                if (request.IsReturnAdress) {
                     var addy = {
                         AddressLine1: request.FromAddress1,
                         AddressLine2: request.FromAddress2,
@@ -744,10 +760,7 @@ if ($("body").data("title") === "Ship") {
                     $.ajax({
                         type: 'POST',
                         url: "/Dashboard/UpdateAddress/",
-                        data: addy,
-                        success: function (response) {
-                            window.location.href = response.redirectToUrl;
-                        }
+                        data: addy
                     });
                 }
 
@@ -764,6 +777,7 @@ if ($("body").data("title") === "Ship") {
                     data: request,
                     //data is a FullRateDTO
                     success: function (data) {
+                        hideLoadingScreen();
                         if (data.isError == true) {
                             alert(data.error)
                         }
@@ -778,11 +792,17 @@ if ($("body").data("title") === "Ship") {
                             calculateBalance();
                             labelID = data.upsOrderDetailsId;
                         }
+                    },
+                    error: function () {
+                        // hides the loading screen if there was an error with the request
+                        hideLoadingScreen();
                     }
                 });
             } else if (!madeWeight) {
+                hideLoadingScreen();
                 alert("Please enter a valid weight.")
             }
+            
         }
         self.selectRate = function (rate) {
             const og = self.selectedrate();
@@ -951,7 +971,7 @@ if ($("body").data("title") === "Ship") {
 if ($("body").data("title") === "Orders") {
    
     var ViewModel = function () {
-
+        showLoadingScreen()
         var self = this;
   
         self.hasNoLabel= ko.observable(false);
@@ -965,6 +985,7 @@ if ($("body").data("title") === "Orders") {
             url: "/Home/getLabelDetails/",
             dataType: 'json',
             success: function (data) {
+                hideLoadingScreen()
                 self.labels(data);
                 if (data.length == 0) {
                     self.hasNoLabel(true);
@@ -976,7 +997,7 @@ if ($("body").data("title") === "Orders") {
             url: "/Home/getUnfinishedOrders/",
             dataType: 'json',
             success: function (data) {
-                
+                hideLoadingScreen()
                 if (data.length == 0) {
                     self.hasNotStarted(true);
                 }
@@ -989,6 +1010,7 @@ if ($("body").data("title") === "Orders") {
 
 
         self.completeLabel = function (label, event) {
+            showLoadingScreen()
             console.log('completeLabel function called');
 
             // The UnfinishedLabel object is accessible using `label`
@@ -999,6 +1021,7 @@ if ($("body").data("title") === "Orders") {
 
             // Redirect the user to the DashboardController/Ship page
             window.location.href = "/Dashboard/Ship";
+            hideLoadingScreen()
         };
 
 
@@ -1063,6 +1086,7 @@ if ($("body").data("title") === "Account") {
             accUpdate = true;
         };
         addy = function () {
+            showLoadingScreen()
             var request = {
                 AddressLine1: self.returnAddress().FromAddress1(),
                 AddressLine2: self.returnAddress().FromAddress2(),
@@ -1078,14 +1102,16 @@ if ($("body").data("title") === "Account") {
                 url: "/Dashboard/UpdateAddress/",
                 data: request,
                 success: function (response) {
-                    window.location.href = response.redirectToUrl;
-                }
+                    hideLoadingScreen()
+                    window.location.reload();
+                g}
             });
 
         };
         
         var isVerified = false;
         self.validatePass = function (formElement) {
+            showLoadingScreen()
            
         // Get a reference to the password input field in the popup
             var passwordInput = document.getElementById('passConfirm');
@@ -1100,7 +1126,7 @@ if ($("body").data("title") === "Account") {
                 data: { password: password },
                 success: function (data) {
                     // If the password is valid, submit the form
-
+                    hideLoadingScreen()
                     if (data) {
                         if (accUpdate) {
                             var request = {
@@ -1119,17 +1145,15 @@ if ($("body").data("title") === "Account") {
                             });
 
                         }
-                        if (addressUpdate)
-                        {
-                           
-
-                        }
+                       
                        
                     } else {
+                        hideLoadingScreen()
                         alert('Invalid password. Please try again.');
                     }
                 },
                 error: function () {
+                    hideLoadingScreen()
                     alert('An error occurred while validating your password. Please try again.');
                 }
             });

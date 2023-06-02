@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Storage.Queues;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,15 +24,16 @@ namespace Thunder.Controllers
         private readonly IThunderService _thunderService;
         private readonly ILogger<WebhookController> _logger;
         private readonly string _webhookSecret;
-        public WebhookController(IUserService userService, ILogger<WebhookController> logger, SecretClient secretClient, IThunderService thunderService)
+        private readonly IBackgroundQueueService _backgroundQueueService;
+
+        public WebhookController(IUserService userService, ILogger<WebhookController> logger, SecretClient secretClient, IThunderService thunderService, IBackgroundQueueService backgroundQueueService)
         {
             _userService = userService;
             _logger = logger;
-
-
+            _backgroundQueueService = backgroundQueueService;
             var stripeWebhookSecret = secretClient.GetSecret("StripeEndpointSecret");
             _webhookSecret = stripeWebhookSecret.Value.Value;
-            _thunderService = thunderService;   
+            _thunderService = thunderService;
         }
 
         [HttpPost]
@@ -39,14 +41,12 @@ namespace Thunder.Controllers
         [Consumes("application/json")]
         public async Task<IActionResult> Index()
         {
-            var eventType = "";
-            var custID = "";
+            var json = await new StreamReader(Request.Body).ReadToEndAsync();
+
             try
             {
-                var json = await new StreamReader(Request.Body).ReadToEndAsync();
-
                 var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _webhookSecret);
-                eventType = stripeEvent.Type;
+
                 if (stripeEvent.Type == Events.PaymentIntentSucceeded)
                 {
                     return Ok("User PaymentIntent Succeeded.");
@@ -60,38 +60,45 @@ namespace Thunder.Controllers
                 if (stripeEvent.Type == Events.ChargeSucceeded)
                 {
                     var charge = stripeEvent.Data.Object as Charge;
+
                     if (charge != null)
                     {
-                        //try
-                        //{
-                        //    _logger.LogInformation("A successful payment for {BillingName} was made. In the amount of {Amount}",
-                        //                      charge.BillingDetails.Name, charge.AmountCaptured);
-                        //    var stripeCustomerId = charge.CustomerId;
+                        _logger.LogInformation("A successful payment for {BillingName} was made. In the amount of {Amount}",
+                                              charge.BillingDetails.Name, charge.AmountCaptured);
 
-                        //    var labelIdString = charge.Metadata["LabelId"];
-                        //    var serviceClass = charge.Metadata["ServiceClass"];
-                        //    int labelId = int.Parse(labelIdString);
-                        //    long amountCaptured = charge.AmountCaptured;
-                        //    var response = await _thunderService.ValidateChargeAsync(labelId, amountCaptured, stripeCustomerId, serviceClass);
+                        var stripeCustomerId = charge.CustomerId;
+                        var labelIdString = charge.Metadata["LabelId"];
+                        var serviceClass = charge.Metadata["ServiceClass"];
+                        int labelId = int.Parse(labelIdString);
+                        int amountCaptured = (int)charge.AmountCaptured;
 
-                        //    if (response.Success)
-                        //    {
-                        //        _thunderService.CreateAIOLabelAsync(labelId);
-                        //        // If validation was successful, return a success response
-                        //        return Ok(response);
-                        //    }
-                        //    else
-                        //    {
-                        //        // Log the error and return a Bad Request response with the error message
-                        //        _logger.LogError("Failed to validate charge. Error: {Error}", response.Message);
-                        //        return BadRequest($"Failed to validate charge. Error: {response.Message}");
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    _logger.LogError(ex, "Exception occurred while validating charge.");
-                        //    return StatusCode(500, "An unexpected error occurred while validating charge."+ ex);
-                        //}
+                        var result = await _userService.FindByStripeCustomerIdAsync(stripeCustomerId);
+                        if (result.Success)
+                        {
+                            var updated = await _userService.UpdateUserBalance(result.uid, amountCaptured);
+
+                            if (updated)
+                            {
+                                var labelCost = _thunderService.GetLabelCost(labelId, serviceClass);
+                                var result2 = await _userService.ChargeUserBalance(result.uid, labelCost);
+                                if (result2.Success)
+                                {
+                                    var response = _thunderService.UpdateUnfinishedOrder(labelId, serviceClass, result.uid);
+                                    _backgroundQueueService.EnqueueCreateLabel(labelIdString);
+                                    return Ok(result2.Message);
+                                }
+                            }
+                            else
+                            {
+                                _logger.LogError("Failed to update User balance. Error: {Error}", result.uid);
+                                return BadRequest($"Failed to update user balance. Error: {result.uid}");
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogError("Failed to find User with this customer ID. Error: {Error}", result.Message);
+                            return BadRequest($"Failed to find User with this customer ID. Error: {result.Message}");
+                        }
                     }
                     else
                     {
@@ -103,31 +110,20 @@ namespace Thunder.Controllers
                 {
                     var charge = stripeEvent.Data.Object as Charge;
                     _logger.LogInformation("A failed payment for {BillingName} was made. In the amount of {Amount}", charge.BillingDetails.Name, charge.Amount);
-
-                    // Perform any required actions, e.g., update your application's records or send a notification to the user
-
-                    // Return a success response to acknowledge receipt of the event
                     return Ok("Charge failed event received.");
-                }
-                else
-                {
-                    // Handle other event types
                 }
             }
             catch (StripeException e)
             {
-                // Log the error and return a 400 Bad Request response
                 _logger.LogError("Error processing the event:{Message}", e);
                 return BadRequest("Error processing the event: " + e);
             }
             catch (Exception e)
             {
-                // Log the error and return a 500 Internal Server Error response
                 _logger.LogError("An unexpected error occurred while processing the event: {Message}", e);
-                return StatusCode(500, "An unexpected error occurred while processing the event: " + e + "// Here is the event: " + eventType + " //CustomerID from Charge: " + custID);
+                return StatusCode(500, "An unexpected error occurred while processing the event: " + e);
             }
 
-            // Return a generic response for unhandled events
             return Ok("Event received.");
         }
     }

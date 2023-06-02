@@ -119,7 +119,7 @@ namespace Thunder.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    //await _mailService.SendEmailAsync(Input.Email, "New Login", "<h1>Hey! New login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
+                    await _mailService.SendEmailAsync(Input.Email, "New Login", "<h1>New login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
                     _logger.LogInformation("User logged in.");
                     return RedirectToAction("Ship", "Dashboard");
                 }

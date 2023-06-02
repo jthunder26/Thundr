@@ -86,7 +86,10 @@ namespace Thunder.Services
             // Check if the user has enough balance to be charged
             if (user.UserBalance < chargeAmount)
             {
-
+                var unfinishedLabelDetails = _db.UnfinishedLabel.FirstOrDefault(x => x.Uid == userId && x.Status == 1);
+                unfinishedLabelDetails.Message = "Not Enough Balance. User Balance: " + user.UserBalance / 100 + ".Label Cost: " + chargeAmount / 100;
+                unfinishedLabelDetails.Error = 1;
+                _db.SaveChanges();
                 return new ChargeValidationResult
                 {
                     Success = false,

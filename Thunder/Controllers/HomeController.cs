@@ -89,7 +89,7 @@ namespace Thunder.Controllers
         [Authorize]
         public IActionResult Dashboard()
         {
-
+        
             return View();
         }
 
@@ -114,7 +114,7 @@ namespace Thunder.Controllers
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userBalance = await _userService.GetUserBalance(uid);
                
-                return Ok(userBalance); // Return the decimal value without the dollar sign
+                return Ok(userBalance/100); // Return the decimal value without the dollar sign
             }
             catch (Exception ex)
             {

@@ -41,8 +41,6 @@ namespace Thunder
                 var clientSecretSecretName = "clientSecret";
                 var clientSecretSecret = secretClient.GetSecret(clientSecretSecretName);
 
-                //UNCOMMENT WHEN GOING LIVE AND COMMENT OUT THE TEST ONE
-                //var stripeApiKeySecretName = "StripeApiKey";
                 var stripeApiKeySecretName = "StripeTestApiKey";
                 var stripeApiKeySecret = secretClient.GetSecret(stripeApiKeySecretName);
 
@@ -52,11 +50,19 @@ namespace Thunder
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseSqlServer(thunderDbSecret.Value.Value);
-                   
-
                 });
 
                 services.AddSingleton<IStripeClient>(x => new Stripe.StripeClient(stripeApiKeySecret.Value.Value));
+
+                services.AddSingleton<IBackgroundQueueService>(provider =>
+                {
+                    var createLabelQueueName = "createlabelqueue";
+                    var retrieveStoreQueueName = "retrievestorequeue";
+                    return new BackgroundQueueService(secretClient, createLabelQueueName, retrieveStoreQueueName);
+                });
+
+                services.AddHostedService<CreateLabelBackgroundService>();
+                services.AddHostedService<RetrieveAndStoreLabelBackgroundService>();
 
                 services.Configure<StripeOptions>(options =>
                 {

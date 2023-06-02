@@ -28,25 +28,6 @@
         </div>
     </div>
 
-
-    @* <div class="nav-link-holder logoutholder">
-        <form class="form-inline" id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
-            @Html.AntiForgeryToken()
-            <button type="submit" id="logoutLink" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-        <div class="link-block-underline"></div>
-    </div>
-
-
-
-
-    <li class="nav-item">
-        <a  class="nav-link text-dark"  title="Manage">Hello @User.Identity?.Name !</a>
-    </li>
-    <li class="nav-item">
-        
-
-    </li>*@
 }
 else
 {
@@ -73,10 +54,5 @@ else
                 <div class="white-background-button-color"></div>
             </a>
         </div>
-    @*<li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" >Login</a>
-    </li>*@
+
 }

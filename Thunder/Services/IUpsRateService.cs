@@ -29,6 +29,7 @@ namespace Thunder.Services
             {"12", "UPS 3 Day Select"},
             {"03", "UPS Ground"}
         };
+      
         private static readonly Dictionary<string, string> ServiceClass = new Dictionary<string, string>
         {
             {"14", "ups_next_day_air_early"},
@@ -37,7 +38,7 @@ namespace Thunder.Services
             {"12", "ups_3_day_select"},
             {"03", "ups_ground"}
         };
-
+       
         private static readonly Dictionary<string, string> WeekDayConverter = new Dictionary<string, string>
         {
             {"MON", "Monday"},
@@ -48,8 +49,7 @@ namespace Thunder.Services
             {"SAT", "Saturday"}
         };
 
-
-
+       
         private static Dictionary<string, Dictionary<int, double>> DiscountMatrix = new Dictionary<string, Dictionary<int, double>>
         {
             {"ups_ground", new Dictionary<int, double>

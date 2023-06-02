@@ -53,7 +53,7 @@ namespace Thunder.Controllers
         public async Task<IActionResult> DashboardAsync()
         {
             
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           
            
             return View("Orders");
         }
@@ -72,23 +72,7 @@ namespace Thunder.Controllers
         [Authorize]
         public async Task<IActionResult> ShipAsync()
         {
-            var result = await _userService.FindByStripeCustomerIdAsync("cus_NwXJcN02PW5vlO");
-            if (result.Success)
-            {
-                var updated = await _userService.UpdateUserBalance(result.uid, 20000);
-
-                if (updated)
-                {
-                   var labelCost = _thunderService.GetLabelCost(14, "ups_next_day_air_early");
-                    var result2 = await _userService.ChargeUserBalance(result.uid, labelCost);
-                    if(result2.Success)
-                    {
-                        _thunderService.UpdateUnfinishedOrder(14, "ups_next_day_air_early");
-                    }
-                }
-            }
-               
-                 
+          
 
             return View();
         }
@@ -149,11 +133,11 @@ namespace Thunder.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UpdateAddress(ReturnAddress address)
+        public async void UpdateAddress(ReturnAddress address)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _thunderService.UpdateAddress(uid, address);
-            return Json(new { redirectToUrl = Url.Action("Account", "Dashboard") });
+           
         }
         [HttpPost]
         public List<RateDTO> requestRates(NewRate quickRate)
@@ -204,31 +188,31 @@ namespace Thunder.Controllers
             var list = _thunderService.getLabelDetails(uid);
             return list;
         }
-        public async Task<IActionResult> DownloadLabel(string orderID)
-        {
-            try
-            {
-                return await _thunderService.getLabel(orderID, false);
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions and return an appropriate error view or message
-                return View("Error", new ErrorViewModel { ErrorMessage = $"An error occurred while downloading the label: {ex.Message}" });
-            }
-        }
+        //public async Task<IActionResult> DownloadLabel(string orderID)
+        //{
+        //    try
+        //    {
+        //        return await _thunderService.getLabel(orderID, false);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle exceptions and return an appropriate error view or message
+        //        return View("Error", new ErrorViewModel { ErrorMessage = $"An error occurred while downloading the label: {ex.Message}" });
+        //    }
+        //}
 
-        public async Task<IActionResult> ViewLabel(string orderID)
-        {
-            try
-            {
-                return await _thunderService.getLabel(orderID, true);
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions and return an appropriate error view or message
-                return View("Error", new ErrorViewModel { ErrorMessage = $"An error occurred while viewing the label: {ex.Message}" });
-            }
-        }
+        //public async Task<IActionResult> ViewLabel(string orderID)
+        //{
+        //    try
+        //    {
+        //        return await _thunderService.getLabel(orderID, true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle exceptions and return an appropriate error view or message
+        //        return View("Error", new ErrorViewModel { ErrorMessage = $"An error occurred while viewing the label: {ex.Message}" });
+        //    }
+        //}
         [Authorize]
         public IActionResult Register()
         {

@@ -7,7 +7,7 @@
 <body data-title="Ship">
     <div style="display:none;opacity:0" class="confirmpasswordpopup">
         <div class="container popup">
-            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
             <div class="center-text popup">
                 <div class="hero-text-holder">
                     <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
@@ -29,6 +29,8 @@
             </div>
         </div>
     </div>
+ 
+
 <div class="section dashboard">
     <div class="columns-21 w-row">
         <div class="w-col w-col-9">
@@ -36,7 +38,7 @@
         </div>
         <div class="column-20 w-col w-col-3">
             <div class="container-4 w-container">
-                <img src="~/images/Media-Image.svg" loading="lazy" width="40" alt="" class="image-6">
+                <img src="/images/Media-Image.svg" loading="lazy" width="40" alt="" class="image-6">
                 <div class="text-block-31">Upload a <br>Spreadsheet</div>
             </div>
         </div>
@@ -46,10 +48,10 @@
             <div class="createlabelformblock w-form">
                 <form data-bind="submit: sendRequest" id="createLabelForm" autocomplete="off" name="wf-form-ship" data-name="ship" method="post">
                     <div data-bind="with: requestForm">
-                        <label for="EmailTo-2" class="field-label">Ship To</label>
+                            <label for="EmailTo" class="field-label">Ship To</label>
                         <div class="w-row">
                             <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="Email" data-name="Email" placeholder="Email (optional)" id="EmailTo" data-bind="value: ToEmail"></div>
-                            <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="PhoneTo" data-name="PhoneTo" placeholder="Phone (optional)" id="ToPhone" data-bind="value: ToPhone"></div>
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="10" pattern="\d{10}" placeholder="Phone (optional)" id="ToPhone" data-bind="value: ToPhone"></div>
                         </div>
                         <div class="w-row">
                             <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="Name" data-name="Name" placeholder="Name" id="ToName" required="" data-bind="value: ToName"></div>
@@ -121,9 +123,9 @@
                             </div>
                         </div>
 
-                        <label for="EmailTo-2" class="field-label">Ship From</label>
+                            <label for="FromName" class="field-label">Ship From</label>
                         <div class="w-row">
-                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromName-3" data-name="From Name 3" placeholder="Name"  required="" data-bind="value: FromName"></div>
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" id="FromName" data-name="From Name 3" placeholder="Name"  required="" data-bind="value: FromName"></div>
                             <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromCompany-3" data-name="From Company 3" placeholder="Company (optional)" data-bind="value: FromCompany"></div>
                         </div>
                         <div class="w-row">
@@ -192,11 +194,11 @@
                                     <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="FromZip-2" data-name="From Zip 2" placeholder="Zipcode" id="FromZip" required="" data-bind="value: FromZip"></div>
                                 </div>
                             </div>
-                            <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="FromPhone-2" data-name="From Phone 2" placeholder="Phone" id="FromPhone" required="" data-bind="value: FromPhone"></div>
-                        </div><label class="w-checkbox checkbox-field"><input type="checkbox" id="checkbox-2" name="checkbox-2" data-name="Checkbox 2" class="w-checkbox-input checkbox-2" data-bind="value: IsReturnAddress"><span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
+                                <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="10" pattern="\d{10}" placeholder="Phone" id="FromPhone" required="" data-bind="value: FromPhone"></div>
+                            </div><label for="checkbox2" class="w-checkbox checkbox-field"><input type="checkbox" id="returnAddressCheckbox" class="w-checkbox-input checkbox-2" data-bind="checked: IsReturnAddress" checked><span class="checkbox-label-2 w-form-label" for="checkbox-2">Use this address as the Return Address on my shipping labels</span></label>
                         <div class="columns-5 w-row">
                             <div class="w-col w-col-6">
-                                <label for="ZipFrom" class="field-label-4">Dimensions (Inches)</label>
+                                    <label for="Length" class="field-label-4">Dimensions (Inches)</label>
                                 <div class="w-row">
                                     <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="length-2" id="Length" placeholder="Length" required="" data-bind="textInput: Length, event: { input: $parent.checkValues }"></div>
                                     <div class="w-col w-col-4"><input type="text" class="input-field w-input" maxlength="256" name="width-2" id="Width" placeholder="Width" required="" data-bind="textInput: Width, event: { input: $parent.checkValues }"></div>
@@ -206,10 +208,10 @@
                                 </div>
                             </div>
                             <div class="w-col w-col-6">
-                                <label for="toZip-2" class="field-label-5">Weight</label>
+                                    <label for="pounds" class="field-label-5">Weight</label>
                                 <div class="w-row">
-                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="pounds-3" data-name="Pounds 3" placeholder="Pounds" id="pounds-3" required="" data-bind="textInput: Pounds, event:{ input: isOverweight }"></div>
-                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ounces-2" data-name="Ounces 2" placeholder="Ounces" id="ounces-2" data-bind="textInput: Ounces, event:{ input: isOverweight }"></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="pounds-3" data-name="Pounds 3" placeholder="Pounds" id="pounds" required="" data-bind="textInput: Pounds, event:{ input: isOverweight }"></div>
+                                    <div class="w-col w-col-6"><input type="text" class="input-field w-input" maxlength="256" name="ounces-2" data-name="Ounces 2" placeholder="Ounces" id="ounces" data-bind="textInput: Ounces, event:{ input: isOverweight }"></div>
                                     <div id="weightError"></div>
                                 </div>
                             </div>
@@ -235,7 +237,7 @@
                                             <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
                                                 <div class="quick-access-card spacing fullrate">
                                                     <div class="columns fullrate w-row">
-                                                        <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
+                                                        <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
                                                         <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
                                                               <div id="serviceType" class="text-block" data-bind="text: service"></div>
                                                         </div>
@@ -278,7 +280,7 @@
                                             <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
                                                 <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
                                                     <div class="columns w-row">
-                                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="~/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
+                                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
                                                             <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
                                                            <div id="serviceType" class="text-block" data-bind="text: service"></div>
                                                         </div>
@@ -318,7 +320,7 @@
                             <div data-w-id="1f3f4983-4002-22ab-1572-1a446b988579" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="labellinkcard buylabel">
                                 <div data-bind="with: labelRequest">
                                 <div>
-                                    <h6 class="heading">Confrim Purchase</h6>
+                                    <h6 class="heading">Confirm Purchase</h6>
                                 </div>
                                 <div class="block-content">
                                     <div class="columns-10 w-row">

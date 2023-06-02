@@ -22,8 +22,8 @@
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
     <script src="~/js/knockout-3.5.1.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    
-   
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie.min.js"></script>
@@ -62,6 +62,10 @@
         @Html.Partial((string)(ViewBag.NavbarPartial ?? "_DefaultNavbar"))
 </header>
     <div class="container">
+        <div id="lottie-animation" class="loading-screen">
+            <!-- Lottie animation will be inserted here -->
+        </div>
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
