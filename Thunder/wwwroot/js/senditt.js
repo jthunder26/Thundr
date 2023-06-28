@@ -78,6 +78,21 @@ function hideLoadingScreen() {
     document.body.style.overflow = 'auto';
 }
 
+var submitButton =document.getElementById('registerBtn');
+
+// If the submit button exists, attach the event listener
+if (submitButton) {
+    submitButton.addEventListener("click", function (event) {
+        // Prevent the default submit behavior
+        event.preventDefault();
+
+        // Show loading screen
+        showLoadingScreen();
+
+        // Submit the form manually
+        event.target.form.submit();
+    });
+}
 
 if ($("body").data("title") === "Rates") {
 
@@ -707,8 +722,7 @@ if ($("body").data("title") === "Ship") {
         }
 
         addressAutocomplete(document.getElementById("autocomplete-container"), (data) => {
-            console.log("Selected option: ");
-            console.log(data);
+           
         }, {
             placeholder: "Enter an address here"
         });
@@ -850,12 +864,12 @@ if ($("body").data("title") === "Ship") {
              
            
                 //currently not able to get the Client Secret from fetch below, check errors and openai
-                const stripe = Stripe("pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm");
-               // const stripe = Stripe("pk_live_51MxFCnDHpayIZlcAomIsaHnFuJDxnQJxJtQf58k2XzvoK2ZRT5Qwmbam93JzOOcS5HZsuQtZP8dMLU7ac0SsZsz5005fSBdzpr");
+               // const stripe = Stripe("pk_test_51MxFCnDHpayIZlcAytKURkjtSmxLNLAd0V2noxps5R1Of0zyHxD67diq4jeehDxzSW2TbyC7Wpu8gDpGi6ros1vU009J6Nf8zm");
+                const stripe = Stripe("pk_live_51MxFCnDHpayIZlcAomIsaHnFuJDxnQJxJtQf58k2XzvoK2ZRT5Qwmbam93JzOOcS5HZsuQtZP8dMLU7ac0SsZsz5005fSBdzpr");
 
                 const options = {
                     mode: 'payment',
-                    amount: calculateOrderAmount(self.selectedrate().ourPrice),
+                    amount: calculateOrderAmount(self.labelRequest().totalCharge()),
                     currency: 'usd',
                     // Fully customizable with appearance API.
                     appearance: {
@@ -908,6 +922,7 @@ if ($("body").data("title") === "Ship") {
                         },
                         body: JSON.stringify({
                             amount: calculateOrderAmount(self.selectedrate().ourPrice),
+                            charged: calculateOrderAmount(self.labelRequest().totalCharge()),
                             description: labelID,
                             serviceClass: self.createLabelObject().selectedClass()
                             
@@ -979,39 +994,36 @@ if ($("body").data("title") === "Orders") {
 
         self.labels = ko.observableArray();
         self.unfinishedLabels = ko.observableArray();
-
+       
         $.ajax({
             type: 'GET',
-            url: "/Home/getLabelDetails/",
+            url: "/Dashboard/getLabelDetails/",
             dataType: 'json',
             success: function (data) {
+                
                 hideLoadingScreen()
-                self.labels(data);
-                if (data.length == 0) {
+                if (data.finishedOrders.length == 0) {
                     self.hasNoLabel(true);
                 }
-            }
-        });
-        $.ajax({
-            type: 'GET',
-            url: "/Home/getUnfinishedOrders/",
-            dataType: 'json',
-            success: function (data) {
-                hideLoadingScreen()
-                if (data.length == 0) {
+                else {
+                    self.labels(data.finishedOrders);
+                }
+                if (data.unfinishedOrders.length == 0) {
                     self.hasNotStarted(true);
                 }
 
                 else {
-                    self.unfinishedLabels(data);
+                    self.unfinishedLabels(data.unfinishedOrders);
+
                 }
             }
         });
+       
 
 
         self.completeLabel = function (label, event) {
             showLoadingScreen()
-            console.log('completeLabel function called');
+            
 
             // The UnfinishedLabel object is accessible using `label`
             var labelId = label.labelId;

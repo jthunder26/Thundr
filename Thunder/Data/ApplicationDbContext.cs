@@ -28,19 +28,18 @@ namespace Thunder.Data
         public DbSet<UpsOrderDetails> UpsOrderDetails { get; set; }
         public DbSet<RateCosts> RateCosts { get; set; }
         public DbSet<ReturnAddress> ReturnAddress { get; set; }
-        public DbSet<LabelDetails> LabelDetails { get; set; }
-        public DbSet<UnfinishedLabel> UnfinishedLabel { get; set; }
+        public DbSet<LabelDetail> LabelDetail { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<UpsOrderDetails>()
                 .HasOne(uo => uo.UnfinishedLabel)
                 .WithOne(ul => ul.UpsOrderDetails)
-                .HasForeignKey<UnfinishedLabel>(ul => ul.LabelId);
-            modelBuilder.Entity<ReturnAddress>().ToTable("RateCosts");
+                .HasForeignKey<LabelDetail>(ul => ul.LabelId);
+            modelBuilder.Entity<RateCosts>().ToTable("RateCosts");
             modelBuilder.Entity<ReturnAddress>().ToTable("ReturnAddress");
-            modelBuilder.Entity<LabelDetails>().ToTable("LabelDetails");
-            modelBuilder.Entity<UnfinishedLabel>().ToTable("UnfinishedLabel");
+           // modelBuilder.Entity<LabelDetails>().ToTable("LabelDetails");
+            modelBuilder.Entity<LabelDetail>().ToTable("LabelDetail");
             modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
             
         }

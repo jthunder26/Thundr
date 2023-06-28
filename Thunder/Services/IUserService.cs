@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Security.Policy;
 using Thunder.Models;
+using Microsoft.Azure.Documents;
 
 
 namespace Thunder.Services
@@ -22,6 +23,7 @@ namespace Thunder.Services
     {
         Task<ApplicationUser> GetCurrentUserAsync();
         string GetCurrentUserId();
+        Task<UserDeets> GetUserDeetsAsync(string uid);
         Task<FindUserResult> FindByStripeCustomerIdAsync(string stripeCustomerId);
         //Task<ChargeValidationResult> UpdateUserBalanceByCustomerIdAsync(string stripeCustomerId, long amountCaptured);
         //Task<IdentityResult> ChargeCustomer(string stripeCustomerId, int charge);
@@ -38,18 +40,25 @@ namespace Thunder.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<UserService> _logger;
+       
         
-        public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
+        public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
-            _logger = logger;
+           
             _httpContextAccessor = httpContextAccessor;
             
         }
 
 
-
+        public async Task<UserDeets> GetUserDeetsAsync (string uid)
+        {
+            var user = await _userManager.FindByIdAsync(uid);
+            UserDeets ud = new UserDeets();
+            ud.FullName = user.FullName;
+            ud.Email = user.Email;
+            return ud;  
+        }
 
         public async Task<bool> UpdateUserBalance(string userId, int balanceToAdd)
         {
@@ -86,7 +95,7 @@ namespace Thunder.Services
             // Check if the user has enough balance to be charged
             if (user.UserBalance < chargeAmount)
             {
-                var unfinishedLabelDetails = _db.UnfinishedLabel.FirstOrDefault(x => x.Uid == userId && x.Status == 1);
+                var unfinishedLabelDetails = _db.LabelDetail.FirstOrDefault(x => x.Uid == userId && x.Status == 1);
                 unfinishedLabelDetails.Message = "Not Enough Balance. User Balance: " + user.UserBalance / 100 + ".Label Cost: " + chargeAmount / 100;
                 unfinishedLabelDetails.Error = 1;
                 _db.SaveChanges();
@@ -160,53 +169,7 @@ namespace Thunder.Services
             };
         }
 
-        //public async Task<ChargeValidationResult> UpdateUserBalanceByCustomerIdAsync(string stripeCustomerId, long amountCaptured)
-        //{
-        //    var findResult = await FindByStripeCustomerIdAsync(stripeCustomerId);
-
-        //    if (!findResult.Success)
-        //    {
-        //        return new ChargeValidationResult { Success = false, Message = findResult.Message };
-        //    }
-
-        //    if (amountCaptured > int.MaxValue || amountCaptured < int.MinValue)
-        //    {
-        //        return new ChargeValidationResult { Success = false, Message = "The amount captured is too large to be processed." };
-        //    }
-
-        //    findResult.User.UserBalance += (int)amountCaptured;
-        //    var updateResult = await _userManager.UpdateAsync(findResult.User);
-
-        //    if (!updateResult.Succeeded)
-        //    {
-        //        return new ChargeValidationResult { Success = false, Message = string.Join(", ", updateResult.Errors.Select(x => x.Description)) };
-        //    }
-
-        //    return new ChargeValidationResult { Success = true };
-        //}
-
-
-        //public async Task<IdentityResult> ChargeCustomer(string uid, int charge)
-        //{
-        //    try
-        //    {
-              
-        //        var user = findUserResult.User;
-        //        if (user == null)
-        //        {
-        //            return IdentityResult.Failed(new IdentityError { Description = "User not found." });
-        //        }
-
-        //        user.UserBalance -= charge;
-        //        var result = await _userManager.UpdateAsync(user);
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while charging the customer with id: {stripeCustomerId}");
-        //        return IdentityResult.Failed(new IdentityError { Description = $"An error occurred while charging: {ex.Message}" });
-        //    }
-        //}
+      
 
 
         public async Task<decimal> GetUserBalance(string uid)
@@ -223,14 +186,14 @@ namespace Thunder.Services
             }
             catch (NotFoundException ex)
             {
-                _logger.LogError(ex, "User not found");
+               // _logger.LogError(ex, "User not found");
 
                 // Return an error response indicating the failure
                 return 0; // Or any other appropriate response
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while retrieving user balance");
+                //_logger.LogError(ex, "Error occurred while retrieving user balance");
 
                 // Return a generic error response
                 return 0; // Or any other appropriate response

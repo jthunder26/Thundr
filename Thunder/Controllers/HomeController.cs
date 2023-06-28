@@ -24,6 +24,8 @@ namespace Thunder.Controllers
     /// #ff347d
     /// #827ded
     /// 
+    /// Orders page, unfinished orders colored baclground built bad in smaller window size
+    /// 
     /// Return Address is not saving on registry. -- done
     /// Balance Functions -- done
     /// Create Email Templates for Account Creation, Payment Confirmation, Password Reset. 
@@ -50,26 +52,43 @@ namespace Thunder.Controllers
 
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+       
         private readonly IThunderService _thunderService;
         private readonly IUpsRateService _upsRateService;
         private readonly IMailService _mailService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserService _userService;
-        public HomeController(ILogger<HomeController> logger, IThunderService thunderService,
+        private readonly IBlobService _blobService;
+        public HomeController(IThunderService thunderService,
             IUpsRateService upsRateService, UserManager<ApplicationUser> userManager, IMailService mailService,
-             IUserService userService)
+             IUserService userService, IBlobService blobService)
         {
-            _logger = logger;
+
             _thunderService = thunderService;
             _upsRateService = upsRateService;
             _userManager = userManager;
             _mailService = mailService;
             _userService = userService;
+            _blobService = blobService;
         }
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            //var client = new HttpClient();
+            //var request = new HttpRequestMessage(HttpMethod.Get, "https://api64.ipify.org?format=json");
+            //var response = await client.SendAsync(request);
+            //response.EnsureSuccessStatusCode();
+            //Console.WriteLine(await response.Content.ReadAsStringAsync());
+            //var client = new HttpClient();
+            //var request = new HttpRequestMessage(HttpMethod.Get,
+            //    "https://shipster.org/api/order/8718b34f-a89a-115d-6ddf-f8fbe57c1c47/file");
+            //request.Headers.Add("X-Api-Auth", "64cf7549-13e8-6081-b22f-ccd8bf1bdfff");
+            //var response = await client.SendAsync(request);
+            //// response.EnsureSuccessStatusCode();
+            //var result = await response.Content.ReadAsStringAsync();
+            //Console.WriteLine(result);
+
+            
             return View();
         }
         [HttpGet]
@@ -129,7 +148,12 @@ namespace Thunder.Controllers
         public async Task<IActionResult> GetFullRates(UpsOrderDetails upsOrder)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deets = await _userService.GetUserDeetsAsync(uid);
+           // var emailClaim = User.FindFirst(ClaimTypes.Email);
+            upsOrder.FromEmail = deets.Email;
+            upsOrder.UserName = deets.FullName;
             upsOrder.Uid = uid;
+
             try
             {
                 FullRateDTO result = await _upsRateService.GetFullRatesAsync(upsOrder);
@@ -141,10 +165,10 @@ namespace Thunder.Controllers
                 {
                     throw new Exception("Failed to retrieve UpsOrderDetailsId");
                 }
-                List<RateDTO> ratesList = new List<RateDTO>();
-                ratesList = result.rates;
-                ratesList.Add(result.selectedrate); 
-                await _thunderService.CreateAndSaveRateCosts((int)result.UpsOrderDetailsId, ratesList);
+                //List<RateDTO> ratesList = new List<RateDTO>();
+                //ratesList = result.rates;
+                //ratesList.Add(result.selectedrate); // this adds the selectedrate from result.selectedrate back to result.rates;
+                //await _thunderService.CreateAndSaveRateCosts((int)result.UpsOrderDetailsId, ratesList);
 
                 return Ok(result);
             }
@@ -154,19 +178,19 @@ namespace Thunder.Controllers
             }
         }
 
-        public List<LabelDetails> getLabelDetails()
-        {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var list = _thunderService.getLabelDetails(uid);
-            return list;
-        }      
+        //public List<LabelDetail> getLabelDetails()
+        //{
+        //    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var list = _thunderService.getLabelDetails(uid);
+        //    return list;
+        //}      
         
-        public List<UnfinishedLabel> getUnfinishedOrders()
-        {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var list = _thunderService.getUnfinishedOrders(uid);
-            return list;
-        }
+        //public List<LabelDetail> getUnfinishedOrders()
+        //{
+        //    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var list = _thunderService.getUnfinishedOrders(uid);
+        //    return list;
+        //}
         public async Task<IActionResult> DownloadLabel(string orderID)
         {
             try
@@ -200,7 +224,7 @@ namespace Thunder.Controllers
         {
             return View("Login");
         }
-        public async Task<IActionResult> Rates()
+        public IActionResult Rates()
         {
             return View();
         }

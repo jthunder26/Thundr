@@ -1,16 +1,16 @@
-﻿using Thunder.Data;
+﻿using System.Text;
+using Thunder.Data;
 using Thunder.Models;
+
 namespace Thunder.Services
 {
     public class CreateLabelBackgroundService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly ILogger<CreateLabelBackgroundService> _logger;
 
-        public CreateLabelBackgroundService(IServiceScopeFactory scopeFactory, ILogger<CreateLabelBackgroundService> logger)
+        public CreateLabelBackgroundService(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
-            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,58 +23,91 @@ namespace Thunder.Services
                     var backgroundQueueService = scope.ServiceProvider.GetRequiredService<IBackgroundQueueService>();
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                    var workItem = await backgroundQueueService.DequeueCreateLabel(stoppingToken);
+                    var dequeueResult = await backgroundQueueService.DequeueCreateLabel(stoppingToken);
+                    string base64WorkItem = dequeueResult.Item1;
+                    string messageId = dequeueResult.Item2;
+                    string popReceipt = dequeueResult.Item3;
 
-                    if (workItem == null) continue;
+                    if (base64WorkItem == null) continue;
 
-                    UnfinishedLabel record = dbContext.UnfinishedLabel.FirstOrDefault(x => x.LabelId == int.Parse(workItem));
+                    // Decode the Base64-encoded work item to a string.
+                    byte[] data = Convert.FromBase64String(base64WorkItem);
+                    string decodedWorkItem = Encoding.UTF8.GetString(data);
 
-                    try
+                    // Now convert the string to an int.
+                    int workItemId = int.Parse(decodedWorkItem);
+
+                    LabelDetail record = dbContext.LabelDetail.FirstOrDefault(x => x.LabelId == workItemId);
+                    if (record != null && record.Status < 2)
                     {
-                        await thunderService.CreateAIOLabelAsync(int.Parse(workItem));
-                        _logger.LogInformation($"Successfully processed work item {workItem}");
-                        record.Status = 3;
-                        record.Message = "Successfully processed AIO Label with Id: " + workItem;
-
-                        backgroundQueueService.EnqueueRetrieveStore(workItem);
-                    }
-                    catch (ApplicationException ex)
-                    {
-                        _logger.LogError(ex, $"Error processing AIO work item {workItem}");
-                        record.Status = 0;
-                        record.Error = 1;
-                        record.Message = "Error processing AIO for Label Id:" + workItem + ". " + ex.Message;
-
                         try
                         {
-                            await thunderService.CreateShipsterLabelAsync(int.Parse(workItem));
-                            _logger.LogInformation($"Successfully processed work item {workItem} with CreateShipsterLabelAsync");
-                            record.Status = 3;
-                            record.Error = 0;
-                            record.Message += " | Successfully processed Shipster Label with Id: " + workItem;
-
-                            backgroundQueueService.EnqueueRetrieveStore(workItem);
+                            await TryCreateAIOLabel(thunderService, backgroundQueueService, workItemId, record);
+                            backgroundQueueService.ConfirmCreateLabel(messageId, popReceipt);
                         }
-                        catch (Exception shipsterEx)
+                        catch (ApplicationException ex)
                         {
-                            _logger.LogError(shipsterEx, $"Error processing work item {workItem} with CreateShipsterLabelAsync");
-                            record.Status = 1;
-                            record.Message += " | Error processing Shipster for Label Id:" + workItem + ". " + shipsterEx.Message;
+                            await HandleAIOError(thunderService, backgroundQueueService, workItemId, record, ex, messageId, popReceipt);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, $"Error processing work item {workItem}");
-                        record.Status = 1;
-                        record.Message += " | " + ex.Message;
-                    }
+                        catch (Exception ex)
+                        {
+                            HandleGeneralError(record, workItemId, ex);
+                        }
 
-                    await dbContext.SaveChangesAsync();
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                
             }
         }
-    }
 
+        private async Task TryCreateAIOLabel(IThunderService thunderService, IBackgroundQueueService backgroundQueueService, int workItemId, LabelDetail record)
+        {
+            await thunderService.CreateAIOLabelAsync(workItemId);
+            record.Status = 3;
+            record.AIO_Attempt++;
+            record.Error = 0;
+            record.Message = "TryCreateAIOLabel: Successfully processed AIO Label with Id: " + workItemId;
+
+            backgroundQueueService.EnqueueRetrieveStore(workItemId.ToString());
+        }
+
+        private async Task HandleAIOError(IThunderService thunderService, IBackgroundQueueService backgroundQueueService, int workItemId, LabelDetail record, ApplicationException ex, string messageId, string popReceipt)
+        {
+            record.Status = 1;
+            record.Error = 1;
+            record.ErrorMsg = "HandleAIOError: Error processing AIO for Label Id:" + workItemId + ". " + ex.Message;
+
+            try
+            {
+                await thunderService.CreateShipsterLabelAsync(workItemId);
+                record.Status = 3;
+                record.Shipster_Attempt++;
+                record.Error = 0;
+                record.Message += " | HandleAIOError:CreateShipsterLabelAsync: Successfully processed Shipster Label with Id: " + workItemId;
+
+                backgroundQueueService.EnqueueRetrieveStore(workItemId.ToString());
+                backgroundQueueService.ConfirmCreateLabel(messageId, popReceipt); // Delete the message from create label queue.
+            }
+            catch (Exception shipsterEx)
+            {
+                HandleShipsterError(record, workItemId, shipsterEx);
+            }
+        }
+
+        private void HandleShipsterError(LabelDetail record, int workItemId, Exception shipsterEx)
+        {
+            record.Status = 1;
+            record.Error = 1;
+            record.ErrorMsg += " | HandleShipsterError: Error processing Shipster for Label Id:" + workItemId + ". " + shipsterEx.Message;
+        }
+
+        private void HandleGeneralError(LabelDetail record, int workItemId, Exception ex)
+        {
+            record.Status = 1;
+            record.Error = 1;
+            record.ErrorMsg += " | HandleGeneralError:" + ex.Message;
+        }
+    }
 }

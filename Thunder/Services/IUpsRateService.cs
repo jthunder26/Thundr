@@ -9,6 +9,7 @@ using Stripe;
 using System.Transactions;
 using System.Runtime.Intrinsics.Arm;
 using Microsoft.CodeAnalysis.QuickInfo;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Thunder.Services
 {
@@ -119,7 +120,7 @@ namespace Thunder.Services
                     {135, 0.3193},
                     {140, 0.3187},
                     {145, 0.3214},
-                    {150, -0.1000}
+                    {150, 0.1000}
                 }
             },
             {"ups_2nd_day_air", new Dictionary<int, double>
@@ -237,8 +238,88 @@ namespace Thunder.Services
         private const string Username = "ekthunder";
         private const string Password = "Exotics2020!";
         private const string MediaType = "application/json";
+        //private const string UspsBaseUrl = "http://production.shippingapis.com/ShippingAPI.dll";
+        //private const string UspsUserId = "YOUR_USER_ID";
 
-        public async Task<FullRateDTO> GetFullRatesAsync(UpsOrderDetails fullRate)
+        //public async Task<UspsRateDTO> GetUspsRatesAsync(UpsOrderDetails orderDetails)
+        //{
+        //    string errorMsg;
+        //    var uspsRequest = CreateUspsRequest(orderDetails);
+        //    var httpRequest = BuildHttpRequest(uspsRequest);
+        //    var customUspsResponse = await SendHttpRequestAsync(httpRequest);
+        //    if (customUspsResponse.IsError)
+        //    {
+        //        errorMsg = customUspsResponse.ErrorMessage;
+        //        UspsRateDTO error = new UspsRateDTO();
+        //        error.IsError = true;
+        //        error.Error = errorMsg;
+        //        return error;
+        //    }
+        //    var uspsRateDto = ProcessUspsRateResponse(customUspsResponse.Response);
+
+        //    return uspsRateDto;
+        //}
+        //private XDocument CreateUspsRequest(UpsOrderDetails orderDetails)
+        //{
+        //    return new XDocument(
+        //        new XElement("RateV4Request",
+        //            new XAttribute("USERID", UspsUserId),
+        //            new XElement("Package",
+        //                new XAttribute("ID", "1"),
+        //                new XElement("Service", "ALL"),
+        //                new XElement("ZipOrigination", orderDetails.FromZip),
+        //                new XElement("ZipDestination", orderDetails.ToZip),
+        //                new XElement("Pounds", orderDetails.Weight),
+        //                new XElement("Ounces", "0"),
+        //                new XElement("Container", "PACKAGE"),
+        //                new XElement("Size", "REGULAR"),
+        //                new XElement("Width", orderDetails.Width),
+        //                new XElement("Length", orderDetails.Length),
+        //                new XElement("Height", orderDetails.Height)
+        //            )
+        //        )
+        //    );
+        //}
+
+        //private HttpRequestMessage BuildHttpRequest(XDocument uspsRequest)
+        //{
+        //    var url = $"{UspsBaseUrl}?API=RateV4&XML={uspsRequest}";
+        //    return new HttpRequestMessage(HttpMethod.Get, url);
+        //}
+
+        //private async Task<HttpResponseMessage> SendHttpRequestAsync(HttpRequestMessage httpRequest)
+        //{
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        return await client.SendAsync(httpRequest);
+        //    }
+        //}
+
+        //private async Task<UspsRateDTO> ProcessUspsRateResponse(HttpResponseMessage response)
+        //{
+        //    var content = await response.Content.ReadAsStringAsync();
+        //    var xmlResponse = XDocument.Parse(content);
+        //    var postages = xmlResponse.Descendants("Postage");
+
+        //    UspsRateDTO rateDto = new UspsRateDTO();
+        //    rateDto.rates = new List<RateDTO>();
+
+        //    foreach (var postage in postages)
+        //    {
+        //        var mailService = postage.Element("MailService").Value;
+        //        var rate = postage.Element("Rate").Value;
+
+        //        if (mailService.Contains("Priority") || mailService.Contains("Express"))
+        //        {
+        //            rateDto.rates.Add(new RateDTO { service = mailService, exactCost = int.Parse(rate) });
+        //        }
+        //    }
+
+        //    return rateDto;
+        //}
+
+        public async Task<FullRateDTO> GetFullRatesAsync(
+            UpsOrderDetails fullRate)
         {
             string errorMsg;
             var upsRequest = CreateUpsRequest(fullRate);
@@ -373,6 +454,17 @@ namespace Thunder.Services
             dp.Price = priceRounded.ToString("F2");
 
             // No discount found or applied, return the discounted price or the original price
+            return dp;
+        } 
+        public static DiscountAndPrice ApplyUSPSDiscount(int ogPriceInCents, int newDiscount)
+        {
+            double discountedPriceInCents = ogPriceInCents;
+            double discountDouble = newDiscount;
+
+            DiscountAndPrice dp = new DiscountAndPrice();
+          
+
+            // No discount found or applied, return the dis;counted price or the original price
             return dp;
         }
 
@@ -522,6 +614,7 @@ namespace Thunder.Services
                     //if (rate.service == "UPS Next Day Air")
                     //{
                     //    rate.isSelected = true;
+                    //(upsResponse.RateResponse.RatedShipment).Items[0]).TimeInTransit.ServiceSummary.SaturdayDelivery
                     //}
                     if (dayCode == "SAT")
                     {
@@ -539,20 +632,51 @@ namespace Thunder.Services
                     int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
                     //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
                     //rate.ourPriceString = "$" + rate.ourPrice;
+                     rate.upsPriceOG = price;
                     var dp = ApplyDiscount(rate.serviceClass, weight, price);
                     rate.ourPrice = dp.Price;
                     rate.percentSaved = dp.Discount;
                     rate.percentSavedString = "Save " + dp.Discount + "%";
                     rate.ourPriceString = "$" + rate.ourPrice;
-                    
+                    rate.usps = false;
+                    rate.ups = true; 
                    
                         rates.Add(rate);
                    
                 }
             }
 
-            //var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
-            //lowestRate.isCheapest = true;
+            RateDTO usps = new RateDTO();
+            foreach (var rate in rates)
+            {
+                if (rate.serviceClass == "ups_ground")
+                {
+                    usps.ID = rate.ID++;
+                    usps.service = "USPS Priority";
+                    usps.deliveryDate = rate.deliveryDate;
+                    usps.deliveryTime = rate.deliveryTime;
+                    usps.serviceClass = "7deff37b-5900-430c-9335-dabe871bc271";
+                    usps.deliveryDayOfWeek = rate.deliveryDayOfWeek;
+                    usps.estimatedDelivery = rate.estimatedDelivery;
+                    usps.upsPrice = rate.upsPrice;
+                    int price = rate.upsPriceOG;
+                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100;
+                    var newPercentSaved = (percentSaved + .05);
+                    var discountedPriceInCents = price * (1 - (newPercentSaved));
+                    var discountRounded = Math.Round(newPercentSaved, 2);
+
+                    var unroundedPrice = discountedPriceInCents / 100;
+                    var priceRounded = Math.Round(unroundedPrice, 2);
+
+                    usps.ourPrice = priceRounded.ToString("F2");
+                    usps.ourPriceString = "$" + usps.ourPrice;
+                    usps.percentSaved = (discountRounded * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
+                    usps.percentSavedString = "Save " + usps.percentSaved + "%";
+                    usps.usps = true;
+                    usps.ups = false;
+                }
+            }
+            rates.Add(usps);
 
             SetAttributes(rates);
             for (int i = rates.Count - 1; i >= 0; i--)
@@ -566,6 +690,18 @@ namespace Thunder.Services
             fullrates.rates = rates;
             return fullrates;
         }
+        // OKAY RATES AND FULL RATES NOW SHOW USPS, NEXT FIND OUT WHAT TO DO WITH SERVICE CLASS. USE UPS_gROUND TO CHANGE TO GUID FOR sHIPSTER OR JUST USE IT DIRECTLY 
+
+
+
+
+
+
+
+
+
+
+
 
         private QuickRateDTO ProcessQuickRateResponse(UpsResponse upsResponse)
         {
@@ -616,23 +752,51 @@ namespace Thunder.Services
 
                     int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
                     int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
-                    //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
-                    //rate.ourPriceString = "$" + rate.ourPrice;
+                    rate.upsPriceOG = price;
                     var dp = ApplyDiscount(rate.serviceClass, weight, price);
+
                     rate.ourPrice = dp.Price;
                     rate.percentSaved = dp.Discount;
                     rate.percentSavedString = "Save " + dp.Discount + "%";
                     rate.ourPriceString = "$" + rate.ourPrice;
-
+                    rate.usps = false;
+                    rate.ups = true;
 
                     rates.Add(rate);
 
                 }
             }
+            RateDTO usps = new RateDTO();
+            foreach (var rate in rates)
+            {
+                if(rate.serviceClass == "ups_ground")
+                {
+                    usps.ID = rate.ID++;
+                    usps.service = "USPS Priority";
+                    usps.deliveryDate = rate.deliveryDate;
+                    usps.deliveryTime = rate.deliveryTime;
+                    usps.serviceClass = "7deff37b-5900-430c-9335-dabe871bc271";
+                    usps.deliveryDayOfWeek = rate.deliveryDayOfWeek;
+                    usps.estimatedDelivery = rate.estimatedDelivery;
+                    usps.upsPrice = rate.upsPrice;
+                    int price = rate.upsPriceOG;
+                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100;
+                    var newPercentSaved = (percentSaved + .05);
+                    var discountedPriceInCents = price * (1 - (newPercentSaved));
+                    var discountRounded = Math.Round(newPercentSaved, 2);
 
-            //var lowestRate = rates.OrderBy(x => x.ourPrice).FirstOrDefault();
-            //lowestRate.isCheapest = true;
+                    var unroundedPrice = discountedPriceInCents / 100;
+                    var priceRounded = Math.Round(unroundedPrice, 2);
 
+                    usps.ourPrice = priceRounded.ToString("F2");
+                    usps.ourPriceString = "$" + usps.ourPrice;
+                    usps.percentSaved = (discountRounded * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
+                    usps.percentSavedString = "Save " + usps.percentSaved + "%";
+                    usps.usps = true;
+                    usps.ups = false;
+                }
+            }
+            rates.Add(usps);
             SetAttributes(rates);
           
             quickRates.Rates = rates;
@@ -641,7 +805,38 @@ namespace Thunder.Services
 
 
 
-        //QuickRate Functions
+        /// <summary>
+        /// 
+        /// NOTES: 
+        /// 0. shipster USPS
+        /// 1. When applying discount, first workaround is to apply an additional 15% to the ourPrice.
+        /// 2. Bulk upload
+        ///     A. No validation
+        ///     B. First, validate values in columns. After validation show confirmation screen with errors or with the order details, showing 
+        ///     numbered list of labels to be created. Then below show order summary allow user to select different service classes, dynamically 
+        ///     update the order form. 
+        /// 3. When applying discount to USPS, we use UPSOGPrice, add an initial discount to UPSogPrice before assigning to USPSOgPrice to 
+        ///     be more inconspicuous
+        /// 4. Check Auto Scroll function on Rates and Ship page
+        /// 5. Have the Cheapest rate show first instead of Fastest
+        /// 6. Update rate dropdown ui to be more legible. 
+        /// 7. Admin accounts and pages. 
+        ///     A. Add a balance maintenance page. Admin is able to update users balances. 
+        ///     B. Admins to be able to manually reset passwords
+        ///     C. Admins to be able to view any errors pertaining to a users orders.
+        ///     D. Admins able to generate promo codes. -- Talk about pricing later. 
+        /// 8. Add duplicate order function
+        /// 9. On payment confirmation page, include link to Orders page, have completed orders tab be active always. 
+        /// 10. Remove link to Monitor
+        /// 11. Add a support page, user can send in a email. 
+        /// 12. Add Terms and Conditions accept checkbox when user creates account 
+        /// </summary>
+        /// <param name="quickRate"></param>
+        /// <returns></returns>
+        /// 
+
+
+
         private UpsRequest CreateUpsRequest(NewRate quickRate)
         {
             RateRequest rateRequest = BuildQuickRateRequest(quickRate);

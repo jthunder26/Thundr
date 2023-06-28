@@ -25,21 +25,21 @@ namespace Thunder.Controllers
         public async Task<ActionResult> PostAsync([FromBody] CreateIntentRequest request)
         {
             var user = await _userService.GetCurrentUserAsync();
-           
-          
 
-            _thunderService.UpdateOrder(request.amount, request.description, request.serviceClass);
+
+
+            _thunderService.UpdateOrder(request.amount, request.description, request.serviceClass, request.charged);
             var options = new PaymentIntentCreateOptions
             {
-                Amount = request.amount,
+                Amount = request.charged,
                 Currency = "usd",
                 Customer = user.StripeCustomerId,
                 ReceiptEmail = user.Email,
                 Metadata = new Dictionary<string, string>
                       {
                         { "LabelId", request.description.ToString() },
-                        { "ServiceClass", request.serviceClass }
-
+                        { "ServiceClass", request.serviceClass },
+                        { "LabelCost", request.amount.ToString() }
                       },
                 
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
@@ -58,7 +58,7 @@ namespace Thunder.Controllers
             public long amount { get; set; }
             public int description { get; set; }
             public string serviceClass { get; set; }
-            
+            public long charged { get; set; }   
           
         }
     }

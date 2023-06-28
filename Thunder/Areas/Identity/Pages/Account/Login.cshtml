@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Log in";
 }
-<html data-wf-page="640dfa54ba6752693209aa6c" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="647e3139476cd742c15bf67d" data-wf-site="640dfa53ba67521ab709aa29">
+<body data-title="Login">
     <div class="section">
         <div class="container">
             <div class="center-text">
@@ -17,7 +18,7 @@
                    <div class="top-margin-l white-text">
                     <div class="center-box"></div>
                             <div class="form-block-7 w-form-7">
-                                <form id="account" class="form-2" method="post">
+                        <form id="account" class="form-2" method="post" onsubmit="showLoadingScreen();">
                             
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                  <label for="Email" class="field-label-3">Email </label>
@@ -65,4 +66,5 @@
                 </div>
             </div>
         </div>
+</body>
 </html>

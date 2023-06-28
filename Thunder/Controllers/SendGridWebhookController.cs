@@ -39,11 +39,11 @@ namespace Thunder.Controllers
         private void HandleEvent(SendGridEvent e)
         {
             // Log event details to the console
-            Console.WriteLine($"Event: {e.Event}");
-            Console.WriteLine($"Email: {e.Email}");
-            Console.WriteLine($"Message ID: {e.Message_id}");
-            Console.WriteLine($"Reason: {e.Reason}");
-            Console.WriteLine("----------------------------------------");
+            //Console.WriteLine($"Event: {e.Event}");
+            //Console.WriteLine($"Email: {e.Email}");
+            //Console.WriteLine($"Message ID: {e.Message_id}");
+            //Console.WriteLine($"Reason: {e.Reason}");
+            //Console.WriteLine("----------------------------------------");
         }
     }
 

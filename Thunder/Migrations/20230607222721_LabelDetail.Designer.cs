@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thunder.Data;
 
@@ -11,9 +12,10 @@ using Thunder.Data;
 namespace Thunder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230607222721_LabelDetail")]
+    partial class LabelDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,9 +244,6 @@ namespace Thunder.Migrations
                     b.Property<int>("AIO_Attempt")
                         .HasColumnType("int");
 
-                    b.Property<string>("CarrierName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DateCreated")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -256,9 +255,6 @@ namespace Thunder.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LabelName")
@@ -290,6 +286,44 @@ namespace Thunder.Migrations
                     b.HasKey("LabelId");
 
                     b.ToTable("LabelDetail", (string)null);
+                });
+
+            modelBuilder.Entity("Thunder.Models.LabelDetails", b =>
+                {
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DateCreated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorMsg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IsError")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LabelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LabelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LabelService")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("LabelDetails", (string)null);
                 });
 
             modelBuilder.Entity("Thunder.Models.RateCosts", b =>
@@ -363,9 +397,6 @@ namespace Thunder.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabelId"), 1L, 1);
-
-                    b.Property<string>("Carrier")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Class")
                         .HasColumnType("nvarchar(max)");
@@ -446,14 +477,7 @@ namespace Thunder.Migrations
                     b.Property<long?>("TotalAmount")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("TotalCharge")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Uid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

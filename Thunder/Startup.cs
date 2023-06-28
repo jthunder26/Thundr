@@ -41,11 +41,17 @@ namespace Thunder
                 var clientSecretSecretName = "clientSecret";
                 var clientSecretSecret = secretClient.GetSecret(clientSecretSecretName);
 
-                var stripeApiKeySecretName = "StripeTestApiKey";
+                var stripeApiKeySecretName = "StripeApiKey";
                 var stripeApiKeySecret = secretClient.GetSecret(stripeApiKeySecretName);
 
                 var stripeWebhookSecretName = "StripeEndpointSecret";
                 var stripeWebhookSecret = secretClient.GetSecret(stripeWebhookSecretName);
+
+                var aioKeyName = "AioKey";
+                var aioKey = secretClient.GetSecret(aioKeyName);
+                
+                var shipsterKeyName = "ShipsterKey";
+                var shipsterKey = secretClient.GetSecret(shipsterKeyName);
 
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
@@ -69,14 +75,16 @@ namespace Thunder
                     options.ApiKey = stripeApiKeySecret.Value.Value;
                     options.WebhookSecret = stripeWebhookSecret.Value.Value;
                 });
-
+                services.AddTransient<IMailService, MailService>();
                 services.AddScoped<IBlobService>(provider =>
                 {
                     var connectionString = thunderBlobStorageSecret.Value.Value;
                     var containerName = "pdfcontainer";
                     var blobServiceClient = new BlobServiceClient(connectionString);
-                    return new BlobService(blobServiceClient, containerName);
+                    var mailService = provider.GetRequiredService<IMailService>(); // Get the IMailService instance
+                    return new BlobService(blobServiceClient, containerName, mailService); // Pass the IMailService instance to BlobService
                 });
+
 
                 services.AddAuthentication()
                     .AddMicrosoftAccount(options =>
@@ -97,7 +105,7 @@ namespace Thunder
                 services.AddScoped<IThunderService, ThunderService>();
                 services.AddScoped<IUpsRateService, UpsRateService>();
                 services.AddScoped<IUserService, UserService>();
-                services.AddTransient<IMailService, MailService>();
+               
                 services.AddHttpContextAccessor();
 
                 services.AddHsts(options =>
@@ -117,6 +125,12 @@ namespace Thunder
                                 .AllowAnyMethod();
                         });
                 });
+                services.Configure<CookiePolicyOptions>(options =>
+                {
+                    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                    options.CheckConsentNeeded = context => false; // cookies can be set without user consent
+                    options.MinimumSameSitePolicy = SameSiteMode.None;
+                });
 
                 services.AddControllersWithViews();
                 services.AddRazorPages();
@@ -135,6 +149,7 @@ namespace Thunder
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+            app.UseCookiePolicy();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

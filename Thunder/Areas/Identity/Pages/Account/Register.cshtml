@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Register";
 }
-<html data-wf-page="640dfa54ba67526ba609aa48" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="648b7b7d052e0e643e1431c4" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Register">
     <div class="section">
         <div class="container">
@@ -21,13 +21,14 @@
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input asp-for="Input.FullName" class="text-field w-input" maxlength="256" name="FullName" data-name="Email" placeholder="Full Name" id="FullName" aria-required="true"><span asp-validation-for="Input.FullName" class="text-danger"></span>
                             <input asp-for="Input.Email" class="text-field w-input" maxlength="256" name="Email" data-name="Email" placeholder="Email" id="Email" aria-required="true"><span asp-validation-for="Input.Email" class="text-danger"></span>
+                            <input asp-for="Input.PhoneNumber" class="text-field w-input" maxlength="10" name="PhoneNumber" data-name="PhoneNumber" placeholder="PhoneNumber" id="PhoneNumber" aria-required="true"><span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                             <input asp-for="Input.Password" class="text-field-2 w-input" maxlength="256" name="Password" data-name="Password" placeholder="Password" id="Password" aria-required="true" /><span asp-validation-for="Input.Password" class="text-danger"></span>
                            
                           
                             <div class="section-3 wf-section">
                                 <div class="send-button-holder2 register">
                                     <div class="fake-submit-button-holder static register">
-                                        <input type="submit" value="Create Account" data-wait="..." class="submit-button3 submit-button-with-text3 register w-button">
+                                        <input type="submit" id="registerBtn" value="Create Account" data-wait="..." class="submit-button3 submit-button-with-text3 register w-button">
                                         <div class="button-gradient register"></div>
                                         <div class="white-background-button-color register"></div>
                                     </div>

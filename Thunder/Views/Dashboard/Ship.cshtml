@@ -3,7 +3,7 @@
     ViewBag.Title = "Ship";
     ViewBag.NavbarPartial = "_SideNavbar";
 }
-<html data-wf-page="643715b253c8ec4510376427" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="648b7b7d052e0e643e1431d8" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Ship">
     <div style="display:none;opacity:0" class="confirmpasswordpopup">
         <div class="container popup">
@@ -237,7 +237,10 @@
                                             <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
                                                 <div class="quick-access-card spacing fullrate">
                                                     <div class="columns fullrate w-row">
-                                                        <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-10376427"></div>
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-3e1431d8" data-bind="visible: ups">
+                                                </div>
                                                         <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
                                                               <div id="serviceType" class="text-block" data-bind="text: service"></div>
                                                         </div>
@@ -277,10 +280,13 @@
                                             <div class="icon w-icon-dropdown-toggle"></div>
                                         </div>
                                         <nav class="dropdown-list w-dropdown-list" data-bind="foreach: rates">
-                                            <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-10376427" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                    <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-3e1431d8" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
                                                 <div class="quick-access-card spacing" data-bind="click: $parent.selectRate">
                                                     <div class="columns w-row">
-                                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1"><img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-10376427"></div>
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-3e1431d8" data-bind="visible: ups">
+                                                </div>
                                                             <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
                                                            <div id="serviceType" class="text-block" data-bind="text: service"></div>
                                                         </div>

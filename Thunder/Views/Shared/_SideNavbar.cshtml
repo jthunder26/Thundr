@@ -4,11 +4,11 @@
 *@
 @{
 }
-<div data-animation="default" data-collapse="small" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="dashnav w-nav">
+<div data-w-id="7da429b7-51e1-ba5b-a6b9-5c15df74e908" data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="dashnav w-nav">
     <div class="sidedashboardnavcontainer w-container">
         <a href="@Url.ActionLink("Index","Home")" class="brand-link nav w-nav-brand">
-            <img src="/images/Icon.png" loading="lazy" width="75" height="75" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" sizes="(max-width: 479px) 100vw, (max-width: 991px) 24.453125px, (max-width: 1439px) 2vw, 24.453125px" alt="" class="brand">
-            <div class="text-block-12 gradient-text nav">Thunder</div>
+            <img src="/images/Icon.png" loading="lazy" width="75" height="75" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" sizes="(max-width: 479px) 11vw, (max-width: 991px) 24.45833396911621px, (max-width: 1439px) 2vw, 24.45833396911621px" alt="" class="brand">
+            <div class="text-block-12 gradient-text nav">Thundr</div>
         </a>
         <div class="menu-button-2 w-nav-button">
             <div class="w-icon-nav-menu"></div>
@@ -18,7 +18,7 @@
                 <div class="dashnavlinkitem">
                     <a href="@Url.ActionLink("Ship","Dashboard")" class="dashnavlink w-inline-block">
                         <div class="dashnavlinkcontent">
-                            <div class="dashnavlinkicondiv"><img src="/images/Icon.png" loading="lazy" sizes="(max-width: 479px) 0px, (max-width: 767px) 100vw, (max-width: 991px) 2vw, (max-width: 1439px) 15px, 1vw" width="24" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" alt="" class="image-3"></div>
+                            <div class="dashnavlinkicondiv"><img src="/images/Icon.png" loading="lazy" sizes="(max-width: 767px) 100vw, (max-width: 1439px) 15px, 1vw" width="24" srcset="/images/Icon-p-500.png 500w, /images/Icon.png 690w" alt="" class="image-3"></div>
                             <div class="dashnavlinktextdiv">
                                 <div class="text-block-24">Ship</div>
                             </div>
@@ -56,7 +56,7 @@
                     </a>
                 </div>
                 <div class="form-block-6 w-form">
-                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" class="form-4">
+                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" class="form-4" data-wf-page-id="648b7b7d052e0e643e1431d8" data-wf-element-id="7da429b7-51e1-ba5b-a6b9-5c15df74e930">
                         @Html.AntiForgeryToken()
                         <input type="submit" value="Logout" id="logoutLink" class="logoutbutton w-button">
                     </form>
@@ -66,3 +66,4 @@
         </nav>
     </div>
 </div>
+

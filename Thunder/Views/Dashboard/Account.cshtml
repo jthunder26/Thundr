@@ -2,11 +2,11 @@
     ViewBag.Title = "Account";
     ViewBag.NavbarPartial = "_SideNavbar";
 }
-<html data-wf-page="64376762d27d2700262b5dc0" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="648b7b7d052e0e643e143196" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Account">
     <div style="display:none;opacity:0" class="confirmpasswordpopup">
         <div class="container popup">
-            <div data-w-id="1b49cc3a-9306-d5f6-d432-e1386921dcb7" class="div-block-8 popup"><img src="~/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div data-w-id="1b49cc3a-9306-d5f6-d432-e1386921dcb7" class="div-block-8 popup"><img src="/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
             <div class="center-text popup">
                 <div class="hero-text-holder">
                     <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
@@ -40,7 +40,7 @@
     <div class="section dashboard">
         <h1 class="heading-3">Account Details</h1>
         <div data-current="AccountDetails" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
-            <div id="w-node-_126f2fb1-0bf5-3493-4e9b-58771fc5e270-262b5dc0" data-w-id="126f2fb1-0bf5-3493-4e9b-58771fc5e270" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
+            <div id="w-node-_126f2fb1-0bf5-3493-4e9b-58771fc5e270-c15bf65a" data-w-id="126f2fb1-0bf5-3493-4e9b-58771fc5e270" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
                 <a id="shipTabLink" data-w-tab="AccountDetails" class="account w-inline-block w-tab-link w--current">
                     <div class="gradient-wrapp">
                         <div class="tab-heading">Account</div>
@@ -49,19 +49,11 @@
                         </div>
                     </div>
                 </a>
-                <a data-w-tab="Billing" class="account w-inline-block w-tab-link">
-                    <div class="gradient-wrapp">
-                        <div class="tab-heading">Billing</div>
-                        <div class="tab-open-content">
-                            <p class="tab-paragraph">Billing Details</p>
-                        </div>
-                    </div>
-                </a>
                 <a data-w-tab="Notifications" class="account w-inline-block w-tab-link">
                     <div class="gradient-wrapp">
                         <div class="tab-heading">Notifications</div>
                         <div class="tab-open-content">
-                            <p class="tab-paragraph">Notification Details</p>
+                            <p class="tab-paragraph">Email Details</p>
                         </div>
                     </div>
                 </a>
@@ -214,41 +206,58 @@
                         </div>
                     </div>
                 </div>
-                <div data-w-tab="Billing" class="w-tab-pane">
-                    <div class="labelcontainer _01">
-                        <div class="feature-image-holder"></div>
-                    </div>
-                </div>
-                <div data-w-tab="Notifications" class="w-tab-pane">
-                    <div class="labelcontainer _01">
-                        <div class="feature-image-holder">
-                            <div class="w-layout-grid grid-6-col">
-                                <div id="w-node-_2f2fcf7f-297c-57fd-e90b-1978b53a7abc-b53a7abb" class="content">
-                                    <div class="fade-in-move-on-scroll">
-                                        <h2 class="heading-2">Create your first label!</h2>
+
+                <div data-w-tab="Notifications" class="tab-pane-notifications w-tab-pane w--tab-active">
+                    <div class="container-6 w-container">
+                        <div class="form-block-7 w-form">
+                            <form id="email-form-2" name="email-form-2" data-name="Email Form 2" method="get">
+                                <div class="columns-22 onenotification w-row">
+                                    <div class="w-col w-col-8 w-col-tiny-8">
+                                        <div class="notificationtitle">Login</div>
+                                        <div class="notificationinfo">Receive an email notification when your account is logged in.</div>
                                     </div>
-                                    <div class="fade-in-move-on-scroll">
-                                        <p class="paragraph-5">Navigate over to the <strong>Ship </strong>tab and begin creating your first label! Once you purchase a label, you can view and download your labels in the <strong>Orders </strong>tab anytime!</p>
-                                    </div>
-                                    <div class="list-container">
-                                        <ul role="list" class="list-with-icons w-list-unstyled">
-                                            <li class="list-item-with-icon">
-                                                <div>All in one platform.</div>
-                                            </li>
-                                            <li class="list-item-with-icon">
-                                                <div>Fully secured.</div>
-                                            </li>
-                                            <li class="list-item-with-icon">
-                                                <div>No hidden fees.</div>
-                                            </li>
-                                            <li class="list-item-with-icon">
-                                                <div>Ship with ease.</div>
-                                            </li>
-                                        </ul>
+                                    <div class="column-22 checkbox w-col w-col-4 w-col-tiny-4">
+                                        <div class="div-block-12"><label class="w-checkbox"><input type="checkbox" id="checkbox" name="checkbox" data-name="Checkbox" class="w-checkbox-input"><span class="checkbox-label-4 w-form-label" for="checkbox">Checkbox</span></label></div>
                                     </div>
                                 </div>
-                                <div id="w-node-_2f2fcf7f-297c-57fd-e90b-1978b53a7ad7-b53a7abb" class="image-container"><img src="~/images/Feature-Image-01.svg" loading="lazy" alt="" class="feature-image"></div>
-                            </div>
+                                <div class="columns-22 onenotification w-row">
+                                    <div class="w-col w-col-8 w-col-small-8 w-col-tiny-8">
+                                        <div class="notificationtitle">Order Processing</div>
+                                        <div class="notificationinfo">Receive an email notification when your order is received and processing.</div>
+                                    </div>
+                                    <div class="column-22 w-col w-col-4 w-col-small-4 w-col-tiny-4">
+                                        <div>
+                                            <div class="div-block-12"><label class="w-checkbox"><input type="checkbox" id="checkbox-2" name="checkbox-2" data-name="Checkbox 2" class="w-checkbox-input"><span class="checkbox-label-4 w-form-label" for="checkbox-2">Checkbox</span></label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="columns-22 onenotification w-row">
+                                    <div class="w-col w-col-8 w-col-small-8 w-col-tiny-8">
+                                        <div class="notificationtitle">Label Update</div>
+                                        <div class="notificationinfo">Receive an email notification when your label is ready for download in the Orders Page.</div>
+                                    </div>
+                                    <div class="column-22 w-col w-col-4 w-col-small-4 w-col-tiny-4">
+                                        <div>
+                                            <div class="div-block-12"><label class="w-checkbox"><input type="checkbox" id="checkbox-3" name="checkbox-3" data-name="Checkbox 3" class="w-checkbox-input"><span class="checkbox-label-4 w-form-label" for="checkbox-3">Checkbox</span></label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="columns-22 onenotification w-row">
+                                    <div class="w-col w-col-8 w-col-small-8 w-col-tiny-8">
+                                        <div class="notificationtitle">Label</div>
+                                        <div class="notificationinfo">Receive an email with the label pdf attached.</div>
+                                    </div>
+                                    <div class="column-22 w-col w-col-4 w-col-small-4 w-col-tiny-4">
+                                        <div>
+                                            <div class="div-block-12"><label class="w-checkbox"><input type="checkbox" id="checkbox-4" name="checkbox-4" data-name="Checkbox 4" class="w-checkbox-input"><span class="checkbox-label-4 w-form-label" for="checkbox-4">Checkbox</span></label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="div-block-11">
+                                    <div class="div-block-10"><input type="submit" value="Update" data-wait="Please wait..." data-w-id="9ce32fa5-331f-4dc2-271c-e989d13d7350" class="logoutbutton updatenotifications w-button"></div>
+                                </div>
+                            </form>
+                                                      
                         </div>
                     </div>
                 </div>

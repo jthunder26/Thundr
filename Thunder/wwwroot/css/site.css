@@ -22,3 +22,53 @@
         max-width: 500px;
         margin: auto;
     }
+.form-block-6 {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+.form-4 {
+    background-color: #000;
+    border: 1px solid #171717;
+    border-radius: 6px;
+    padding: 1px;
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+.container.popup {
+    z-index: 2147483647;
+    background-color: #000;
+    border: 1px solid #9f9f9f;
+    border-radius: 20px;
+    margin: 10px auto;
+    padding-top: 2em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+@media screen and (max-width: 991px) {
+    .container.popup {
+        margin-top: 10px;
+        padding-bottom: 5px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .container.popup {
+        padding-top: 0.125em;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .container.popup {
+        margin-top: 10px;
+        margin-left: 5px;
+        margin-right: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
