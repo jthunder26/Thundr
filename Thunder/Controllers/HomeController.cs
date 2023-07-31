@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using NuGet.Protocol;
@@ -10,15 +11,59 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Security.Policy;
 using Thunder.Data;
 using Thunder.Models;
 using Thunder.Services;
 
 namespace Thunder.Controllers
 {
+    /// <summary>
+    /// 
+    /// NEW 
+    /// 
+    /// Add ability to update TotalCharge for customer in Bulk Shipping
+    /// 
+    /// 
+    /// NOTES: 
+    /// 0. shipster USPS
+
+    ///
+    /// 6. Update rate dropdown ui to be more legible. 
+    /// 
+    /// 11. Add a support page, user can send in a email. 
+    /// 12. Add Terms and Conditions accept checkbox when user creates account
+    /// 
+    /// 
+    /// 
+    /// 
+    /// --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ///     /// 1. When applying discount, first workaround is to apply an additional 15% to the ourPrice. -- DONE
+    ///     /// 4. Check Auto Scroll function on Rates and Ship page -- DONE
+    ///     /// 10. Remove link to Monitor -- DONE.
+    ///     /// 5. Have the Cheapest rate show first instead of Fastest -- DONE
+    ///     /// 3. When applying discount to USPS, we use UPSOGPrice, add an initial discount to UPSogPrice before assigning to USPSOgPrice to 
+    ///     be more inconspicuous  -- DONE
+    ///     7. Admin accounts and pages.  --DONE
+    ///              A. Add a balance maintenance page. Admin is able to update users balances. 
+    ///              B. Admins to be able to manually reset passwords
+    ///              C. Admins to be able to view any errors pertaining to a users orders.
+    ///              D. Admins able to generate promo codes. -- Talk about pricing later. 
+    ///     /// 9. On payment confirmation page, include link to Orders page, have completed orders tab be active always.  -- DONE
+    ///          8. Add duplicate order function -- DONE
+    ///          
+    /// NEW 1: Check why upsOgPrice and OgPriceString are difference, one is rounded: 
+    ///    //   upsPrice	"$12.76 retail"	string
+    ///     //   upsPriceOG		13	int --- DONE
+    ///  2. Bulk upload
+    ///     A. No validation
+    ///     B. First, validate values in columns. After validation show confirmation screen with errors or with the order details, showing 
+    ///     numbered list of labels to be created. Then below show order summary allow user to select different service classes, dynamically 
+    ///     update the order form.  --- IN PROGRESS
+    /// </summary>
 
     /// <summary>
-   
+
     /// 
     /// #dec880
     /// #ff347d
@@ -125,6 +170,8 @@ namespace Thunder.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return uid;
         }
+    
+       
         [HttpPost]
         public async Task<IActionResult> GetUserBalance()
         {
@@ -143,6 +190,14 @@ namespace Thunder.Controllers
                 return StatusCode(500, "An error occurred while retrieving user balance."); // Return an appropriate error response
             }
         }
+
+        /// <summary>
+        ///                 ADD THE OGPRICE, PERCENTSAVED ETC. TO LABELDETAILS FROM RATEDTO, 
+        ///                 MAYBE AFTER USER PURCHASES. 
+        ///                 
+        /// </summary>
+        /// <param name="upsOrder"></param>
+        /// <returns></returns>
 
         [HttpPost]
         public async Task<IActionResult> GetFullRates(UpsOrderDetails upsOrder)

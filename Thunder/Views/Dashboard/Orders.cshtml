@@ -2,22 +2,14 @@
     ViewBag.Title = "Orders";
     ViewBag.NavbarPartial = "_SideNavbar";
 }
-<html data-wf-page="648b7b7d052e0e643e1431be" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="64c7fbbef3915ca2f00a3908" data-wf-site="640dfa53ba67521ab709aa29">
 
 <body data-title="Orders">
     <div class="section dashboard">
         <h1 class="heading-3">Orders</h1>
-        <div data-current="UnfinishedOrders" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
-            <div id="w-node-caacae09-723b-2892-684c-f178accba37a-3e1431be" data-w-id="caacae09-723b-2892-684c-f178accba37a" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
-                <a id="shipTabLink" data-w-tab="UnfinishedOrders" class="account w-inline-block w-tab-link w--current">
-                    <div class="gradient-wrapp">
-                        <div class="tab-heading">Unfinished</div>
-                        <div class="tab-open-content">
-                            <p class="tab-paragraph">Input Needed</p>
-                        </div>
-                    </div>
-                </a>
-                <a data-w-tab="CompletedOrders" class="account w-inline-block w-tab-link">
+        <div data-current="CompletedOrders" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
+            <div id="w-node-caacae09-723b-2892-684c-f178accba37a-f00a3908" data-w-id="caacae09-723b-2892-684c-f178accba37a" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
+                <a id="shipTabLink" data-w-tab="CompletedOrders" class="account w-inline-block w-tab-link w--current">
                     <div class="gradient-wrapp">
                         <div class="tab-heading">Completed</div>
                         <div class="tab-open-content">
@@ -25,46 +17,107 @@
                         </div>
                     </div>
                 </a>
+                <a data-w-tab="UnfinishedOrders" class="account w-inline-block w-tab-link">
+                    <div class="gradient-wrapp">
+                        <div class="tab-heading">Unfinished</div>
+                        <div class="tab-open-content">
+                            <p class="tab-paragraph">Input Needed</p>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div data-w-id="caacae09-723b-2892-684c-f178accba390" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="feature-tabs-content w-tab-content">
-                <div data-w-tab="UnfinishedOrders" class="tab-pane-accounttab w-tab-pane w--tab-active">
+                <div data-w-tab="CompletedOrders" class="tab-pane-completedorders w-tab-pane w--tab-active">
+                    <div class="labelcontainer _01">
+                        <div class="feature-image-holder fade-in-move-on-scroll">
+                            <div data-bind="foreach: labels">
+                                        <div class="labellinkcard">
+                                            <div class="columns-16 w-row">
+                                                <div class="column-21 w-col w-col-5">
+                                                    <div class="text-block-20" data-bind="text: labelName"></div>
+                                                    <div class="text-block-21" data-bind="text: dateCreated"></div>
+                                                </div>
+                                                <div class="w-col w-col-3">
+                                                    <div class="text-block-22">Complete</div>
+                                                </div>
+                                                <div class="column-14 w-col w-col-4">
+                                                    <a data-bind="attr: { href: '/Home/ViewLabel?orderID=' + orderId, target: '_blank' }" id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c5f-f00a3908" class="link">View</a>
+                                                    <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c61-f00a3908" class="line-gradient"></div>
+                                                    <a data-bind="attr: { href: '/Home/DownloadLabel?orderID=' + orderId, download: 'ShippingLabel.pdf' }" id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c62-f00a3908" href="#" class="link-2">Download</a>
+                                                    <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c61-f00a3908" class="line-gradient"></div>
+                                                    <a data-bind="attr: { href: '/Dashboard/DuplicateOrder?labelId=' + labelId }" class="link-2">Duplicate</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </div>
+                            <!-- ko if: hasNoLabel -->
+                            <div class="w-layout-grid grid-6-col">
+                                <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c65-f00a3908" class="content">
+                                    <div class="fade-in-move-on-scroll">
+                                        <h2 class="heading-2">Create your first label!</h2>
+                                    </div>
+                                    <div class="fade-in-move-on-scroll">
+                                        <p class="paragraph-5">Navigate over to the <strong>Ship </strong>tab and begin creating your first label! Or complete an unfinished label by selecting the <strong>Unfinished Labels</strong> tab above! Once you purchase a label, you can view and download your labelsanytime!</p>
+                                    </div>
+                                    <div class="list-container">
+                                        <ul role="list" class="list-with-icons w-list-unstyled">
+                                            <li class="list-item-with-icon">
+                                                <div>All in one platform.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>Fully secured.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>No hidden fees.</div>
+                                            </li>
+                                            <li class="list-item-with-icon">
+                                                <div>Ship with ease.</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c80-f00a3908" class="image-container"><img loading="lazy" src="/images/Feature-Image-01.svg" alt="" class="feature-image"></div>
+                            </div>
+                            <!-- /ko -->
+
+                        </div>
+                    </div>
+                </div>
+                <div data-w-tab="UnfinishedOrders" class="w-tab-pane">
                     <div class="labelcontainer _01 unfinished">
                         <div class="feature-image-holder fade-in-move-on-scroll">
-                                   <div data-bind="foreach: unfinishedLabels">
-                               
-
-                                         <div class="labellinkcard unfinished">
-                                                 <div class="columns-16 unfinished w-row">
-                                                    <div class="column-23 w-col w-col-5">
-                                                        <div class="text-block-20 orders" data-bind="text: labelName"></div>
-                                                        <div class="text-block-21 unfinished" data-bind="text: dateCreated"></div>
-                                                    </div>
-                                                    <div class="w-col w-col-4">
-                                                        <div class="text-block-22">In Progress</div>
-                                                    </div>
-                                                                <div class="column-14 unfinished w-col w-col-3">
-                                                                        <div class="form-block-4 w-form">
-                                                                             <form data-bind="submit: function(data, event) { $parent.completeLabel($data, event); }" method="post"  class="form-5">
-                                                                                        <div class="send-button-wrapper fullrates buylabel orders">
-                                                                                                <div class="send-button-holder2 fullrates">
-                                                                                                        <div class="fake-submit-button-holder static fullrates">
-                                                                                                            <input type="submit" value="Complete" data-wait="..." data-w-id="827c043a-fc50-5e61-0bcc-252a1b7506f6"  class="submit-button3 submit-button-with-text3 fullrates buylabel orders w-button">
-                                                                                                            <div class="button-gradient fullrates"></div>
-                                                                                                            <div class="white-background-button-color fullrates"></div>
-                                                                                                        </div>
-                                                                                                </div>
-                                                                                        </div>
-                                            
-                                                                            </form>
-                                                                        </div>
+                            <div data-bind="foreach: unfinishedLabels">
+                                        <div class="labellinkcard unfinished">
+                                            <div class="columns-16 unfinished w-row">
+                                                <div class="column-23 w-col w-col-5">
+                                                    <div class="text-block-20 orders" data-bind="text: labelName"></div>
+                                                    <div class="text-block-21 unfinished" data-bind="text: dateCreated"></div>
+                                                </div>
+                                                <div class="w-col w-col-4">
+                                                    <div class="text-block-22">In Progress</div>
+                                                </div>
+                                                <div class="column-14 unfinished w-col w-col-3">
+                                                    <div class="form-block-4 w-form">
+                                                        <form data-bind="submit: function(data, event) { $parent.completeLabel($data, event); }" method="post" class="form-5">
+                                                            <div class="send-button-wrapper fullrates buylabel orders">
+                                                                <div class="send-button-holder2 fullrates">
+                                                                    <div class="fake-submit-button-holder static fullrates">
+                                                                        <input type="submit" value="Complete" data-wait="..." data-w-id="827c043a-fc50-5e61-0bcc-252a1b7506f6" class="submit-button3 submit-button-with-text3 fullrates buylabel orders w-button">
+                                                                        <div class="button-gradient fullrates"></div>
+                                                                        <div class="white-background-button-color fullrates"></div>
+                                                                    </div>
                                                                 </div>
-                                                 </div>
-                                         </div>
-                                   </div>
+                                                            </div>
+                                                        </form>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </div>
                             <!-- ko if: hasNotStarted -->
-
                             <div class="w-layout-grid grid-6-col">
-                                <div id="w-node-_87daf6d5-fa6b-9d72-9f7f-850a8aa96068-3e1431be" class="content">
+                                <div id="w-node-_87daf6d5-fa6b-9d72-9f7f-850a8aa96068-f00a3908" class="content">
                                     <div class="fade-in-move-on-scroll">
                                         <h2 class="heading-2">Create your first label!</h2>
                                     </div>
@@ -88,64 +141,9 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div id="w-node-_87daf6d5-fa6b-9d72-9f7f-850a8aa96083-3e1431be" class="image-container"><img loading="lazy" src="/images/Feature-Image-01.svg" alt="" class="feature-image"></div>
-                                </div>
-                           
-                            <!-- /ko -->
-                        </div>
-                    </div>
-                </div>
-                <div data-w-tab="CompletedOrders" class="w-tab-pane">
-                    <div class="labelcontainer _01">
-                        <div class="feature-image-holder fade-in-move-on-scroll">
-                                            <div data-bind="foreach: labels">
-                                                    <div class="labellinkcard">
-                                                            <div class="columns-16 w-row">
-                                                                                    <div class="column-21 w-col w-col-5">
-                                                                                            <div class="text-block-20" data-bind="text: labelName"></div>
-                                                                                            <div class="text-block-21" data-bind="text: dateCreated"></div>
-                                                                                    </div>
-                                                                                    <div class="w-col w-col-3">
-                                                                                        <div class="text-block-22">Completed</div>
-                                                                                    </div>
-                                                                                    <div class="column-14 w-col w-col-4">
-                                                                                        <a data-bind="attr: { href: '/Home/ViewLabel?orderID=' + orderId, target: '_blank' }" class="link">View</a>
-                                                                                        <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c61-abaa0a41" class="line-gradient"></div>
-                                                                                        <a data-bind="attr: { href: '/Home/DownloadLabel?orderID=' + orderId, download: 'ShippingLabel.pdf' }" class="link-2">Download</a>
-                                                                                    </div>
-                                                            </div>
-                                                    </div>
-                                            </div>
-                            
-                            <!-- ko if: hasNoLabel -->
-                                    <div class="w-layout-grid grid-6-col">
-                                        <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c65-3e1431be" class="content">
-                                            <div class="fade-in-move-on-scroll">
-                                                <h2 class="heading-2">Create your first label!</h2>
-                                            </div>
-                                            <div class="fade-in-move-on-scroll">
-                                                <p class="paragraph-5">Navigate over to the <strong>Ship </strong>tab and begin creating your first label! Once you purchase a label, you can view and download your labels in the <strong>Orders </strong>tab anytime!</p>
-                                            </div>
-                                            <div class="list-container">
-                                                <ul role="list" class="list-with-icons w-list-unstyled">
-                                                    <li class="list-item-with-icon">
-                                                        <div>All in one platform.</div>
-                                                    </li>
-                                                    <li class="list-item-with-icon">
-                                                        <div>Fully secured.</div>
-                                                    </li>
-                                                    <li class="list-item-with-icon">
-                                                        <div>No hidden fees.</div>
-                                                    </li>
-                                                    <li class="list-item-with-icon">
-                                                        <div>Ship with ease.</div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div id="w-node-_08c1b4a6-b00d-afae-e434-e8def79d3c80-3e1431be" class="image-container"><img loading="lazy" src="/images/Feature-Image-01.svg" alt="" class="feature-image"></div>
-                                       
-                                    </div>
+                                <div id="w-node-_87daf6d5-fa6b-9d72-9f7f-850a8aa96083-f00a3908" class="image-container"><img loading="lazy" src="/images/Feature-Image-01.svg" alt="" class="feature-image"></div>
+                            </div>
+
                             <!-- /ko -->
                         </div>
                     </div>

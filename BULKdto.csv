@@ -1,0 +1,7 @@
+﻿RateDTO,RateDTO.ID,RateDTO.exactCost,RateDTO.service,RateDTO.isCheapest,RateDTO.isFastest,RateDTO.isBest,RateDTO.deliveryDate,RateDTO.deliveryTime,RateDTO.deliveryDayOfWeek,RateDTO.estimatedDelivery,RateDTO.upsPrice,RateDTO.upsPriceOG,RateDTO.ourPrice,RateDTO.ourPriceString,RateDTO.isSelected,RateDTO.serviceClass,RateDTO.percentSaved,RateDTO.percentSavedString,RateDTO.usps,RateDTO.ups
+Thunder.Models.RateDTO,0,0,"USPS Priority",False,False,False,"","","","","$220 retail",220,581.98,$581.98,False,"",-47.254397014885806778487230164,"Save -47.25%",False,False
+Thunder.Models.RateDTO,0,0,"UPS Next Day Air Early",False,False,False,"","","","","$117326 retail",117326,4295.10,$4295.10,False,"",-99.27162017938447943351609472,"Save -99.27%",False,False
+Thunder.Models.RateDTO,0,0,"UPS Ground",False,False,False,"","","","","$21540 retail",21540,624.92,$624.92,False,"",-99.42140803169603111301895318,"Save -99.42%",False,False
+Thunder.Models.RateDTO,0,0,"UPS Next Day Air",False,False,False,"","","","","$113898 retail",113898,4410.23,$4410.23,False,"",-99.22725942440014839710274916,"Save -99.23%",False,False
+Thunder.Models.RateDTO,0,0,"UPS 2nd Day Air",False,False,False,"","","","","$85179 retail",85179,3226.57,$3226.57,False,"",-99.24452150286960854309079104,"Save -99.24%",False,False
+Thunder.Models.RateDTO,0,0,"UPS 3 Day Select",False,False,False,"","","","","$58466 retail",58466,2182.94,$2182.94,False,"",-99.26138013444765839662464705,"Save -99.26%",False,False

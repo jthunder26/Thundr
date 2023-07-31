@@ -22,6 +22,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Azure.Security.KeyVault.Secrets;
+using SendGrid.Helpers.Mail;
+using Stripe;
 
 namespace Thunder.Services
 {
@@ -36,14 +38,17 @@ namespace Thunder.Services
         LabelDetails getLabelDetails(string uid);
         //Task TestShipAsync();
         UpsOrderDetails getUnfinishedLabel(int labelId, string uid);
+        OrderDTO AdminGetOrderDetails(int labelId);
         Task<FileStreamResult> getLabel(string orderID, bool view = false);
         void UpdateAddress(string uid, ReturnAddress address);
         void AddOrder(UpsOrderDetails order);
+        void AddBulkOrder(BulkRateOrderDetails order);
         int GetUpsOrderDetailsId(string uid);
-        void UpdateOrder(long amount, int labelId, string serviceClass, long charged);
+        void UpdateOrder(long amount, int labelId, string serviceClass, long charged, int ogPrice, string percentSaved);
         Task CreateAndSaveRateCosts(int upsOrderDetailsId, List<RateDTO> rates);
         int GetLabelCost(int labelId, string serviceClass);
         bool UpdateUnfinishedOrder(int labelId, string serviceClass, string uid);
+        Task DuplicateOrderAsync(int labelId);
     }
 
     public class ThunderService : IThunderService
@@ -58,23 +63,100 @@ namespace Thunder.Services
             { "ups_ground", "48d32fbd-0034-46ff-9b7a-046f3f5b640f" },
             { "ups_next_day_air", "f8952c0f-3467-4a90-ae7b-a52840254218" },
             { "ups_next_day_air_early", "deac3347-10ab-412d-b577-4b90d7566bd6" },
-            { "UPS Next Day Air Saturday", "f9a64e11-a254-4b16-96d8-444c6fcfa5ed" },
+            { "ups_next_day_air_saturday", "f9a64e11-a254-4b16-96d8-444c6fcfa5ed" },
             { "ups_2nd_day_air", "7ab79f8d-d687-4c7e-91b1-d35bcff2ab42" },
             { "ups_3_day_select", "a7ae8133-7a45-4581-b1b2-caca53ab95e2" }
         };
 
-        public ThunderService(ApplicationDbContext db, SecretClient secretClient, IBlobService blobservice, IUserService userService, ILogger<ThunderService> logger)
+        public ThunderService(ApplicationDbContext db, string aioSecret, string shipsterSecret, IBlobService blobservice, IUserService userService, ILogger<ThunderService> logger)
         {
             _db = db;
             _blobService = blobservice;
             _userService = userService;
-            var aioApiKeySecret = secretClient.GetSecret("AioKey");
-            _aioApiKeySecret = aioApiKeySecret.Value.Value;
+           
+            _aioApiKeySecret = aioSecret;
             
-            var shipsterApiKeySecret = secretClient.GetSecret("ShipsterKey");
-            _shipsterApiKeySecret = shipsterApiKeySecret.Value.Value;
+            
+            _shipsterApiKeySecret = shipsterSecret;
         }
 
+        public async Task DuplicateOrderAsync(int labelId)
+        {
+           
+            try
+            {
+                // Fetch the existing order and label details
+                var existingOrder = _db.UpsOrderDetails
+                    .Include(o => o.UnfinishedLabel)
+                    .FirstOrDefault(o => o.LabelId == labelId);
+
+                if (existingOrder == null)
+                {
+                    throw new Exception("Order not found");
+                }
+
+                var existingLabelDetail = existingOrder.UnfinishedLabel;
+                var newOrder = new UpsOrderDetails
+                {
+                    Uid = existingOrder.Uid,
+                    FromEmail = existingOrder.FromEmail,
+                    ToEmail = existingOrder.ToEmail,
+                    FromName = existingOrder.FromName,
+                    FromCompany = existingOrder.FromCompany,
+                    FromPhone = existingOrder.FromPhone,
+                    FromZip = existingOrder.FromZip,
+                    FromAddress1 = existingOrder.FromAddress1,
+                    FromAddress2 = existingOrder.FromAddress2,
+                    FromCity = existingOrder.FromCity,
+                    FromState = existingOrder.FromState,
+                    ToName = existingOrder.ToName,
+                    ToCompany = existingOrder.ToCompany,
+                    ToPhone = existingOrder.ToPhone,
+                    ToZip = existingOrder.ToZip,
+                    ToAddress1 = existingOrder.ToAddress1,
+                    ToAddress2 = existingOrder.ToAddress2,
+                    ToCity = existingOrder.ToCity,
+                    ToState = existingOrder.ToState,
+                    OurPrice = existingOrder.OurPrice,
+                    Weight = existingOrder.Weight,
+                    Length = existingOrder.Length,
+                    Width = existingOrder.Width,
+                    Height = existingOrder.Height,
+                    checkedOut = 0,
+                    UserName = existingOrder.UserName
+                };
+
+                _db.UpsOrderDetails.Add(newOrder);
+                await _db.SaveChangesAsync();
+
+                // Create a new label detail with the existing label detail's data
+                var newLabelDetail = new LabelDetail
+                {
+                    LabelId = newOrder.LabelId, // The new order's ID
+                    Uid = existingLabelDetail.Uid,
+                    LabelName = existingLabelDetail.LabelName,
+                    FromEmail = existingLabelDetail.FromEmail,
+                    Status = 0,
+                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    FullName = existingLabelDetail.FullName,
+                    CarrierName = existingLabelDetail.CarrierName,
+                    OrderId = existingLabelDetail.OrderId,
+                    LabelService = existingLabelDetail.LabelService,
+                    UpsOrderDetails = newOrder // The new order
+                };
+
+                _db.LabelDetail.Add(newLabelDetail);
+                await _db.SaveChangesAsync();
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw;  // Re-throw the exception if you still want it to bubble up
+            }
+            // Create a new order with the existing order's data
+           
+        }
 
 
         public async Task<HttpResponseMessage> CreateShipsterLabelAsync(int labelId)
@@ -194,7 +276,7 @@ namespace Thunder.Services
         public async Task<HttpResponseMessage> CreateAIOLabelAsync(int labelId)
         {
             var UpsOrderDetails = _db.UpsOrderDetails.FirstOrDefault(x => x.LabelId == labelId);
-            if (UpsOrderDetails.Class == "7deff37b-5900-430c-9335-dabe871bc271")
+            if (UpsOrderDetails.Class == "7deff37b-5900-430c-9335-dabe871bc271" || UpsOrderDetails.Class == "ups_next_day_air_saturday")
             {
                 // If it does, throw an exception
                 throw new ApplicationException("USPS Class, auto AIO redirect to Shipster");
@@ -346,7 +428,7 @@ namespace Thunder.Services
 
 
 
-            public int GetUpsOrderDetailsId(string uid)
+        public int GetUpsOrderDetailsId(string uid)
         {
             var upsOrderDetail = _db.UpsOrderDetails.Where(a => a.Uid == uid && a.checkedOut == 1).FirstOrDefault();
 
@@ -354,18 +436,21 @@ namespace Thunder.Services
 
             return upsOrderDetailsId;
         }
-        public void UpdateOrder(long amount, int labelId, string serviceClass, long charged)
+        public void UpdateOrder(long amount, int labelId, string serviceClass, long charged, int ogPrice, string percentSaved)
         {
             var uid = _userService.GetCurrentUserId();
             var upsOrder = _db.UpsOrderDetails.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
+            var label = _db.LabelDetail.Where(a => a.Uid == uid && a.LabelId == labelId).FirstOrDefault();
             if(upsOrder != null)
             {
 
-                upsOrder.TotalAmount = int.Parse(amount.ToString());
+                upsOrder.TotalAmount = int.Parse(amount.ToString()); // same as OurPrice
                 upsOrder.LabelId = labelId;
                 upsOrder.Class = serviceClass;
                 upsOrder.TotalCharge = int.Parse(charged.ToString());
-
+                upsOrder.OurPrice = int.Parse(amount.ToString());
+                upsOrder.OgPrice = ogPrice;
+                upsOrder.PercentSaved = percentSaved;
             }
             _db.SaveChanges();
         } 
@@ -398,6 +483,7 @@ namespace Thunder.Services
                 {
                     // Create a new RateCosts record
                     RateCosts rateCost = new RateCosts
+
                     {
                         LabelId = upsOrderDetailsId,
                         serviceClass = rate.serviceClass,
@@ -409,6 +495,7 @@ namespace Thunder.Services
 
             await _db.SaveChangesAsync();
         }
+
         public void AddOrder(UpsOrderDetails upsOrder)
         {
            var orders = _db.UpsOrderDetails.Where(x => x.Uid == upsOrder.Uid);
@@ -475,11 +562,131 @@ namespace Thunder.Services
                     DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     Status = 1
                 });
+
             }
 
             _db.SaveChanges();
         }
+        public void AddBulkOrder(BulkRateOrderDetails orderDetails)
+        {
+            try
+            {
+                var orders = _db.UpsOrderDetails.Where(x => x.Uid == orderDetails.Uid);
+                var labelDetails = _db.LabelDetail.Where(x => x.Uid == orderDetails.Uid);
+                int bulkID = 0;
+                //both of these for eaches just set the checkedout and status = to 0
+                foreach (var order in orders)
+                {
+                    order.checkedOut = 0;
+                }
 
+                foreach (var order in labelDetails)
+                {
+                    if (order.Status < 3)
+                    {
+                        order.Status = 0;
+                    }
+                }
+
+                foreach (var order in orderDetails.OrderDetails)
+                {
+                    // Create a new entry for UpsOrderDetails
+                    order.checkedOut = 1;
+                    order.Uid = orderDetails.Uid;
+                    _db.UpsOrderDetails.Add(order);
+
+                    // Save changes to generate LabelId
+                    _db.SaveChanges();
+
+                    // Get the generated LabelId
+                    int generatedLabelId = order.LabelId;
+
+                    if (bulkID == 0)
+                    {
+                        bulkID = generatedLabelId;
+                    }
+
+                    order.BulkId = bulkID;
+
+                    // Now we can create the LabelDetail
+                    _db.LabelDetail.Add(new LabelDetail
+                    {
+                        LabelId = generatedLabelId,
+                        BulkId = bulkID,
+                        Uid = order.Uid,
+                        FullName = order.UserName,
+                        LabelName = order.ToName,
+                        FromEmail = order.FromEmail,
+                        DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Status = 1
+                    });
+
+                    // Save changes after each order addition
+                    _db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception according to your needs
+                // For example, you could log the error or rethrow it
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        ////public void AddBulkOrder(BulkRateOrderDetails orderDetails)
+        //{
+        //    var orders = _db.UpsOrderDetails.Where(x => x.Uid == orderDetails.Uid);
+        //    var labelDetails = _db.LabelDetail.Where(x => x.Uid == orderDetails.Uid);
+        //    int bulkID = 0;
+        //    //both of these for eaches just set the checkedout and status = to 0
+        //    foreach (var order in orders)
+        //    {
+        //        order.checkedOut = 0;
+        //    }
+
+        //    foreach (var order in labelDetails)
+        //    {
+        //        if (order.Status < 3)
+        //        {
+        //            order.Status = 0;
+        //        }
+
+        //    }
+        //    foreach (var order in orderDetails.OrderDetails)
+        //    {
+        //        // Create a new entry for UpsOrderDetails
+        //        order.checkedOut = 1;
+        //        order.Uid = orderDetails.Uid;
+        //        _db.UpsOrderDetails.Add(order);
+        //        _db.SaveChanges(); // Save changes to get the generated LabelId
+
+        //        // Save the generated LabelId
+        //        int generatedLabelId = order.LabelId;
+
+        //        if (bulkID == 0)
+        //        {
+        //            bulkID = generatedLabelId;
+        //        }
+
+        //        order.BulkId = bulkID;
+        //        _db.SaveChanges();
+
+        //        // Now we can create the LabelDetail
+        //        _db.LabelDetail.Add(new LabelDetail
+        //        {
+        //            LabelId = generatedLabelId,
+        //            BulkId = bulkID,
+        //            Uid = order.Uid,
+        //            FullName = order.UserName,
+        //            LabelName = order.ToName,
+        //            FromEmail = order.FromEmail,
+        //            DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+        //            Status = 1
+        //        });
+        //        _db.SaveChanges();
+
+        //    }
+        //}
 
         public UserDetails GetUserDeets(string uid)
         {
@@ -520,8 +727,8 @@ namespace Thunder.Services
 
                 //.OrderByDescending(x => x.DateCreated);
 
-            var finishedOrders = orders.Where(x => x.Status == 3);
-            var unfinishedOrders = orders.Where(x => x.Status < 3);
+            var finishedOrders = orders.Where(x => x.Status == 3).OrderByDescending(c => c.DateCreated);
+            var unfinishedOrders = orders.Where(x => x.Status < 3).OrderByDescending(c => c.DateCreated);
 
             LabelDetails labelDetails = new LabelDetails();
             labelDetails.FinishedOrders = finishedOrders.ToList();
@@ -548,6 +755,52 @@ namespace Thunder.Services
 
 
             return upsOrderDetails;
+        }
+          public OrderDTO AdminGetOrderDetails(int labelId)
+        {
+            var orderDetails = _db.UpsOrderDetails
+                                   .Where(x => x.LabelId == labelId)
+                                   .FirstOrDefault();
+            var labelDetails = _db.LabelDetail.Where(z => z.LabelId == labelId).FirstOrDefault(); 
+           
+            OrderDTO order = new OrderDTO();
+            order.LabelId = orderDetails.LabelId;
+            order.UserName = orderDetails.UserName;
+            order.OrderMessage = labelDetails.Message;
+            order.ErrorMessage = labelDetails.ErrorMsg;
+            order.Status = labelDetails.Status.ToString();
+            order.LabelServiceAttempts = "AIO attempts: " + labelDetails.AIO_Attempt.ToString() + " - Shipster Attempts: " + labelDetails.Shipster_Attempt.ToString();
+           
+            order.FromEmail = orderDetails.FromEmail;
+            order.FromName = orderDetails.FromName;
+            order.FromCompany = orderDetails.FromCompany;
+            order.FromAddress1 = orderDetails.FromAddress1;
+            order.FromAddress2 = orderDetails.FromAddress2;
+            order.FromCity = orderDetails.FromCity;
+            order.FromState = orderDetails.FromState;
+            order.FromZip = orderDetails.FromZip;
+            order.FromPhone = orderDetails.FromPhone;
+           
+            order.ToEmail = orderDetails.ToEmail;
+            order.ToName = orderDetails.ToName;
+            order.ToCompany = orderDetails.ToCompany;
+            order.ToAddress1 = orderDetails.ToAddress1;
+            order.ToAddress2 = orderDetails.ToAddress2;
+            order.ToCity = orderDetails.ToCity;
+            order.ToState = orderDetails.ToState;
+            order.ToZip = orderDetails.ToZip;
+            order.ToPhone = orderDetails.ToPhone;
+
+            order.Length = orderDetails.Length;
+            order.Width = orderDetails.Width;
+            order.Height = orderDetails.Height;
+            order.Weight = orderDetails.Weight;
+            order.ServiceClass = orderDetails.Class;
+            order.OGPrice = orderDetails.OgPrice.ToString();
+            order.PercentSaved = orderDetails.PercentSaved;
+            order.OurPrice = orderDetails.OurPrice.ToString();
+            order.TotalCharge = orderDetails.TotalCharge.ToString();
+            return order;
         }
 
      

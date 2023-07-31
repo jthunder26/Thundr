@@ -1,0 +1,331 @@
+﻿@{
+    ViewBag.Title = "BulkShip";
+    ViewBag.NavbarPartial = "_SideNavbar";
+}
+
+<html data-wf-page="64c7fbbef3915ca2f00a38f7" data-wf-site="640dfa53ba67521ab709aa29">
+<body data-title="BulkShip">
+    <div style="display:none;opacity:0" class="confirmpasswordpopup bulkshipping">
+        <div class="container popup">
+            <div data-w-id="4b014bde-0f03-2984-7031-87091a9bad15" class="div-block-8 popup"><img src="/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div class="center-text popup">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text popup"><span class="gradient-text stripe">Welcome to Bulk Shipping! </span></div>
+                    </div>
+                </div>
+            </div>
+            <h6 class="heading-5">ThundrShip allows you to create multiple labels at once by entering your label data in our csv/excel template! <br>Shipping to different addresses? Different sizes and weights? No problem!<br>Follow these easy steps and begin shipping!!</h6>
+            <div class="text-block-35">‍<br><br><strong>Step 1</strong>: Download our CSV/Excel Template and input the data in the correct columns (ex: The address you are shipping to should go in the ToAddress column). Each Row represents 1 label you are attempting to create.<br><br><strong>Step 2</strong>: Drag or Upload the file in the Bulk Shipping page. <br><br><strong>Step 3</strong>: Thundr will process your file and return any errors found. <br>‍<br>         - You will receive an error if:<br>            1. There is an empty column that is not marked as &quot;(optional)&quot;.<br>            2. There is anything other than numbers in Pounds, Length, Width, Height or Zipcode columns. <br>‍<br><strong>Step 4</strong>: Review your order, select the desired service and purchase! <br><br><strong>NOTE</strong>: <br><br>1. Thundr does not validate the addresses in Bulk Shipping, ensure you have the correct information! We will attempt to create every label. <br>2. Package weight MUST be between 1 LB and 150 LBS<br>3. Labels will be grouped by weight, 0 - 70 lbs and 70+ lb packages. <br>4. USPS allows for a maximum weight of 70 pounds (lbs) for all domestic services. If you are sending packages over 70 lbs, you will be able to choose from any available UPS services! <br>‍</div>
+        </div>
+    </div>
+    <div style="display:none;opacity:0" class="confirmpasswordpopup stripe">
+        <div class="container popup">
+            <div data-w-id="bb54be62-878f-a629-0499-ebf9ccc4d7cb" class="div-block-8 popup"><img src="/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div class="center-text popup">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text popup"><span class="gradient-text stripe">Complete your purchase!</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-block-5 w-form">
+                <form id="payment-form" class="payment-form">
+                    <div id="payment-element">
+                        <!-- Elements will create form elements here -->
+                    </div>
+                    <button id="submit">Submit</button>
+                    <div id="error-message">
+                        <!-- Display error message to your customers here -->
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+<div class="section dashboard">
+    <div class="columns-21 w-row">
+        <div class="w-col w-col-9">
+            <h1 class="heading-3">Bulk Shipping</h1>
+        </div>
+        <div class="column-20 w-col w-col-3">
+            <div class="container-4 w-container">
+                <img src="/images/Media-Image.svg" loading="lazy" width="40" alt="" class="image-6">
+                <div class="text-block-31"><strong>Download Template</strong></div>
+                <div class="div-block-13">
+                    <div data-w-id="6314e234-a17c-c5e4-ce04-dc7c79756635" class="text-block-38">Guide</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="labelcontainer _01">
+        <div class="createlabelholder">
+            <div class="w-layout-blockcontainer container-8 w-container" id="dropzone">
+                <div class="text-block-39"><strong>Drag file here or click to upload</strong></div>
+                <img src="/images/check.png" loading="lazy" width="25" alt="">
+            </div>
+            <div class="container _4em fade-in-move-on-scroll" id="dropdownrates" style="display: none">
+                <div class="w-form">
+                        <form id="email-form" class="form-3" data-wf-page-id="64c7fbbef3915ca2f00a38f7" data-wf-element-id="1f3f4983-4002-22ab-1572-1a446b9884c6">
+                            <div class="text-block-40">Labels 70lbs and under</div>
+                        <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
+                                <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedRateUnder70">
+                                <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
+                                    <div class="quick-access-card spacing fullrate bulk">
+                                        <div class="columns fullrate w-row">
+                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884cd-f00a38f7" data-bind="visible: ups">
+                                            </div>
+                                            <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                            </div>
+                                        </div>
+                                            <div class="columns-2 fullrate w-row">
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                    <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                    <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                </div>
+
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
+                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                        <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                            <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                <div class="text-block-34">total</div>
+                                            </div>
+                                        </div>
+                                        <div class="columns-24 w-row">
+                                            <div class="w-col w-col-6">
+                                                    <div class="text-block-36"></div>
+                                            </div>
+                                            <div class="w-col w-col-6">
+                                                    <div class="text-block-37"><span data-bind="text: $parent.underCount"></span> labels</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grey-border fullrate"></div>
+                                </div>
+                                <div class="icon w-icon-dropdown-toggle"></div>
+                            </div>
+                                <nav class="dropdown-list w-dropdown-list" data-bind="foreach: ratesUnder70">
+                                <div id="w-node-_1f3f4983-4002-22ab-1572-1a446b9884e8-f00a38f7" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                    <div class="quick-access-card spacing" data-bind="click: $parent.selectUnderRate">
+                                        <div class="columns w-row">
+                                            <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_1f3f4983-4002-22ab-1572-1a446b9884ec-f00a38f7" data-bind="visible: ups">
+                                            </div>
+                                            <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                            </div>
+                                        </div>
+                                            <div class="columns-2 fullrate w-row">
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                    <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                    <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                </div>
+
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
+                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                            <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                                <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                             
+                            </nav>
+                        </div>
+                            <div class="text-block-40">Labels 70lbs and over</div>
+                        <div data-delay="0" data-hover="false" class="dropdown w-dropdown">
+                                <div class="dropdown-toggle w-dropdown-toggle" data-bind="foreach: selectedRateOver70">
+                                    <div class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll fullrate">
+                                        <div class="quick-access-card spacing fullrate bulk">
+                                            <div class="columns fullrate w-row">
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_49e007f1-265d-50c2-1295-34e20ee0b32f-f00a38f7" data-bind="visible: ups">
+                                                </div>
+                                                <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                </div>
+                                            </div>
+                                            <div class="columns-2 fullrate w-row">
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                    <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                    <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                </div>
+
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
+                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                            <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                                <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                    <div class="text-block-34">average</div>
+                                                </div>
+                                            </div>
+                                            <div class="columns-24 w-row">
+                                                <div class="w-col w-col-6">
+                                                    <div class="text-block-36"></div>
+                                                </div>
+                                                <div class="w-col w-col-6">
+                                                    <div class="text-block-37"><span data-bind="text: $parent.overCount"></span> labels</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grey-border fullrate"></div>
+                                    </div>
+                                <div class="icon w-icon-dropdown-toggle"></div>
+                            </div>
+                            <nav class="dropdown-list w-dropdown-list" data-bind="foreach: ratesOver70">
+                                <div  id="w-node-_49e007f1-265d-50c2-1295-34e20ee0b357-f00a38f7" class="quick-access-card-holder-2 less-padding fade-in-move-on-scroll">
+                                        <div class="quick-access-card spacing" data-bind="click: $parent.selectOverRate">
+                                            <div class="columns w-row">
+                                                <div class="column-3 w-col w-col-1 w-col-small-1 w-col-tiny-1">
+                                                    <img src="/images/usps.png" loading="lazy" width="37" alt="" data-bind="visible: usps">
+                                                    <img id="companyImg" loading="lazy" src="/images/UPS.svg" alt="" class="image w-node-_49e007f1-265d-50c2-1295-34e20ee0b35c-f00a38f7" data-bind="visible: ups">
+                                                </div>
+                                                <div class="column-4 w-col w-col-11 w-col-small-11 w-col-tiny-11">
+                                                    <div id="serviceType" class="text-block" data-bind="text: service"></div>
+                                                </div>
+                                            </div>
+                                            <div class="columns-2 fullrate w-row">
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isFastest">
+                                                    <div id="isCheapest" class="text-block-3 fastest">FASTEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isCheapest">
+                                                    <div id="isCheapest" class="text-block-3">CHEAPEST</div>
+                                                </div>
+                                                <div class="badgecolumn w-col w-col-2" data-bind="visible: isBest">
+                                                    <div id="isCheapest" class="text-block-3 best">BEST VALUE</div>
+                                                </div>
+
+                                                <div class="column-6 w-col w-col-10">
+                                                    <div id="rateSlogan" class="text-block-4">Instant Access, Deep Discounts</div>
+                                                </div>
+                                            </div>
+                                            <div id="estimatedDelivery" class="text-block-5" data-bind="text: estimatedDelivery"></div>
+                                            <div id="hasInsurance" class="text-block-6">Free Tracking • $100 insurance included</div>
+                                            <div class="columns-3 w-row">
+                                                <div class="column-10 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="percentSaved" class="text-block-7" data-bind="text: percentSavedString"></div>
+                                                    <div id="retailPrice" class="text-block-9" data-bind="text: upsPrice"></div>
+                                                </div>
+                                                <div class="column-7 w-col w-col-6 w-col-small-6 w-col-tiny-6">
+                                                    <div id="ourPrice" class="text-block-10" data-bind="text: ourPriceString"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                   
+                                </div>
+                              
+                            </nav>
+                        </div>
+                        <div data-w-id="1f3f4983-4002-22ab-1572-1a446b988579" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="labellinkcard buylabel">
+                           <div data-bind="with: labelRequest">
+                            <div>
+                                <h6 class="heading">Confirm Purchase</h6>
+                            </div>
+                            <div class="block-content">
+                                <div class="columns-10 w-row">
+                                    <div class="w-col w-col-6">
+                                        <div class="text-block-15">Ship Date</div>
+                                    </div>
+                                    <div class="w-col w-col-6">
+                                        <div class="text-block-14" data-bind="text: currentDate"></div>
+                                    </div>
+                                </div>
+                                <div class="columns-3 w-row">
+                                    <div class="column-10 w-col w-col-6">
+                                        <div class="text-block-16">Current Account Balance</div>
+                                    </div>
+                                    <div class="column-7 w-col w-col-6">
+                                        <div class="text-block-14" data-bind="text: beginningBalance"></div>
+                                    </div>
+                                </div>
+                                <div class="columns-12 w-row">
+                                    <div class="w-col w-col-6">
+                                        <div class="text-block-17">Total Cost</div>
+                                    </div>
+                                    <div class="w-col w-col-6">
+                                        <div class="text-block-14"data-bind="text: totalCost"></div>
+                                    </div>
+                                </div>
+                                 <div class="columns-13 w-row">
+                                    <div class="w-col w-col-8">
+                                        <div class="text-block-18">Total Charge</div>
+                                    </div>
+                                   <div class="w-col w-col-4"><input type="text" class="input-field custom w-input" maxlength="256" name="TotalCharge-2" data-bind="textInput: totalCharge, event:{input: calculateBalanceBulk}" data-name="TotalCharge" id="TotalCharge" required=""></div>
+                                </div>
+                                   <div class="columns-3 w-row" id="endingBalanceColumn">
+                                    <div class="column-10 w-col w-col-6">
+                                        <div class="text-block-19">Ending Account Balance</div>
+                                    </div>
+                                    <div class="column-7 w-col w-col-6">
+                                         <div class="text-block-14" id="RemainingBalance" data-bind="text: endingBalance"></div>
+                                    </div>
+                                </div>
+                                <div class="send-button-wrapper fullrates buylabel">
+                                    <div class="send-button-holder2 fullrates">
+                                        <div class="fake-submit-button-holder static fullrates" data-bind="visible: canBuy">
+                                           <input id="buyLabel" type="submit" value="Buy Label" data-wait="..." data-w-id="0407eb30-f557-8cef-c6d7-0c35c67af1bc" class="submit-button3 submit-button-with-text3 fullrates buylabel w-button">
+                                            <div class="button-gradient fullrates"></div>
+                                            <div class="white-background-button-color fullrates"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                </div>
+                        </div>
+                    </form>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

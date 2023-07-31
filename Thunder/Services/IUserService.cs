@@ -28,8 +28,10 @@ namespace Thunder.Services
         //Task<ChargeValidationResult> UpdateUserBalanceByCustomerIdAsync(string stripeCustomerId, long amountCaptured);
         //Task<IdentityResult> ChargeCustomer(string stripeCustomerId, int charge);
         Task<decimal> GetUserBalance(string uid);
+        Task<decimal> GetUserBalanceByEmail(string email);
         Task<string> GetStripeCustomerId(string userId);
         Task<bool> UpdateUserBalance(string userId, int balanceToAdd);
+        Task<bool> AdminUpdateUserBalance(UserToUpdate user);
         Task<ChargeValidationResult> ChargeUserBalance(string userId, int chargeAmount);
     }
 
@@ -78,6 +80,25 @@ namespace Thunder.Services
             // Return whether the operation was successful
             return result.Succeeded;
         }
+       
+        public async Task<bool> AdminUpdateUserBalance(UserToUpdate userToUpdate)
+        {
+            // Find user by user ID
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userToUpdate.email);
+            if (user == null)
+            {
+                return false;  // User not found
+            }
+            
+            // Add balance to user
+            user.UserBalance = int.Parse(userToUpdate.balance)*100;
+
+            // Update user in the database
+            var result = await _userManager.UpdateAsync(user);
+
+            // Return whether the operation was successful
+            return result.Succeeded;
+        }
 
         public async Task<ChargeValidationResult> ChargeUserBalance(string userId, int chargeAmount)
         {
@@ -117,6 +138,7 @@ namespace Thunder.Services
             {
                 Success = true,
                 Message = "Charged Successfully"
+                 
             };
         }
 
@@ -198,6 +220,33 @@ namespace Thunder.Services
                 // Return a generic error response
                 return 0; // Or any other appropriate response
             }
+        }  
+        public async Task<decimal> GetUserBalanceByEmail(string email)
+        {
+            try
+            {
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                {
+                    throw new NotFoundException("User not found");
+                }
+
+                return user.UserBalance;
+            }
+            catch (NotFoundException ex)
+            {
+               // _logger.LogError(ex, "User not found");
+
+                // Return an error response indicating the failure
+                return 0; // Or any other appropriate response
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "Error occurred while retrieving user balance");
+
+                // Return a generic error response
+                return 0; // Or any other appropriate response
+            }
         }
 
 
@@ -211,3 +260,4 @@ namespace Thunder.Services
     }
 
 }
+

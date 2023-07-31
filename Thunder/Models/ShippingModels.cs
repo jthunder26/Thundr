@@ -11,7 +11,33 @@ namespace Thunder.Models
         public int ID { get; set; }
         public string service { get; set; }
     }
+    public class BulkRateOrderDetails
+    {   
+        public string Uid { get; set; }
+        public List<UpsOrderDetails> OrderDetails { get; set; }
 
+    }  
+    public class BulkRates
+    {
+        public List<FullRateDTO> Under { get; set; }
+        public List<FullRateDTO> Over { get; set; }
+        public List<FullRateDTO> Error { get; set; }
+
+    } 
+    public class BulkRateDTO
+    {
+        public List<RateDTO> under { get; set; }
+        public List<RateDTO> over { get; set; }
+        public List<RateDTO> error { get; set; }
+        public RateDTO? selectedUnder { get; set; }
+        public RateDTO? selectedOver { get; set; }
+        public int underCount { get; set; }
+        public int overCount { get; set; }
+        public bool isError { get; set; }
+        public string? errorMsg { get; set; }
+        public int? bulkId { get; set; }
+
+    }
     public class FullRateDTO
     {
         public List<RateDTO>? rates { get; set; }
@@ -25,6 +51,7 @@ namespace Thunder.Models
         public List<RateDTO>? Rates { get; set; }
         public bool IsError { get; set; }
         public string? Error { get; set; }
+
     }
     public class RateDTO
     {
@@ -46,6 +73,7 @@ namespace Thunder.Models
         public string serviceClass { get; set; }
         public string percentSaved { get; set; }
         public string percentSavedString { get; set; }
+        
         public bool usps { get; set; }
         public bool ups { get; set; }
     }

@@ -1,0 +1,440 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    ViewBag.NavbarPartial = "_SideNavbar";
+}
+<html data-wf-page="64c7fbbef3915ca2f00a38f4" data-wf-site="640dfa53ba67521ab709aa29">
+<body data-title="Admin">
+    <div style="display:none;opacity:0" class="confirmpasswordpopup">
+        <div class="container popup">
+            <div data-w-id="1b49cc3a-9306-d5f6-d432-e1386921dcb7" class="div-block-8 popup"><img src="/images/x-icon.svg" loading="lazy" width="16" alt="" class="image-5"></div>
+            <div class="center-text popup">
+                <div class="hero-text-holder">
+                    <div style="-webkit-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="animate-on-load-1st">
+                        <div class="hero-text popup"><span class="gradient-text">Confirm your password to save changes </span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-slace-on-scroll">
+                <div class="top-margin-l white-text popup">
+                    <div class="center-box popup"></div>
+                    <div class="login popup w-form">
+                        <form data-bind="submit: validatePass" method="post" class="loginform popup">
+                            <label for="Password-3" class="field-label-3">Password</label>
+                            <input type="password" class="text-field-2 w-input" placeholder="Password" id="passConfirm" required="">
+                            <div class="section-2 wf-section">
+                                <div class="send-button-holder2 custom4 popup">
+                                    <div class="fake-submit-button-holder static custom4 popup">
+                                        <input type="submit" value="Verify" data-wait="..." data-w-id="1b49cc3a-9306-d5f6-d432-e1386921dccb" class="submit-button3 submit-button-with-text3 custom4 popup w-button">
+                                        <div class="button-gradient custom4 popup"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="section dashboard">
+    <h1 class="heading-3">Account Details</h1>
+    <div data-current="AccountDetails" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs feature-page w-tabs">
+        <div id="w-node-_126f2fb1-0bf5-3493-4e9b-58771fc5e270-23812ff8" data-w-id="126f2fb1-0bf5-3493-4e9b-58771fc5e270" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="tabs-menu feature-page w-tab-menu">
+            <a id="shipTabLink" data-w-tab="AccountDetails" class="account w-inline-block w-tab-link w--current">
+                <div class="gradient-wrapp">
+                    <div class="tab-heading">Users</div>
+                    <div class="tab-open-content">
+                        <p class="tab-paragraph">User Details</p>
+                    </div>
+                </div>
+            </a>
+            <a data-w-tab="Notifications" class="account w-inline-block w-tab-link">
+                <div class="gradient-wrapp">
+                    <div class="tab-heading">Orders</div>
+                    <div class="tab-open-content">
+                        <p class="tab-paragraph">Order Details</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div data-w-id="126f2fb1-0bf5-3493-4e9b-58771fc5e286" style="opacity:0;-webkit-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 25px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="feature-tabs-content w-tab-content">
+            <div data-w-tab="AccountDetails" class="tab-pane-completedorders w-tab-pane w--tab-active">
+                <div class="accountdetailscontainer">
+                    <h4 class="sectionheader">User</h4>
+                    <div class="detailwrapper personal w-row">
+                        <div class="detailname personal w-col w-col-3">
+                            <div class="text-block-26">Search By Email</div>
+                        </div>
+                        <div class="detailinfo personal w-col w-col-9">
+                            <div class="formupdate w-form">
+                                <form id="findEmail" method="post" class="colupdatewrapper emailandname">
+                                        <div data-bind="with: userDeets">
+                                            <div class="columns-18 w-row">
+                                                <div class="details returnaddress w-col w-col-6 w-col-stack">
+                                                 <input type="text" class="formupdate details w-input" data-bind="value: email" maxlength="256" name="EmailSearch" data-name="EmailSearch" placeholder="user@email.com" id="EmailSearch" required="">
+                                                 </div>
+                                                <div class="iconcolumn w-col w-col-6 w-col-stack">
+                                                    <div class="send-button-holder2 custom4 updateinto">
+                                                        <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                                <input type="submit" data-bind="click: findEmail" value="Search" data-wait="..." class="submit-button3 submit-button-with-text3 custom4 updateinfo admin w-button">
+                                                            <div class="button-gradient custom4 updateinfo"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </form>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailwrapper password w-row" id="passwordDiv" style="display: none">
+                        <div class="detailname personal w-col w-col-3">
+                            <div class="text-block-26">Password</div>
+                        </div>
+                        <div class="detailinfo personal w-col w-col-9">
+                            <div class="formupdate password w-form">
+                                <form method="post" class="colupdatewrapper password" data-wf-page-id="64a4332b31cc19bf23812ff8" data-wf-element-id="126f2fb1-0bf5-3493-4e9b-58771fc5e2a8">
+                                    <div class="columns-18 w-row">
+                                        <div class="details w-col w-col-6">
+                                            <div class="text-block-28">Send an email with a password-reset link</div>
+                                        </div>
+                                        <div class="iconcolumn foremail w-col w-col-6">
+                                            <div class="div-block-9"><img loading="lazy" src="/images/Message-Image.svg" alt="" class="iconimage"><input type="submit" value="" data-wait="Please wait..." class="submit-button w-button"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detailwrapper personal w-row" id="balanceDiv" style="display: none">
+                        <div class="detailname personal w-col w-col-3">
+                            <div class="text-block-26">Balance <strong>($)</strong></div>
+                        </div>
+                        <div class="detailinfo personal w-col w-col-9">
+                            <div class="formupdate w-form">
+                                <form method="post" class="colupdatewrapper emailandname" data-wf-page-id="64a4332b31cc19bf23812ff8" data-wf-element-id="126f2fb1-0bf5-3493-4e9b-58771fc5e291">
+                                   <div data-bind="with: userDeets">
+                                    <div class="columns-18 w-row">
+                                        <div class="details w-col w-col-6">
+                                                    <input type="text" class="formupdate details w-input" maxlength="256" name="field-2" data-name="Field 2" data-bind="value: balance" id="field-2">
+                                                </div>
+                                        <div class="iconcolumn w-col w-col-6">
+                                            <div class="send-button-holder2 custom4 updateinto">
+                                                <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                    <input type="submit" value="Update" data-wait="..." data-w-id="126f2fb1-0bf5-3493-4e9b-58771fc5e29a" class="submit-button3 submit-button-with-text3 custom4 updateinfo w-button">
+                                                    <div class="button-gradient custom4 updateinfo"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-w-tab="Notifications" class="tab-pane-notifications w-tab-pane">
+                <div class="container-6 w-container">
+                    <div class="accountdetailscontainer">
+                        <h4 class="sectionheader">Order Details</h4>
+                        <div class="detailwrapper personal w-row">
+                            <div class="detailname personal w-col w-col-3">
+                                <div class="text-block-26">Search By Order Number</div>
+                            </div>
+                            <div class="detailinfo personal w-col w-col-9">
+                                <div class="formupdate w-form">
+                                    <form method="post" class="colupdatewrapper emailandname" data-wf-page-id="64a4332b31cc19bf23812ff8" data-wf-element-id="4248fbd5-a631-165c-03b7-54a6b8722a5c">
+                                       <div data-bind="with: order">
+                                           <div class="columns-18 w-row">
+                                                <div class="details returnaddress w-col w-col-6 w-col-stack">
+                                                        <input type="text" data-bind="value: LabelId" class="formupdate details w-input" maxlength="256" name="EmailSearch-2" data-name="Email Search 2" placeholder="ex: 123" id="EmailSearch-2" required="">
+                                                    </div>
+                                                <div class="iconcolumn w-col w-col-6 w-col-stack">
+                                                    <div class="send-button-holder2 custom4 updateinto">
+                                                        <div class="fake-submit-button-holder static custom4 updateinfo">
+                                                                <input type="submit" data-bind="click: getOrder" value="Search" data-wait="..." class="submit-button3 submit-button-with-text3 custom4 updateinfo admin w-button">
+                                                            <div class="button-gradient custom4 updateinfo"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                       </div>
+                                    </form>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-layout-blockcontainer container-7 w-container" id="orderDiv" style="display: none">
+                            <div data-bind = "with: order">
+                                    <div class="text-block-26">Details for Order: <div data-bind="text: LabelId"></div></div>
+                                    <div class="columns-23 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>User</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: UserName"></div>
+                                        </div>
+                                    </div>
+                                    <div class="columns-23 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Order Message</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: OrderMessage"></div>
+                                        </div>
+                                    </div>
+                                    <div class="columns-23 w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Errors</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ErrorMessage"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Status</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: Status"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Label Service Attempts</strong>: </div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: LabelServiceAttempts"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Email</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromEmail"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Name</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromName"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Company</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromCompany"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Phone</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromPhone"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Address 1</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromAddress1"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Address 2</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromAddress2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From Zipcode</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromZip"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From City</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromCity"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>From State</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: FromState"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Email</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToEmail"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Name</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToName"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Company</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToCompany"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Phone</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToPhone"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Address 1</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToAddress1"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Address2</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToAddress2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To Zipcode</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToZip"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To City</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToCity"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>To State</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ToState"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Weight (LBS)</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: Weight"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Length (IN)</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: Length"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Width (IN)</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: Width"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Height (IN) </strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: Height"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Class</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: ServiceClass"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>UPS/USPS OG Price</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: OGPrice"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Percent Saved</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: PercentSaved"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Our Price</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: OurPrice"></div>
+                                        </div>
+                                    </div>
+                                    <div class="adminorder w-row">
+                                        <div class="w-col w-col-6">
+                                            <div><strong>Total Charge</strong>:</div>
+                                        </div>
+                                        <div class="w-col w-col-6">
+                                            <div data-bind="text: TotalCharge"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

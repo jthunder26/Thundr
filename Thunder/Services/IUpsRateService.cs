@@ -10,6 +10,11 @@ using System.Transactions;
 using System.Runtime.Intrinsics.Arm;
 using Microsoft.CodeAnalysis.QuickInfo;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Thunder.Migrations;
+using Microsoft.Azure.Documents;
+using OfficeOpenXml.Style;
+using NPOI.SS.Formula.Functions;
+using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Thunder.Services
 {
@@ -17,6 +22,7 @@ namespace Thunder.Services
     {
         Task<FullRateDTO> GetFullRatesAsync(UpsOrderDetails fullRate);
         Task<QuickRateDTO> GetQuickRatesAsync(NewRate quickRate);
+        Task<BulkRateDTO> GetBulkRatesAsync(BulkRateOrderDetails bulkOrderDetails);
     }
 
     public class UpsRateService : IUpsRateService
@@ -192,6 +198,40 @@ namespace Thunder.Services
                 {145, 0.2215},
                 {150, 0.2211}
             }
+            },{"ups_next_day_air_saturday", new Dictionary<int, double>
+            {
+                {1, 0.2815},
+                {5, 0.2783},
+                {10, 0.2908},
+                {15, 0.2743},
+                {20, 0.2721},
+                {25, 0.2693},
+                {30, 0.2725},
+                {35, 0.2597},
+                {40, 0.2597},
+                {45, 0.2459},
+                {50, 0.2548},
+                {55, 0.2659},
+                {60, 0.2575},
+                {65, 0.239},
+                {70, 0.2427},
+                {75, 0.2477},
+                {80, 0.2444},
+                {85, 0.2335},
+                {90, 0.2398},
+                {95, 0.2367},
+                {100, 0.2264},
+                {105, 0.2257},
+                {110, 0.225},
+                {115, 0.2244},
+                {120, 0.2238},
+                {125, 0.2233},
+                {130, 0.2228},
+                {135, 0.2223},
+                {140, 0.2219},
+                {145, 0.2215},
+                {150, 0.2211}
+            }
             },
             {"ups_next_day_air_early", new Dictionary<int, double>
             {
@@ -238,88 +278,207 @@ namespace Thunder.Services
         private const string Username = "ekthunder";
         private const string Password = "Exotics2020!";
         private const string MediaType = "application/json";
-        //private const string UspsBaseUrl = "http://production.shippingapis.com/ShippingAPI.dll";
-        //private const string UspsUserId = "YOUR_USER_ID";
 
-        //public async Task<UspsRateDTO> GetUspsRatesAsync(UpsOrderDetails orderDetails)
+       
+        public async Task<BulkRateDTO> GetBulkRatesAsync(BulkRateOrderDetails bulkOrderDetails)
+        {
+            BulkRates bulkRates = new BulkRates();
+            List<RateDTO> under = new List<RateDTO>();
+            List<RateDTO> over = new List<RateDTO>();
+            int overCount = 0;
+            int underCount = 0;
+            foreach(var order in bulkOrderDetails.OrderDetails)
+            {
+
+              
+                string errorMsg;
+                var upsRequest = CreateUpsRequest(order);
+                var httpRequest = BuildHttpRequest(upsRequest);
+                var customUpsResponse = await SendHttpRequestAsync(httpRequest);
+                FullRateDTO error = new FullRateDTO();
+                if (customUpsResponse.IsError)
+                {
+                    errorMsg = customUpsResponse.ErrorMessage;
+                    
+                    error.IsError = true;
+                    error.Error = errorMsg;
+                    bulkRates.Error.Add(error);
+                }
+                else
+                {
+                    
+                    
+                    if (order.Weight < 70)
+                    {
+                        var rateDTO = ProcessBulkRateResponse(customUpsResponse.Response, true);
+                        under.AddRange(rateDTO);
+                        underCount++;
+                    }
+                    else
+                    {
+                        var rateDTO = ProcessBulkRateResponse(customUpsResponse.Response, false);
+                        over.AddRange(rateDTO);
+                        overCount++;
+                    }
+                    
+                }
+            }
+            BulkRateDTO bulkDTO = new BulkRateDTO();
+            bulkDTO.under = CalculateAggregateRates(under);
+            bulkDTO.over = CalculateAggregateRates(over);
+            bulkDTO.underCount = underCount;
+            bulkDTO.overCount = overCount;
+        
+
+              for (int i = bulkDTO.under.Count - 1; i >= 0; i--)
+                {
+                if (bulkDTO.under[i].serviceClass == "ups_ground" || bulkDTO.under[i].serviceClass == "7deff37b-5900-430c-9335-dabe871bc271")
+                   {
+                        bulkDTO.selectedUnder = bulkDTO.under[i];
+                        bulkDTO.under.RemoveAt(i);
+                    }
+                } 
+              for (int i = bulkDTO.over.Count - 1; i >= 0; i--)
+                {
+                if (bulkDTO.over[i].serviceClass == "ups_ground" || bulkDTO.over[i].serviceClass == "7deff37b-5900-430c-9335-dabe871bc271")
+                {
+                        bulkDTO.selectedOver = bulkDTO.over[i];
+                        bulkDTO.over.RemoveAt(i);
+                    }
+                }
+          
+
+
+            return bulkDTO;
+        }
+        //private static readonly Dictionary<string, string> ServiceClass = new Dictionary<string, string>
         //{
-        //    string errorMsg;
-        //    var uspsRequest = CreateUspsRequest(orderDetails);
-        //    var httpRequest = BuildHttpRequest(uspsRequest);
-        //    var customUspsResponse = await SendHttpRequestAsync(httpRequest);
-        //    if (customUspsResponse.IsError)
-        //    {
-        //        errorMsg = customUspsResponse.ErrorMessage;
-        //        UspsRateDTO error = new UspsRateDTO();
-        //        error.IsError = true;
-        //        error.Error = errorMsg;
-        //        return error;
-        //    }
-        //    var uspsRateDto = ProcessUspsRateResponse(customUspsResponse.Response);
+        //    {"14", "ups_next_day_air_early"},
+        //    {"01", "ups_next_day_air"},
+        //    {"02", "ups_2nd_day_air"},
+        //    {"12", "ups_3_day_select"},
+        //    {"03", "ups_ground"}
+        //};
 
-        //    return uspsRateDto;
-        //}
-        //private XDocument CreateUspsRequest(UpsOrderDetails orderDetails)
+        /// <summary>
+        /// 
+        /// 
+        /// CHECK DTO BATCHUPLOAD
+        /// 
+        /// 
+        /// WE NEED AVERAGE PRICE, NUMBER OF LABELS
+        /// 
+        /// , TOTAL PRICE OF ALL RATES GROUPED BY WEIGHT THEN SERVICE. 
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="bulkRates"></param>
+        /// <returns></returns>
+        //public List<RateDTO> CalculateAggregateRates(List<RateDTO> rates)
         //{
-        //    return new XDocument(
-        //        new XElement("RateV4Request",
-        //            new XAttribute("USERID", UspsUserId),
-        //            new XElement("Package",
-        //                new XAttribute("ID", "1"),
-        //                new XElement("Service", "ALL"),
-        //                new XElement("ZipOrigination", orderDetails.FromZip),
-        //                new XElement("ZipDestination", orderDetails.ToZip),
-        //                new XElement("Pounds", orderDetails.Weight),
-        //                new XElement("Ounces", "0"),
-        //                new XElement("Container", "PACKAGE"),
-        //                new XElement("Size", "REGULAR"),
-        //                new XElement("Width", orderDetails.Width),
-        //                new XElement("Length", orderDetails.Length),
-        //                new XElement("Height", orderDetails.Height)
-        //            )
-        //        )
-        //    );
-        //}
-
-        //private HttpRequestMessage BuildHttpRequest(XDocument uspsRequest)
-        //{
-        //    var url = $"{UspsBaseUrl}?API=RateV4&XML={uspsRequest}";
-        //    return new HttpRequestMessage(HttpMethod.Get, url);
-        //}
-
-        //private async Task<HttpResponseMessage> SendHttpRequestAsync(HttpRequestMessage httpRequest)
-        //{
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        return await client.SendAsync(httpRequest);
-        //    }
-        //}
-
-        //private async Task<UspsRateDTO> ProcessUspsRateResponse(HttpResponseMessage response)
-        //{
-        //    var content = await response.Content.ReadAsStringAsync();
-        //    var xmlResponse = XDocument.Parse(content);
-        //    var postages = xmlResponse.Descendants("Postage");
-
-        //    UspsRateDTO rateDto = new UspsRateDTO();
-        //    rateDto.rates = new List<RateDTO>();
-
-        //    foreach (var postage in postages)
-        //    {
-        //        var mailService = postage.Element("MailService").Value;
-        //        var rate = postage.Element("Rate").Value;
-
-        //        if (mailService.Contains("Priority") || mailService.Contains("Express"))
+        //    return rates
+        //        .GroupBy(r => r.service)
+        //        .Select(g =>
         //        {
-        //            rateDto.rates.Add(new RateDTO { service = mailService, exactCost = int.Parse(rate) });
-        //        }
-        //    }
+        //            var totalOurPrice = g.Sum(r => decimal.Parse(r.ourPrice));
+        //            var totalUpsPriceOG = g.Sum(r => r.upsPriceOG);
+        //            var firstRate = g.First();
 
-        //    return rateDto;
+        //            var rate = new RateDTO
+        //            {
+        //                service = g.Key,
+        //                upsPriceOG = totalUpsPriceOG,
+        //                percentSaved = ((1 - (totalOurPrice / (totalUpsPriceOG / 100.0m))) * 100).ToString("F2"),
+
+        //                ourPrice = totalOurPrice.ToString(),
+
+        //                deliveryDate = firstRate.deliveryDate,
+        //                deliveryTime = firstRate.deliveryTime,
+        //                deliveryDayOfWeek = firstRate.deliveryDayOfWeek,
+        //                serviceClass = firstRate.serviceClass,
+
+        //                // String formatted fields from the first RateDTO
+        //                upsPrice = firstRate.upsPrice,
+        //                ourPriceString = firstRate.ourPriceString,
+        //                percentSavedString = firstRate.percentSavedString,
+        //                isBest = firstRate.isBest,
+        //                isCheapest = firstRate.isCheapest,
+
+
+
+
+        //            };
+
+        //            // Call UpdateStrings here to update string fields
+        //            UpdateStrings(ref rate);
+
+        //            return rate;
+        //        })
+        //        .ToList();
         //}
+        public List<RateDTO> CalculateAggregateRates(List<RateDTO> rates)
+        {
+            var ratesGroupedByService = rates.GroupBy(r => r.service).ToList();
 
-        public async Task<FullRateDTO> GetFullRatesAsync(
-            UpsOrderDetails fullRate)
+            List<RateDTO> aggregatedRates = new List<RateDTO>();
+
+            foreach (var group in ratesGroupedByService)
+            {
+                var aggregatedRate = AggregateRateGroup(group);
+                UpdateStrings(ref aggregatedRate);
+                aggregatedRates.Add(aggregatedRate);
+            }
+
+            return aggregatedRates;
+        }
+
+        private RateDTO AggregateRateGroup(IGrouping<string, RateDTO> rateGroup)
+        {
+            var totalOurPrice = rateGroup.Sum(r => decimal.Parse(r.ourPrice)); //98.58
+            var totalUpsPriceOG = rateGroup.Sum(r => r.upsPriceOG); //180
+            var firstRate = rateGroup.First();
+
+            var rate = new RateDTO
+            {
+                service = rateGroup.Key,
+                upsPriceOG = totalUpsPriceOG,
+                percentSaved = ((1 - (totalOurPrice / (totalUpsPriceOG / 100.0m))) * 100).ToString("F2"),
+                ourPrice = totalOurPrice.ToString(),
+                deliveryDate = firstRate.deliveryDate,
+                deliveryTime = firstRate.deliveryTime,
+                deliveryDayOfWeek = firstRate.deliveryDayOfWeek,
+                estimatedDelivery = firstRate.estimatedDelivery,
+                serviceClass = firstRate.serviceClass,
+                upsPrice = firstRate.upsPrice,
+                ourPriceString = firstRate.ourPriceString,
+                percentSavedString = firstRate.percentSavedString,
+                isBest = firstRate.isBest,
+                isCheapest = firstRate.isCheapest,
+                isFastest = firstRate.isFastest,
+                usps = firstRate.usps,
+                ups = firstRate.ups
+            };
+
+            
+            
+            return rate;
+        }
+
+        public void UpdateStrings(ref RateDTO rate)
+        {
+            // Parse the decimal values
+            decimal ourPriceDecimal = decimal.Parse(rate.ourPrice);
+            decimal percentSavedDecimal = decimal.Parse(rate.percentSaved);
+
+            // Convert to string with proper formatting
+            rate.ourPriceString = $"${ourPriceDecimal:F2}";
+            rate.percentSavedString = $"Save {percentSavedDecimal:F2}%";
+            rate.upsPrice = $"${rate.upsPriceOG / 100.0m:F2} retail";
+        }
+
+
+
+        public async Task<FullRateDTO> GetFullRatesAsync(UpsOrderDetails fullRate)
         {
             string errorMsg;
             var upsRequest = CreateUpsRequest(fullRate);
@@ -455,18 +614,9 @@ namespace Thunder.Services
 
             // No discount found or applied, return the discounted price or the original price
             return dp;
+           
         } 
-        public static DiscountAndPrice ApplyUSPSDiscount(int ogPriceInCents, int newDiscount)
-        {
-            double discountedPriceInCents = ogPriceInCents;
-            double discountDouble = newDiscount;
-
-            DiscountAndPrice dp = new DiscountAndPrice();
-          
-
-            // No discount found or applied, return the dis;counted price or the original price
-            return dp;
-        }
+   
 
         public static void SetAttributes(List<RateDTO> rates)
         {
@@ -494,6 +644,7 @@ namespace Thunder.Services
             if (cheapestRate != null)
             {
                 cheapestRate.isCheapest = true;
+                cheapestRate.isSelected = true;
             }
 
             // Find the fastest rate
@@ -519,7 +670,7 @@ namespace Thunder.Services
             if (fastestRate != null)
             {
                 fastestRate.isFastest = true;
-                fastestRate.isSelected = true;
+                fastestRate.isSelected = false;
             }
 
             // Find the best value rate
@@ -576,10 +727,145 @@ namespace Thunder.Services
 
 
 
+        //       private static readonly Dictionary<string, string> ServiceNames = new Dictionary<string, string>
+        //{
+        //    {"14", "UPS Next Day Air Early"},
+        //    {"01", "UPS Next Day Air"},
+        //    {"02", "UPS 2nd Day Air"},
+        //    {"12", "UPS 3 Day Select"},
+        //    {"03", "UPS Ground"}
+        //};
+
+
+
+        private List<RateDTO> ProcessBulkRateResponse(UpsResponse upsResponse, bool isUnder70)
+        {
+            List<RateDTO> rates = new List<RateDTO>();
+            FullRateDTO fullrates = new FullRateDTO();
+            fullrates.IsError = false;
+            var id = 0;
+            foreach (var ratedShipment in upsResponse.RateResponse.RatedShipment)
+            {
+                bool hasService = ServiceNames.ContainsKey(ratedShipment.Service.Code);
+                if (hasService)
+                {
+                    if (ratedShipment.Service.Code == "02" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
+                    if (ratedShipment.Service.Code == "14" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
+
+                    RateDTO rate = new RateDTO();
+                        var serviceCode = ratedShipment.Service.Code;
+                        rate.ID = id;
+                        id++;
+                        string unparsedDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
+                        string parsedDate = unparsedDate.Substring(4, 2) + "/" + unparsedDate.Substring(6, 2);
+                        rate.deliveryDate = parsedDate.ToString();
+
+                        var unparsedTime = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
+                        DateTime DT = DateTime.ParseExact(unparsedTime, "HHmmss", new System.Globalization.CultureInfo("en-US"));
+                        var n = DT.ToString("hh:mm tt");
+                        rate.deliveryTime = n;
+
+                        string serviceClass;
+                        ServiceClass.TryGetValue(serviceCode, out serviceClass);
+                        rate.serviceClass = serviceClass;
+                        rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
+
+                        var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
+                    
 
 
 
 
+
+
+                        if (dayCode == "SAT" && (ratedShipment.Service.Code == "01" || ratedShipment.Service.Code == "14"))
+                        {
+                            rate.service += " [Saturday Delivery]";
+                            rate.serviceClass = "ups_next_day_air_saturday";
+                        }
+
+
+                        string day;
+                        WeekDayConverter.TryGetValue(dayCode, out day);
+                        rate.deliveryDayOfWeek = day;
+
+                        rate.estimatedDelivery = "Estimated Delivery " + rate.deliveryDayOfWeek + " " + rate.deliveryDate + " by " + rate.deliveryTime + " if shipped today";
+                        rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
+
+                        int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
+                        rate.exactCost = price;
+                        int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
+                        //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
+                        //rate.ourPriceString = "$" + rate.ourPrice;
+
+                        rate.upsPriceOG = price; // = 10842 -- cents // NEXTDAYAIR SAT DEL
+                        var dp = ApplyDiscount(rate.serviceClass, weight, price); // price == 10842 int, cents. 
+                       
+                        rate.ourPrice = dp.Price; // "58.29" -- string
+                        rate.percentSaved = dp.Discount;// "38.15"
+                        rate.percentSavedString = "Save " + dp.Discount + "%";
+                        rate.ourPriceString = "$" + rate.ourPrice;
+                        rate.usps = false;
+                        rate.ups = true;
+
+                        rates.Add(rate);
+                    
+                }
+            }
+
+            //$4 - AIO Ground
+            //$6 - 
+            //$
+      
+            if(isUnder70)
+            { 
+                RateDTO usps = new RateDTO();
+                    foreach (var rate in rates)
+                    {
+                        if (rate.serviceClass == "ups_ground")
+                        {
+
+                            usps.ID = rate.ID++;
+                            usps.service = "USPS Priority";
+                            usps.deliveryDate = rate.deliveryDate;
+                            usps.deliveryTime = rate.deliveryTime;
+                            usps.serviceClass = "7deff37b-5900-430c-9335-dabe871bc271";
+                            usps.deliveryDayOfWeek = rate.deliveryDayOfWeek;
+                            usps.estimatedDelivery = rate.estimatedDelivery;
+                           //usps.upsPrice = rate.upsPrice; // string  = "$16.25 retail";
+                            int price = rate.upsPriceOG;                                       // int 1533
+                            double uspsOgPrice = price * 1.021;                               // 1565.1929999999998 Here we are adding 2% increase to the UPS OG Price !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            double unroundedOgPrice = Convert.ToDouble(uspsOgPrice) / 100;   // 15.651929999999998 double
+                            var ogPriceRounded = Math.Round(unroundedOgPrice, 2);           // 15.65 double
+                            var ogPrice = ogPriceRounded.ToString("F2");                    //"15.65" 
+
+
+
+                            double percentSaved = Convert.ToDouble(rate.percentSaved) / 100;         //0.4876
+                            var newPercentSaved = (percentSaved + .051);                            //0.5386
+                            var discountedPriceInCents = (uspsOgPrice) * (1 - (newPercentSaved));    //722.1800502
+                            var discountRounded = Math.Round(newPercentSaved, 2);                   //0.54
+                            // DO THIS BUT FOR OG PRICE
+                            var unroundedPrice = discountedPriceInCents / 100;                      //7.221800502 d
+                            var priceRounded = Math.Round(unroundedPrice, 2);                       //7.22 d
+                            usps.upsPriceOG = Convert.ToInt32( ogPriceRounded * 100);
+                            usps.upsPrice = "$" + ogPrice + " retail";
+                            usps.ourPrice = priceRounded.ToString("F2");
+                            usps.ourPriceString = "$" + usps.ourPrice;
+                            usps.percentSaved = (newPercentSaved * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
+                            usps.percentSavedString = "Save " + usps.percentSaved + "%";
+                            usps.usps = true;
+                            usps.ups = false;
+                        }
+                    }
+                    rates.Add(usps);
+            }
+            SetAttributes(rates);
+           
+            return rates;
+        }    
         private FullRateDTO ProcessFullRateResponse(UpsResponse upsResponse)
         {
             List<RateDTO> rates = new List<RateDTO>();
@@ -591,66 +877,83 @@ namespace Thunder.Services
                 bool hasService = ServiceNames.ContainsKey(ratedShipment.Service.Code);
                 if (hasService)
                 {
+                    if (ratedShipment.Service.Code == "02" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
+                    if (ratedShipment.Service.Code == "14" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
 
                     RateDTO rate = new RateDTO();
-                    var serviceCode = ratedShipment.Service.Code;
-                    rate.ID = id;
-                    id++;
-                    string unparsedDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
-                    string parsedDate = unparsedDate.Substring(4, 2) + "/" + unparsedDate.Substring(6, 2);
-                    rate.deliveryDate = parsedDate.ToString();
+                        var serviceCode = ratedShipment.Service.Code;
+                        rate.ID = id;
+                        id++;
+                        string unparsedDate = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
+                        string parsedDate = unparsedDate.Substring(4, 2) + "/" + unparsedDate.Substring(6, 2);
+                        rate.deliveryDate = parsedDate.ToString();
 
-                    var unparsedTime = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
-                    DateTime DT = DateTime.ParseExact(unparsedTime, "HHmmss", new System.Globalization.CultureInfo("en-US"));
-                    var n = DT.ToString("hh:mm tt");
-                    rate.deliveryTime = n;
+                        var unparsedTime = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
+                        DateTime DT = DateTime.ParseExact(unparsedTime, "HHmmss", new System.Globalization.CultureInfo("en-US"));
+                        var n = DT.ToString("hh:mm tt");
+                        rate.deliveryTime = n;
 
-                    string serviceClass;
-                    ServiceClass.TryGetValue(serviceCode, out serviceClass);
-                    rate.serviceClass = serviceClass;
-                    rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
+                        string serviceClass;
+                        ServiceClass.TryGetValue(serviceCode, out serviceClass);
+                        rate.serviceClass = serviceClass;
+                        rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
 
-                    var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
-                    //if (rate.service == "UPS Next Day Air")
-                    //{
-                    //    rate.isSelected = true;
-                    //(upsResponse.RateResponse.RatedShipment).Items[0]).TimeInTransit.ServiceSummary.SaturdayDelivery
-                    //}
-                    if (dayCode == "SAT")
-                    {
-                        rate.service += " [Saturday Delivery]";
-                    }
-                    string day;
-                    WeekDayConverter.TryGetValue(dayCode, out day);
-                    rate.deliveryDayOfWeek = day;
+                        var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
+                    
 
-                    rate.estimatedDelivery = "Estimated Delivery " + rate.deliveryDayOfWeek + " " + rate.deliveryDate + " by " + rate.deliveryTime + " if shipped today";
-                    rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
 
-                    int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
-                    rate.exactCost = price;
-                    int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
-                    //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
-                    //rate.ourPriceString = "$" + rate.ourPrice;
-                     rate.upsPriceOG = price;
-                    var dp = ApplyDiscount(rate.serviceClass, weight, price);
-                    rate.ourPrice = dp.Price;
-                    rate.percentSaved = dp.Discount;
-                    rate.percentSavedString = "Save " + dp.Discount + "%";
-                    rate.ourPriceString = "$" + rate.ourPrice;
-                    rate.usps = false;
-                    rate.ups = true; 
-                   
+
+
+
+
+                        if (dayCode == "SAT" && (ratedShipment.Service.Code == "01" || ratedShipment.Service.Code == "14"))
+                        {
+                            rate.service += " [Saturday Delivery]";
+                            rate.serviceClass = "ups_next_day_air_saturday";
+                        }
+
+
+                        string day;
+                        WeekDayConverter.TryGetValue(dayCode, out day);
+                        rate.deliveryDayOfWeek = day;
+
+                        rate.estimatedDelivery = "Estimated Delivery " + rate.deliveryDayOfWeek + " " + rate.deliveryDate + " by " + rate.deliveryTime + " if shipped today";
+                        rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
+
+                        int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
+                        rate.exactCost = price;
+                        int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
+                        //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
+                        //rate.ourPriceString = "$" + rate.ourPrice;
+
+                        rate.upsPriceOG = price; // = 10842 -- cents // NEXTDAYAIR SAT DEL
+                        var dp = ApplyDiscount(rate.serviceClass, weight, price); // price == 10842 int, cents. 
+                       
+                        rate.ourPrice = dp.Price; // "58.29" -- string
+                        rate.percentSaved = dp.Discount;// "38.15"
+                        rate.percentSavedString = "Save " + dp.Discount + "%";
+                        rate.ourPriceString = "$" + rate.ourPrice;
+                        rate.usps = false;
+                        rate.ups = true;
+
                         rates.Add(rate);
-                   
+                    
                 }
             }
 
-            RateDTO usps = new RateDTO();
+            //$4 - AIO Ground
+            //$6 - 
+            //$
+      
+
+        RateDTO usps = new RateDTO();
             foreach (var rate in rates)
             {
                 if (rate.serviceClass == "ups_ground")
                 {
+
                     usps.ID = rate.ID++;
                     usps.service = "USPS Priority";
                     usps.deliveryDate = rate.deliveryDate;
@@ -658,19 +961,27 @@ namespace Thunder.Services
                     usps.serviceClass = "7deff37b-5900-430c-9335-dabe871bc271";
                     usps.deliveryDayOfWeek = rate.deliveryDayOfWeek;
                     usps.estimatedDelivery = rate.estimatedDelivery;
-                    usps.upsPrice = rate.upsPrice;
-                    int price = rate.upsPriceOG;
-                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100;
-                    var newPercentSaved = (percentSaved + .05);
-                    var discountedPriceInCents = price * (1 - (newPercentSaved));
-                    var discountRounded = Math.Round(newPercentSaved, 2);
+                   //usps.upsPrice = rate.upsPrice; // string  = "$16.25 retail";
+                    int price = rate.upsPriceOG;    // int 1370
+                    double uspsOgPrice = price * 1.021;  // Here we are adding 2% increase to the UPS OG Price !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    double unroundedOgPrice = Convert.ToDouble(uspsOgPrice) / 100; // 13.7 double
+                    var ogPriceRounded = Math.Round(unroundedOgPrice, 2); // 13.7 double
+                    var ogPrice = ogPriceRounded.ToString("F2"); //"13.70" 
 
+
+
+                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100; //.608
+                    var newPercentSaved = (percentSaved + .051); //.659
+                    var discountedPriceInCents = (uspsOgPrice) * (1 - (newPercentSaved));
+                    var discountRounded = Math.Round(newPercentSaved, 2);
+                    // DO THIS BUT FOR OG PRICE
                     var unroundedPrice = discountedPriceInCents / 100;
                     var priceRounded = Math.Round(unroundedPrice, 2);
-
+                    usps.upsPriceOG = Convert.ToInt32( ogPriceRounded);
+                    usps.upsPrice = "$" + ogPrice + " retail";
                     usps.ourPrice = priceRounded.ToString("F2");
                     usps.ourPriceString = "$" + usps.ourPrice;
-                    usps.percentSaved = (discountRounded * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
+                    usps.percentSaved = (newPercentSaved * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
                     usps.percentSavedString = "Save " + usps.percentSaved + "%";
                     usps.usps = true;
                     usps.ups = false;
@@ -715,6 +1026,10 @@ namespace Thunder.Services
                 bool hasService = ServiceNames.ContainsKey(ratedShipment.Service.Code);
                 if (hasService)
                 {
+                    if (ratedShipment.Service.Code == "02" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
+                    if (ratedShipment.Service.Code == "14" && ratedShipment.TimeInTransit.ServiceSummary.SaturdayDelivery == "1")
+                        continue;
 
                     RateDTO rate = new RateDTO();
                     var serviceCode = ratedShipment.Service.Code;
@@ -735,14 +1050,13 @@ namespace Thunder.Services
                     rate.service = ratedShipment.TimeInTransit.ServiceSummary.Service.Description;
 
                     var dayCode = ratedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.DayOfWeek;
-                    //if (rate.service == "UPS Next Day Air")
-                    //{
-                    //    rate.isSelected = true;
-                    //}
-                    if (dayCode == "SAT")
+                    if (dayCode == "SAT" && (ratedShipment.Service.Code == "01" || ratedShipment.Service.Code == "14"))
                     {
                         rate.service += " [Saturday Delivery]";
+                        rate.serviceClass = "ups_next_day_air_saturday";
                     }
+
+
                     string day;
                     WeekDayConverter.TryGetValue(dayCode, out day);
                     rate.deliveryDayOfWeek = day;
@@ -751,12 +1065,16 @@ namespace Thunder.Services
                     rate.upsPrice = "$" + ratedShipment.TotalCharges.MonetaryValue + " retail";
 
                     int price = Convert.ToInt32(Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 100);
+                    rate.exactCost = price;
                     int weight = Convert.ToInt32(Convert.ToDouble(ratedShipment.BillingWeight.Weight));
-                    rate.upsPriceOG = price;
-                    var dp = ApplyDiscount(rate.serviceClass, weight, price);
+                    //rate.ourPrice = (Convert.ToDouble(ratedShipment.TotalCharges.MonetaryValue) * 0.5).ToString("F");
+                    //rate.ourPriceString = "$" + rate.ourPrice;
 
-                    rate.ourPrice = dp.Price;
-                    rate.percentSaved = dp.Discount;
+                    rate.upsPriceOG = price; // = 10842 -- cents // NEXTDAYAIR SAT DEL
+                    var dp = ApplyDiscount(rate.serviceClass, weight, price); // price == 10842 int, cents. 
+
+                    rate.ourPrice = dp.Price; // "58.29" -- string
+                    rate.percentSaved = dp.Discount;// "38.15"
                     rate.percentSavedString = "Save " + dp.Discount + "%";
                     rate.ourPriceString = "$" + rate.ourPrice;
                     rate.usps = false;
@@ -766,11 +1084,18 @@ namespace Thunder.Services
 
                 }
             }
+
+            //$4 - AIO Ground
+            //$6 - 
+            //$
+
+
             RateDTO usps = new RateDTO();
             foreach (var rate in rates)
             {
-                if(rate.serviceClass == "ups_ground")
+                if (rate.serviceClass == "ups_ground")
                 {
+
                     usps.ID = rate.ID++;
                     usps.service = "USPS Priority";
                     usps.deliveryDate = rate.deliveryDate;
@@ -778,62 +1103,43 @@ namespace Thunder.Services
                     usps.serviceClass = "7deff37b-5900-430c-9335-dabe871bc271";
                     usps.deliveryDayOfWeek = rate.deliveryDayOfWeek;
                     usps.estimatedDelivery = rate.estimatedDelivery;
-                    usps.upsPrice = rate.upsPrice;
-                    int price = rate.upsPriceOG;
-                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100;
-                    var newPercentSaved = (percentSaved + .05);
-                    var discountedPriceInCents = price * (1 - (newPercentSaved));
-                    var discountRounded = Math.Round(newPercentSaved, 2);
+                    //usps.upsPrice = rate.upsPrice; // string  = "$16.25 retail";
+                    int price = rate.upsPriceOG;    // int 1370
+                    double uspsOgPrice = price * 1.021;  // Here we are adding 2% increase to the UPS OG Price !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    double unroundedOgPrice = Convert.ToDouble(uspsOgPrice) / 100; // 13.7 double
+                    var ogPriceRounded = Math.Round(unroundedOgPrice, 2); // 13.7 double
+                    var ogPrice = ogPriceRounded.ToString("F2"); //"13.70" 
 
+
+
+                    double percentSaved = Convert.ToDouble(rate.percentSaved) / 100; //.608
+                    var newPercentSaved = (percentSaved + .051); //.659
+                    var discountedPriceInCents = (uspsOgPrice) * (1 - (newPercentSaved));
+                    var discountRounded = Math.Round(newPercentSaved, 2);
+                    // DO THIS BUT FOR OG PRICE
                     var unroundedPrice = discountedPriceInCents / 100;
                     var priceRounded = Math.Round(unroundedPrice, 2);
-
+                    usps.upsPriceOG = Convert.ToInt32(ogPriceRounded);
+                    usps.upsPrice = "$" + ogPrice + " retail";
                     usps.ourPrice = priceRounded.ToString("F2");
                     usps.ourPriceString = "$" + usps.ourPrice;
-                    usps.percentSaved = (discountRounded * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
+                    usps.percentSaved = (newPercentSaved * 100).ToString("F2"); // multiply by 100 to convert back to percentage form
                     usps.percentSavedString = "Save " + usps.percentSaved + "%";
                     usps.usps = true;
                     usps.ups = false;
                 }
             }
             rates.Add(usps);
+
             SetAttributes(rates);
-          
+
             quickRates.Rates = rates;
             return quickRates;
         }
 
 
 
-        /// <summary>
-        /// 
-        /// NOTES: 
-        /// 0. shipster USPS
-        /// 1. When applying discount, first workaround is to apply an additional 15% to the ourPrice.
-        /// 2. Bulk upload
-        ///     A. No validation
-        ///     B. First, validate values in columns. After validation show confirmation screen with errors or with the order details, showing 
-        ///     numbered list of labels to be created. Then below show order summary allow user to select different service classes, dynamically 
-        ///     update the order form. 
-        /// 3. When applying discount to USPS, we use UPSOGPrice, add an initial discount to UPSogPrice before assigning to USPSOgPrice to 
-        ///     be more inconspicuous
-        /// 4. Check Auto Scroll function on Rates and Ship page
-        /// 5. Have the Cheapest rate show first instead of Fastest
-        /// 6. Update rate dropdown ui to be more legible. 
-        /// 7. Admin accounts and pages. 
-        ///     A. Add a balance maintenance page. Admin is able to update users balances. 
-        ///     B. Admins to be able to manually reset passwords
-        ///     C. Admins to be able to view any errors pertaining to a users orders.
-        ///     D. Admins able to generate promo codes. -- Talk about pricing later. 
-        /// 8. Add duplicate order function
-        /// 9. On payment confirmation page, include link to Orders page, have completed orders tab be active always. 
-        /// 10. Remove link to Monitor
-        /// 11. Add a support page, user can send in a email. 
-        /// 12. Add Terms and Conditions accept checkbox when user creates account 
-        /// </summary>
-        /// <param name="quickRate"></param>
-        /// <returns></returns>
-        /// 
+       
 
 
 

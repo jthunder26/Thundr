@@ -28,7 +28,7 @@ namespace Thunder.Controllers
 
 
 
-            _thunderService.UpdateOrder(request.amount, request.description, request.serviceClass, request.charged);
+            _thunderService.UpdateOrder(request.amount, request.description, request.serviceClass, request.charged, request.rateDto.upsPriceOG, request.rateDto.percentSaved);
             var options = new PaymentIntentCreateOptions
             {
                 Amount = request.charged,
@@ -55,11 +55,32 @@ namespace Thunder.Controllers
 
         public class CreateIntentRequest
         {
-            public long amount { get; set; }
-            public int description { get; set; }
-            public string serviceClass { get; set; }
-            public long charged { get; set; }   
-          
+            public long amount { get; set; } //ourPrice 589	long -->$5.89
+            public int description { get; set; } //labelId 70	int
+            public string serviceClass { get; set; } //class "7deff37b-5900-430c-9335-dabe871bc271"	string
+            public long charged { get; set; }   //totalCharge 50	long -->.50 Cents
+            public RateDTO rateDto { get; set; } 
+         //// ID			    3	int
+         //   deliveryDate		"07/17"	string
+         //   deliveryDayOfWeek	"Monday"	string
+         //   deliveryTime		"11:00 PM"	string
+         //   estimatedDelivery	"Estimated Delivery Monday 07/17 by 11:00 PM if shipped today"	string
+         //   exactCost		    0	int
+         //   isBest			false	bool
+         //   isCheapest		true	bool
+         //   isFastest		    false	bool
+         //   isSelected		true	bool
+         //   ourPrice		    "5.89"	string
+         //   ourPriceString    "$5.89"	string
+         //   percentSaved		"53.86"	string
+         //   percentSavedString"Save 53.86%"	string
+         //   service			"USPS Priority"	string
+         //   serviceClass		"7deff37b-5900-430c-9335-dabe871bc271"	string
+         //   ups			    false	bool
+         //   upsPrice		    "$12.76 retail"	string
+         //   upsPriceOG		13	int
+         //   usps			    true	bool
+
         }
     }
 }

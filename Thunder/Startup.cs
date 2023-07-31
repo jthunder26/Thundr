@@ -12,6 +12,7 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Thunder
 {
@@ -26,45 +27,36 @@ namespace Thunder
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var keyVaultEndpoint = Configuration["KeyVault:Endpoint"];
-            if (!string.IsNullOrEmpty(keyVaultEndpoint))
-            {
-                var credential = new DefaultAzureCredential();
-                var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
+           
+                var thunderDbSecret = Configuration["thundrdb"];
 
-                var thunderDbSecretName = "thundrdb";
-                var thunderDbSecret = secretClient.GetSecret(thunderDbSecretName);
+                var thunderBlobStorageSecret = Configuration["thunderblobstorage"];
 
-                var thunderBlobStorageSecretName = "thunderblobstorage";
-                var thunderBlobStorageSecret = secretClient.GetSecret(thunderBlobStorageSecretName);
+                var clientSecretSecret = Configuration["clientSecret"];
 
-                var clientSecretSecretName = "clientSecret";
-                var clientSecretSecret = secretClient.GetSecret(clientSecretSecretName);
+                var stripeApiKeySecret = Configuration["StripeApiKey"];
 
-                var stripeApiKeySecretName = "StripeApiKey";
-                var stripeApiKeySecret = secretClient.GetSecret(stripeApiKeySecretName);
+                var stripeWebhookSecret = Configuration["StripeEndpointSecret"];
 
-                var stripeWebhookSecretName = "StripeEndpointSecret";
-                var stripeWebhookSecret = secretClient.GetSecret(stripeWebhookSecretName);
+               
+                var aioKey = Configuration["AioKey"];
 
-                var aioKeyName = "AioKey";
-                var aioKey = secretClient.GetSecret(aioKeyName);
-                
-                var shipsterKeyName = "ShipsterKey";
-                var shipsterKey = secretClient.GetSecret(shipsterKeyName);
+              
+                var shipsterKey = Configuration["ShipsterKey"];
 
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    options.UseSqlServer(thunderDbSecret.Value.Value);
+                    options.UseSqlServer(thunderDbSecret);
                 });
 
-                services.AddSingleton<IStripeClient>(x => new Stripe.StripeClient(stripeApiKeySecret.Value.Value));
+                services.AddSingleton<IStripeClient>(x => new Stripe.StripeClient(stripeApiKeySecret));
 
                 services.AddSingleton<IBackgroundQueueService>(provider =>
                 {
+                    var blobStorageConnection = Configuration["thunderblobstorage"];
                     var createLabelQueueName = "createlabelqueue";
                     var retrieveStoreQueueName = "retrievestorequeue";
-                    return new BackgroundQueueService(secretClient, createLabelQueueName, retrieveStoreQueueName);
+                    return new BackgroundQueueService(blobStorageConnection, createLabelQueueName, retrieveStoreQueueName);
                 });
 
                 services.AddHostedService<CreateLabelBackgroundService>();
@@ -72,13 +64,13 @@ namespace Thunder
 
                 services.Configure<StripeOptions>(options =>
                 {
-                    options.ApiKey = stripeApiKeySecret.Value.Value;
-                    options.WebhookSecret = stripeWebhookSecret.Value.Value;
+                    options.ApiKey = stripeApiKeySecret;
+                    options.WebhookSecret = stripeWebhookSecret;
                 });
                 services.AddTransient<IMailService, MailService>();
                 services.AddScoped<IBlobService>(provider =>
                 {
-                    var connectionString = thunderBlobStorageSecret.Value.Value;
+                    var connectionString = thunderBlobStorageSecret;
                     var containerName = "pdfcontainer";
                     var blobServiceClient = new BlobServiceClient(connectionString);
                     var mailService = provider.GetRequiredService<IMailService>(); // Get the IMailService instance
@@ -90,7 +82,7 @@ namespace Thunder
                     .AddMicrosoftAccount(options =>
                     {
                         options.ClientId = "5bad5faa-9e81-47d3-828e-48a2e68f46af";
-                        options.ClientSecret = clientSecretSecret.Value.Value;
+                        options.ClientSecret = clientSecretSecret;
                         options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "uid");
                     });
 
@@ -99,11 +91,24 @@ namespace Thunder
                     options.SignIn.RequireConfirmedAccount = false;
                     options.User.RequireUniqueEmail = true;
                 })
+                    .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-                services.AddSingleton(secretClient);
-                services.AddScoped<IThunderService, ThunderService>();
-                services.AddScoped<IUpsRateService, UpsRateService>();
+
+            services.AddScoped<IThunderService>(provider =>
+            {
+                var db = provider.GetRequiredService<ApplicationDbContext>();
+                var blobService = provider.GetRequiredService<IBlobService>();
+                var userService = provider.GetRequiredService<IUserService>();
+                var logger = provider.GetRequiredService<ILogger<ThunderService>>();
+
+                var aioKey = Configuration["AioKey"];
+                var shipsterKey = Configuration["ShipsterKey"];
+
+                return new ThunderService(db, aioKey, shipsterKey, blobService, userService, logger);
+            });
+
+            services.AddScoped<IUpsRateService, UpsRateService>();
                 services.AddScoped<IUserService, UserService>();
                
                 services.AddHttpContextAccessor();
@@ -134,25 +139,25 @@ namespace Thunder
 
                 services.AddControllersWithViews();
                 services.AddRazorPages();
-            }
+            
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseAuthentication();
+                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            app.UseCookiePolicy();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -165,6 +170,27 @@ namespace Thunder
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            await EnsureRoles(services);
+        }
+
+        private async Task EnsureRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            try
+            {
+                if (!await roleManager.RoleExistsAsync("Admin").ConfigureAwait(false))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("Admin")).ConfigureAwait(false);
+                    await roleManager.CreateAsync(new IdentityRole("User")).ConfigureAwait(false);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                Console.WriteLine(ex);
+            }
         }
     }
 }

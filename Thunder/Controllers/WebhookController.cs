@@ -5,6 +5,7 @@ using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Stripe;
 using Thunder.Models;
 using Thunder.Services;
@@ -19,13 +20,12 @@ public class WebhookController : ControllerBase
     private readonly string _webhookSecret;
     private readonly IBackgroundQueueService _backgroundQueueService;
 
-    public WebhookController(IUserService userService, ILogger<WebhookController> logger, SecretClient secretClient, IThunderService thunderService, IBackgroundQueueService backgroundQueueService)
+    public WebhookController(IUserService userService, ILogger<WebhookController> logger, IOptions<StripeOptions> stripeOptions, IThunderService thunderService, IBackgroundQueueService backgroundQueueService)
     {
         _userService = userService;
        
         _backgroundQueueService = backgroundQueueService;
-        var stripeWebhookSecret = secretClient.GetSecret("StripeEndpointSecret");
-        _webhookSecret = stripeWebhookSecret.Value.Value;
+        _webhookSecret = stripeOptions.Value.WebhookSecret; 
         _thunderService = thunderService;
     }
 

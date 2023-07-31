@@ -29,8 +29,8 @@ namespace Thunder.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly IThunderService _thunderService;
         private readonly IMailService _mailService;
-        private readonly SecretClient _secretClient;
-
+        private readonly IConfiguration _configuration;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
@@ -38,7 +38,8 @@ namespace Thunder.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             IThunderService thunderService,
             IMailService mailService,
-            SecretClient secretClient)
+            IConfiguration configuration,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -47,7 +48,8 @@ namespace Thunder.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _thunderService = thunderService;
             _mailService = mailService;
-            _secretClient = secretClient;
+            _configuration = configuration;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -125,7 +127,8 @@ namespace Thunder.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-                var stripeSecretKey = _secretClient.GetSecret("StripeApiKey").Value.Value;
+                var stripeSecretKey = _configuration["StripeApiKey"];
+
                 StripeConfiguration.ApiKey = stripeSecretKey;
                 var customerOptions = new CustomerCreateOptions
                 {
@@ -149,11 +152,11 @@ namespace Thunder.Areas.Identity.Pages.Account
                 {
                     //address.Uid = user.Id;
                     //_thunderService.SaveReturnAddress(address);
-                  
+
 
 
                     //_logger.LogInformation("User created a new account with password.");
-                    
+                    await _userManager.AddToRoleAsync(user, "User");
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

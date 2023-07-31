@@ -47,12 +47,13 @@ namespace Thunder.Controllers
             var userAddress = _thunderService.GetUserAddress(uid);
             return userAddress;
         }
+
         [Authorize]
         public async Task<IActionResult> DashboardAsync()
         {
+           
 
-           
-           
+
             return View("Orders");
         }
         [Authorize]
@@ -68,12 +69,34 @@ namespace Thunder.Controllers
             return View();
         } 
         [Authorize]
+        public IActionResult BulkShip()
+        {
+
+            return View();
+        }  
+        [Authorize]
+        public IActionResult Admin()
+        {
+
+            return View();
+        } 
+        [Authorize]
         public async Task<IActionResult> ShipAsync()
         {
-          
+            var userClaim = this.User;
+            var user = await _userManager.GetUserAsync(userClaim);
+            if (user != null)
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+            }
             return View();
         }
-
+        [Authorize]
+        public async Task<IActionResult> DuplicateOrder(int labelId)
+        {
+            await _thunderService.DuplicateOrderAsync(labelId);
+            return View("Ship");
+        }
         [Authorize]
         [HttpGet]
         public IActionResult GetUnfinishedLabel(int labelId)
@@ -135,6 +158,40 @@ namespace Thunder.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _thunderService.UpdateAddress(uid, address);
            
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<UserToUpdate> AdminGetUserBalance(string email)
+        {
+            UserToUpdate user = new UserToUpdate();
+            var balance = await _userService.GetUserBalanceByEmail(email);
+
+            user.balance = (balance / 100).ToString();
+            user.email = email;
+           return user;
+           
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult AdminGetOrderDetails(int labelId)
+        {
+           
+            var orderDetails = _thunderService.AdminGetOrderDetails(labelId);
+
+            return Json(orderDetails);
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AdminUpdateBalance(UserToUpdate userToUpdate)
+        {
+            
+           var result = await _userService.AdminUpdateUserBalance(userToUpdate);
+
+            return Json(new { redirectToUrl = Url.Action("Admin", "Dashboard") });
         }
         [HttpPost]
         public List<RateDTO> requestRates(NewRate quickRate)

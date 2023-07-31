@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thunder.Data;
 
@@ -11,9 +12,10 @@ using Thunder.Data;
 namespace Thunder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230714163244_OrderDetails")]
+    partial class OrderDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,9 +244,6 @@ namespace Thunder.Migrations
                     b.Property<int>("AIO_Attempt")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BulkId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CarrierName")
                         .HasColumnType("nvarchar(max)");
 
@@ -299,6 +298,7 @@ namespace Thunder.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Uid")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LabelId");
@@ -378,9 +378,6 @@ namespace Thunder.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabelId"), 1L, 1);
 
-                    b.Property<int?>("BulkId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Carrier")
                         .HasColumnType("nvarchar(max)");
 
@@ -408,6 +405,7 @@ namespace Thunder.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromPhone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromState")
@@ -424,14 +422,8 @@ namespace Thunder.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OgPrice")
-                        .HasColumnType("int");
-
                     b.Property<long?>("OurPrice")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("PercentSaved")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToAddress1")
                         .IsRequired()
@@ -476,6 +468,7 @@ namespace Thunder.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Weight")

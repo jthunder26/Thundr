@@ -33,12 +33,13 @@ namespace Thunder.Services
         private readonly QueueClient _retrieveStoreQueueClient;
         private readonly ConcurrentDictionary<string, DateTime> _failedWorkItems = new ConcurrentDictionary<string, DateTime>();
 
-        public BackgroundQueueService(SecretClient secretClient, string createLabelQueueName, string retrieveStoreQueueName)
+        public BackgroundQueueService(string blobstorage, string createLabelQueueName, string retrieveStoreQueueName)
         {
-            var blobStorageSecret = secretClient.GetSecret("thunderblobstorage");
-            _createLabelQueueClient = new QueueClient(blobStorageSecret.Value.Value, createLabelQueueName);
-            _retrieveStoreQueueClient = new QueueClient(blobStorageSecret.Value.Value, retrieveStoreQueueName);
+          
+            _createLabelQueueClient = new QueueClient(blobstorage, createLabelQueueName);
+            _retrieveStoreQueueClient = new QueueClient(blobstorage, retrieveStoreQueueName);
         }
+       
 
         public void EnqueueCreateLabel(string workItem)
         {

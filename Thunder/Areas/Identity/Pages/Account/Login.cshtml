@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Log in";
 }
-<html data-wf-page="647e3139476cd742c15bf67d" data-wf-site="640dfa53ba67521ab709aa29">
+<html data-wf-page="64c7fbbef3915ca2f00a3906" data-wf-site="640dfa53ba67521ab709aa29">
 <body data-title="Login">
     <div class="section">
         <div class="container">
@@ -33,12 +33,19 @@
                            
                             
                                
+                            <div class="columns-17 w-row">
+                                <div class="column-15 w-col w-col-6">
+
                                     <label asp-for="Input.RememberMe" class="form-label">
                                         <input class="form-check-input" asp-for="Input.RememberMe" />
                                         @Html.DisplayNameFor(m => m.Input.RememberMe)
                                     </label>
-
-                        <div class="section-2 wf-section">
+                                </div>
+                                <div class="w-clearfix w-col w-col-6">
+                                    <a href="#" class="forgotpassword">Forgot Password</a>
+                                </div>
+                            </div>
+                        <div class="section-2">
                             <div class="send-button-holder2 custom4">
                                 <div data-w-id="4dcca303-a5e1-7daa-9430-1ef68b264886" class="fake-submit-button-holder static custom4">
                                     <input type="submit" value="Login" data-wait="..." class="submit-button3 submit-button-with-text3 custom4 w-button">
